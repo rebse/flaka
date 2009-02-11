@@ -185,24 +185,13 @@ All mentioned stem properties are cleared (i.e. undefined) if this task is being
 
 Assume that file build.xml is to be investigated. The file shall be under CVS control. This shall be the content of the CVS file (related to build.xml - other stuff skipped):
 
-{| class="{{Whtable}}"
-|-
-! File 
-! Content
-|-
-| CVS/Entries
-| /build.xml/1.49.2.3/Fri Nov  2 14:31:03 2007//Tv-2_1_8
-|-
-| CVS/Root
-| :pserver:wh81752@cvs.internal.epo.org:/cvsroot
-|-
-| CVS/Repository
-| var/antepoline/AntEpoline
-|-
-| CVS/Tag
-| not available
-|-
-|}
+
+
+|| *File || *Content ||
+|| CVS/Entries || /build.xml/1.49.2.3/Fri Nov  2 14:31:03 2007//Tv-2_1_8 ||
+|| CVS/Root    || :pserver:me@cvshost:/cvsroot ||
+|| CVS/Repository || foo/bar ||
+|| CVS/Tag     || _N/A_ ||
 
 Then
 
@@ -218,8 +207,8 @@ would set the following properties:
  c.cvsdate  = Fri Nov  2 14:31:03 2007
  c.cvsstag  = v-2_1_8
  c.cvstag   = v-2_1_8
- c.cvsdir   = var/antepoline/AntEpoline
- c.cvsroot  = :pserver:wh81752@cvs.internal.epo.org:/cvsroot
+ c.cvsdir   = foo/bar
+ c.cvsroot  = :pserver:me@cvshost:/cvsroot
 }}}
 
 
