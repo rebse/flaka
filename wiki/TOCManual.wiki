@@ -1,5 +1,9 @@
 #summary One-sentence summary of this page.
 
+* Getting Started
+ * [Installation]
+ * [Scripting BasicScriptingConstructs] 
+
 * API Reference
  * [Tasks Tasks]
  * [Types Types]
