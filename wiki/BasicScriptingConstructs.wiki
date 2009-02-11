@@ -1,20 +1,20 @@
 #labels Featured
- #summary This pages list basic scripting tasks and types introduced by Flaka
+#summary This pages list basic scripting tasks and types introduced by Flaka
 
 <div style="border: 1px solid red;margin: auto 0;">
 <wiki:toc max_depth="1" />
 
 = Basics =
 
-Flaka is a set of tasks, types and macros. This entities can be used like any other Ant entity. See [http://flaka.code.google.com:8080/ant/manual Ant Manual] for a list of standard Ant tasks and types and a list of other 3rdparty contributions. *To use Flaka*, add _ant-flaka-x.y.z.jar_ to Ant's classpath and within the buildscript, define a namespace like
+On a lower level, Flaka is a set of tasks, types and macros. This entities can be used [http://http://ant.apache.org/manual like any other entity provided by standard Ant]. Just add _ant-flaka-x.y.z.jar_ to Ant's classpath and make Flaka's entities available withing the buildscript via a namespace
 
 {{{
  <project xmlns:c="antlib:net.haefelingerit.flaka">
-   _build script_
+   [..]
  </project>
 }}}
 
-The standard namespace prefix used in this document is, as shown above, the character _c_. The prefix itself is not relevant and can thus be changed to your liking. Then, Flaka entities are used just like other entities. For example, 
+The namespace prefix used in this document is, as shown above, the character _c_. The prefix itself is not relevant and can thus be changed to your liking. Here is an example of a simple script using Flaka:
 
 {{{ 
   <project xmlns:_c_="antlib:net.haefelingerit.flaka">
