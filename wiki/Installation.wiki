@@ -1,35 +1,23 @@
 = Installation For The Impatient =
 *Download latest version of Flaka and drop `ant-flaka.''x.y.z''.jar` into your local Ant installation. There are various techniques how to ''drop''. Please read-on for refreshment.
 
-{{NewsBox|1=
-Starting with Flaka 2.2,  '''''cvs'' is no longer required.''' Older versions require a ''cvs'' client when building a project using a Baseline. When using an older version, the following requirements must be satisfied:
-* `CVSROOT` must be set
-* `CVS_RSH>` must be set when using ''cvs'' via ''ssh''
-* `cvs login` must work when using ''cvs'' via ''pserver''
-}}
-</div>
-
 = Before You Start! =
-<div style="{{FlakaDivSty}}">
-The following requirements must be fulfilled before you can start to use {{Flaka}}:
+The following requirements must be fulfilled before you can start to use *Flaka*:
 
-# {{Flaka}} requires Java 1.4 or newer. You can change the version by setting environment variable `JAVA_HOME`. Have also a look at [http://ant.apache.org/manual/index.html Ant's Manual] for other environment variables to be used.
-# [http://ant.apache.org Ant] version 1.7.0 or newer. 
-# '''Flaka older than 2.2:''' A `cvs` client your `PATH`, `CVSROOT` must be set and you must have been authenticated, i.e. `cvs login` must have been executed successfully.
-</div>
+ # *Flaka* requires Java 1.4 or newer. You can change the version by setting environment variable `JAVA_HOME`. Have also a look at [http://ant.apache.org/manual/index.html Ant's Manual] for other environment variables to be used.
+ # [http://ant.apache.org Ant] version 1.7.0 or newer. 
+
 
 = How to ''drop'' `ant-flaka-x.y.z.jar`? =
-<div style="{{FlakaDivSty}}">
 The most primitive technique is to save `ant-flaka-x.y.z.jar` in Ant's library folder `lib`. If you have no clue where Ant is installed, try 
-
 {{{
  $ ant -diagnostics | grep ant.home
  ant.home: /opt/ant/1.7.1
 }}}
-Saving something in Ant's library folder may not work due to lack of permission. There's also the disadvantage that when switching to another Ant installation {{Flaka}} needs to be installed again. Therefore consider to use Ant's standard option '''-lib''': 
+Saving something in Ant's library folder may not work due to lack of permission. There's also the disadvantage that when switching to another Ant installation *Flaka* needs to be installed again. Therefore consider to use Ant's standard option `-lib`: 
 
 {{{
- $ ant '''-lib''' ant-flaka-x.y.z.jar
+ $ ant -lib ant-flaka-x.y.z.jar
 }}}
 
 A pretty nice feature of option `-lib` is that if the argument is a directory, that directory is scanned for jar files. Therefore you may instead want to do something like this:
@@ -40,23 +28,23 @@ A pretty nice feature of option `-lib` is that if the argument is a directory, t
 }}}
 This approach has the nice advantage that you simply can drop other jar files into folder `$HOME/lib/ant` to make them reachable  without touching the original Ant installation. As already mentioned, this will get handy when you have either multiple Ant installations. Btw, notice that option `-lib` can be applied more than once if the jars to use reside in various folders. Finally notice that folders are not recursively searched.
 
-When working from the command line it's a bit annoying to provide option `-lib` for each and every call of Ant. Fortunatley, Ant recognizes environment variable '''`ANT_ARGS`''' which can be used to let `-lib` disappear:
+When working from the command line it's a bit annoying to provide option `-lib` for each and every call of Ant. Fortunatley, Ant recognizes environment variable `ANT_ARGS` which can be used to let `-lib` disappear:
 {{{
  $ ANT_ARGS="-lib $HOME/lib/ant"
  $ export ANT_ARGS
 }}}
-The drawback with this technique is that you need to make sure that this variable is set in every environment you start up Ant. This sounds easier than done. Luckily, Ant reads file '''`$HOME/.antrc`''' and '''`$HOME/.ant/ant.conf`''' on each and every startup. It's is therefore recommended to set `ANT_ARGS ` in one of this files (without the need to export) to make just every plain call to `ant` {{Flaka}} aware. For example:
+The drawback with this technique is that you need to make sure that this variable is set in every environment you start up Ant. This sounds easier than done. Luckily, Ant reads file `$HOME/.antrc` and `$HOME/.ant/ant.conf` on each and every startup. It's is therefore recommended to set `ANT_ARGS ` in one of this files (without the need to export) to make just every plain call to `ant` *Flaka* aware. For example:
 {{{
  $ cat $HOME/.antrc
  ANT_ARGS="-lib $HOME/lib/ant"
 }}}
+
 = Check whether Flaka works! =
-<div style="{{FlakaDivSty}}">
-To check whether your setup of {{Flaka}} works,  create a local Java project and try to build it. For example, 
+To check whether your setup of `Flaka` works,  create a local Java project and try to build it. For example, 
 {{{
  $ mkdir -p hello/src/demo && cd hello 
  $ cat > src/demo/Hello.java << EOF
-   public class Hello { /* .. */ }
+   public class Hello {}
  ^D
  $ cat > build.xml << EOF
  <project xmlns:c="antlib:net.haefelingerit.flaka">
@@ -73,7 +61,7 @@ To check whether your setup of {{Flaka}} works,  create a local Java project and
  BUILD SUCCESSFUL
  Total time: 2 seconds
 }}}
-The call to {{ant}} builds the package. The result will be file `hello-SNAPSHOT.jar` found in folder `build/dist`:
+The call to `ant` builds the package. The result will be file `hello-SNAPSHOT.jar` found in folder `build/dist`:
 {{{
  $ jar tvf dist/hello-SNAPSHOT.jar
      0 Thu Jan 17 17:04:08 CET 2009 META-INF/
