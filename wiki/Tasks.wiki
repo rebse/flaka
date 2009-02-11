@@ -33,7 +33,7 @@ Being executed, the following will be dumped on stdout:
 A task implementing a series of ifelse statements, i.e. a generalized if-then-else statement.
 
 == Attributes ==
-* when.test<br />A test condition. When evaluating to true, the corresponding when clause will be executed.
+ * when.test<br />A test condition. When evaluating to true, the corresponding when clause will be executed.
 == Elements ==
 * when<br/> A optional series of elements acting as container for task and macros.
 * otherwise<br />An optional element that is executed if no when clause got executed
