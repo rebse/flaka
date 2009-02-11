@@ -1,3 +1,6 @@
+#labels Featured
+#summary How to install Flaka
+
 = Installation For The Impatient =
 *Download latest version of Flaka and drop `ant-flaka.''x.y.z''.jar` into your local Ant installation. There are various techniques how to ''drop''. Please read-on for refreshment.
 
@@ -8,7 +11,7 @@ The following requirements must be fulfilled before you can start to use *Flaka*
  # [http://ant.apache.org Ant] version 1.7.0 or newer. 
 
 
-= How to ''drop'' `ant-flaka-x.y.z.jar`? =
+= How to drop `ant-flaka-x.y.z.jar`? =
 The most primitive technique is to save `ant-flaka-x.y.z.jar` in Ant's library folder `lib`. If you have no clue where Ant is installed, try 
 {{{
  $ ant -diagnostics | grep ant.home
