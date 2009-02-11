@@ -86,8 +86,8 @@ This would execute all macros and tasks listed in the otherwise clause since no 
 A simple task to install or uninstall a special component handler supposed to get rid of some annoying Ant warning messages.
 
 == Attributes ==
- * install<br />Install AntEpoline component handler [true]
- * uninstall<br />Uninstall AntEpoline component handler [false]
+ * install<br />Install component handler [true]
+ * uninstall<br />Uninstall component handler [false]
  * fail<br />Whether to fail if the installation or un-installation can't be carried out.
 
 == References ==
@@ -218,13 +218,13 @@ would set the following properties:
 
 = export = 
 
-Use this task to dump a file within the AntEpoline package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target {{AntEpolineRefTarget|1=export}}.  
+Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target {{RefTarget|1=export}}.  
 
 == Attributes ==
  * dst The destination to dump the file to. If dst is <tt>-</tt>, the file will be dumped to stdout.
  * dest Same as dst
  * out Same as dst
- * src The file within the AntEpoline package to export. By default, file antlib.xml is exported.
+ * src The file within the package to export. By default, file antlib.xml is exported.
  * tee (boolean,false) If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does).
 
 == References ==
@@ -271,7 +271,7 @@ Report all files in the folder containing this Ant build file.
  </c:find>
 }}}
 
-Note that this function dirname needs to be enabled by installing AntEpoline's property handler {{RefTask|1=property-handler}} once.
+Note that this function dirname needs to be enabled by installing Flaka's property handler {{RefTask|1=property-handler}} once.
 
 
 
@@ -282,7 +282,7 @@ Note that this function dirname needs to be enabled by installing AntEpoline's p
 
 = for = 
 
-Task for implements a loop statement in AntEpoline.
+Task that implements a loop statement.
 
 == Attributes ==
  * var<br/>The variable holding each loop item. This variable can be referenced within the body like @{var}} where var is the string used in this attribute. If not used, then x will be the default.
@@ -325,7 +325,7 @@ Note that the third word, c d, contains a whitespace character and that attribut
  * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
  * Task {{RefTask|1=for}} 
  * Task {{RefTask|1=continue}}
- * Quickref {{AntEpolineQuickRef|1=looping}} for an introduction to looping in AntEpoline
+ * Quickref [BasicScriptingConstructs#Looping] for an introduction to looping in Flaka
 
 = getdeps = 
 
@@ -569,7 +569,7 @@ creates property
 
 = property-handler = 
 
-A task to install AntEpoline's property handler in addition to the standard one provided by Ant. 
+A task to install a property handler in addition to the standard one provided by Ant. 
 
 This task provides some inline property functions like uppercasing an argument. For example:
 
@@ -585,7 +585,7 @@ This snippet would show:
  [echo] hello => HELLO
 }}}
 
-Note that this property handler gets automatically installed when booting the AntEpoline framework.
+Note that this property handler gets automatically installed when booting the framework.
 
 A list of functions provided by installing property-handler:
 
@@ -837,7 +837,7 @@ Note that this properties are set regardless whether they exists or not.
 == Element ==
 
  * case <br />The case element is used for matching the given switch value. This element can be applied multiple times or can be absent. Each case element will be tried in order. Element case supports the same attributes as the enclosing switch element does. Additionally the following attributes are supported:
- ** match<br />The expression to use for matching this case against the switch value. By default, the expression is interpreted as pattern  expression. If however the first and last character are '/', then these characters are stripped off and the remaining string is interpreted as regular expression. If it is not possible to interpret the remaining string as regular expression, the remaining string will be treated as pattern expression which is always possible. <br />If the first and last character are '%', then the remaining string is interpreted as pattern expression. The underlying regular expression engine is implementation dependent. It is Java for the current version of AntEpoline. Although Java, note that the backslash character doesn't need to be escaped. For example, string "\s" is indeed a whitespace character while this needs to be written as "\\s" in Java.
+ ** match<br />The expression to use for matching this case against the switch value. By default, the expression is interpreted as pattern  expression. If however the first and last character are '/', then these characters are stripped off and the remaining string is interpreted as regular expression. If it is not possible to interpret the remaining string as regular expression, the remaining string will be treated as pattern expression which is always possible. <br />If the first and last character are '%', then the remaining string is interpreted as pattern expression. The underlying regular expression engine is implementation dependent. It is Java for the current version of Flaka. Although Java, note that the backslash character doesn't need to be escaped. For example, string "\s" is indeed a whitespace character while this needs to be written as "\\s" in Java.
  * default <br />The default statement will be executed if no case statement matched. This element is optional. This element can only be specified once. A build exception will be raised if used more than once.
  * otherwise <br />This element is a synonym for element default.
 
@@ -1288,7 +1288,7 @@ While task wc supports implicit filesets and selectors it's often useful to have
 
 counts directories and files. Note that each type descriptor is only once taken into account, i.e. type="ffd" does not count files twice.
 
-The result of wc, i.e. the number of counted items can be saved in a project property. The name of the property is specified via attribute var. If a property is not given, then AntEpoline will use _ as value and the same happens if var is an empty string, i.e. only contains whitespace characters. The property denoted by var does not need to exist. If it exists, it will be overridden. That's why the attribute has been named var and not property. Property are not override able in standard Ant (they are when suing AntEpoline though). 
+The result of wc, i.e. the number of counted items can be saved in a project property. The name of the property is specified via attribute var. If a property is not given, then Flaka will use _ as value and the same happens if var is an empty string, i.e. only contains whitespace characters. The property denoted by var does not need to exist. If it exists, it will be overridden. That's why the attribute has been named var and not property. Property are not override able in standard Ant (they are when suing Flaka though). 
 
 == Elements ==
 
