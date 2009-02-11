@@ -4,7 +4,7 @@
 <div style="border: 1px solid red;margin: auto 0;">
 <wiki:toc max_depth="1" />
 
-= Basics =
+= Getting Started =
 
 On a lower level, Flaka is a set of tasks, types and macros. This entities can be used [http://http://ant.apache.org/manual like any other entity provided by standard Ant]. Just add _ant-flaka-x.y.z.jar_ to Ant's classpath and make Flaka's entities available withing the buildscript via a namespace
 
@@ -24,7 +24,7 @@ The namespace prefix used in this document is, as shown above, the character c. 
  </project>
 }}}
 
-Here Flaka's task {{FlakaRefTask|1=unless}} is being used to test whether a given folder exists or not (the test is carried out via Flaka's expression language AEL). If not existing, the folder is created using [http://flaka.code.google.com:8080/ant/manual/CoreTasks/mkdir.html *Ant's standard task mkdir*].
+Here Flaka's task {{FlakaRefTask|1=unless}} is being used to test whether a given folder exists or not (the test is carried out via Flaka's expression language AEL). If not existing, the folder is created using [http://ant.apache.org/manual/CoreTasks/mkdir.html task mkdir] provided by Ant.
 
 = Data Types =
 
@@ -34,14 +34,13 @@ Like Ant, Flaka supports currently strings and, when applicable, pointer to reso
 == Symbols ==
 
 Symbols are names carrying associated data. The name of a symbol is a sequence of characters. The allowed characters are basically unlimited. It is recommended to stick with well known characters [a-zA-Z0-9._-]. Symbols can be used as variables, target, task, type or macro names. 
-{{{
-* <property name=_sym_ value=_expr_ /> Use _sym_ as variable: assign the value of _expr_ to _sym_. *A symbol associated with a string value is called a property*. Notice that Ant and Flaka provide further ways of creating properties. 
-* <macrodef name=_sym_> .. Use _sym_ as macro name
-* <target name_sym_> .. Use _sym_ as target name
-* <taskdef name=_sym_> .. Use _sym_ as task name
-* <typedef name=_sym_> .. Use _sym_ as type name
-* id=_sym_ Use _sym_ as reference: assign the evaluation of task (or macro) to _id_ 
-}}}
+
+ * `<property name=sym value=expr />` Use sym as variable: assign the value of _expr_ to _sym_. *A symbol associated with a string value is called a property*. Notice that Ant and Flaka provide further ways of creating properties. 
+ * `<macrodef name=sym>`  Use _sym_ as macro name
+ * `<target namesym>` Use _sym_ as target name
+ * `<taskdef name=sym>` Use _sym_ as task name
+ * `<typedef name=sym>` Use _sym_ as type name
+ * `id=sym` Use sym as reference: assign the evaluation of task (or macro) to _id_ 
 
 = Properties = 
 
@@ -49,15 +48,15 @@ To reference a property, enclose it's symbol name with curly braces and prefix w
 
 {{{
  <property name="x" value="09" />
- ${x} _-- '09' _
+ -- ${x} => 09
 }}}
 
-When referencing a non existing property, i.e. a symbol name not associated with a string value, the reference expression evaluates to itself, i.e. <code>${not-a-property} -- _${not-a-property}_</code>. Using standard Ant, it is *not possible to change the association* between a symbol name and it's string value once established:
+When referencing a non existing property, i.e. a symbol name not associated with a string value, the reference expression evaluates to itself, i.e. `${not-a-property}` evaluates to _${not-a-property}_. Standard Ant does not allow to change the association between a symbol name and it's string value once established:
 
 {{{
   <property name="x" value="09" />
   <property name="x" value="The quick brown fox .."/>
-  ${x} _-- still '09' !!_
+  -- ${x} => 09
 }}}
 
 It can be done using Flaka: Use task
@@ -66,118 +65,100 @@ It can be done using Flaka: Use task
 an association between a symbol and a string value as the following snippet demonstrates.
 
 {{{
-  <c:set name="x" value="09" />
+  <property name="x" value="09" />
   <c:set name="x" value="The quick brown fox .."/>
-  ${x} _-- now  'The quick brown fox ..' !!_
+  -- ${x} => The quick brown fox ..
   <c:unset name="x" />
-  ${x} _-- ${x}_
+  ${x} => ${x}
 }}}
 
 Properties have their own symbol table (as targets, tasks, macros and types have). This means for example that it is possible to have a property and a task _sharing_ the same symbol name:
 
 {{{
   <property name="foobar" ../>
-  <macrodef name="foobar" ../>  _-- no name clash here !_
-  <c:set name="foobar" ../>     _-- clash! symbol name reused here!!_
+  <macrodef name="foobar" ../>  -- property foobar not harmed!
 }}}
 
 = Sequencing =
 
-To evaluate a sequence of expressions (tasks or macros) where only one expression is allowed, use Ant's _sequential_ task.
+To evaluate a sequence of expressions (tasks or macros) where only one expression is allowed, use [http://ant.apache.org/manual/CoreTasks/sequential.html Ant's sequential task]:
 
 {{{
  <sequential>
-   _-- any sequence of tasks or macros_ 
+   -- any sequence of tasks or macros
  </sequential>
 }}}
 
-Evaluates each expression in turn. Notice that _sequential_ returns nothing. Use properties (or other variables) to communicate with the caller if necessary.
+Note that _sequential_ returns nothing. Use properties to communicate with the caller if necessary.
 
 = Conditionals =
 
-With standard Ant, task {{AntRefCore|1=condition}} is used to set a property if a condition is given and attributes _if_ and _unless_ to execute a task or macro if that property is defined. Flaka defines a couple of control structures to handle conditionals in a simpler way in addition to the _standard_ way.
+With standard Ant, task [http://ant.apache.org/manual/CoreTasks/condition.html condition] is used to set a property if a condition is given. Then a macro, task or target can be conditionally executed  by checking the existence or absence of that property (using standard attributes _if_ or _unless_. Flaka defines a couple of control structures to handle conditionals in a simpler way.
 
 == when and unless ==
 
 Task {{FlakaRefTask|1=when}} evaluates _expr_. If the evaluation gives _true_, the sequence of tasks are executed. Nothing else happens in case of _false_. 
 
 {{{
- <c:when test="_expr_">
-   _executed if true_
+ <c:when test="expr">
+   -- executed if expr evaluates to true
  </c:when>
 }}}
 
-The logical negation of set _when_ is task {{FlakaRefTask|1=unless}} which executes the sequence of tasks only in case the evaluation of _expr_ returns _false_.
+The logical negation of `when` is task {{FlakaRefTask|1=unless}} which executes the sequence of tasks only in case the evaluation of _expr_ returns _false_.
 
 {{{
- <c:unless test="_expr_">
-  _executed if false_
+ <c:unless test="expr">
+   -- executed if expr evaluates to false
  </c:unless>
 }}}
 
 The body of _when_ and _unset_ may contain any sequence of tasks or macros (or a combination of both).
 
-
-
-== if ==
-
-Use task {{FlakaRefTask|1=if}} represents the _classical_ if statement. 
-
-{{{
- <c:if test="expr">
-   <sequential>
-    _-- *then*: any sequence of task and macros_ 
-   </sequential>
-   <sequential>
-    _-- *else*: any sequence of task and macros_ 
-   </sequential>
- <c:/if>
-}}}
-
-Notice that the _else_ part is optional. Then _if_ becomes equal with task {{FlakaRefTask|1=when}}. The usage of _if_ is kind of deprecated. If no _else_ part is available, it's better to use either _when_ or _unless_. If a _else_ part is required, it is often better to use task {{FlakaRefTask|1=choose}} or {{FlakaRefTask|1=switch}}.
-
 == choose ==
 
-Task {{FlakaRefTask|1=choose}} tests each _when condition_ in turn executing the first _when body_ for which the test returns _true_. Subsequent _whens_ are then not further tested (nor executed). If no test evaluates to _true_, the optional _catch-all_ clause gets executed.
+Task {{FlakaRefTask|1=choose}} tests each _when condition_ in turn until an _expr_ evalutes to _true_. It executes then the body of that when condition. Subsequent _whens_ are then not further tested (nor executed). If all expressions evaluate to _false_, the optional _catch-all_ clause gets executed.
 
 {{{
  <c:choose>
-  <when test="_test1_">
-    _body1_
+  <when test="expr_1">
+    -- body_1
   </when>
   ..
-  <otherwise> _-- optional_
-    _ catch-all clause_
+  <otherwise> -- optional_
+    -- catch all body
   </otherwise>
  <c:/choose>
 }}}
 
 == switch ==
 
-A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of _if_  or _when_ statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the {{FlakaRefTask|1=switch}} task:
+A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of _when_ statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the {{FlakaRefTask|1=switch}} task:
 
 {{{
- <c:switch value="_some value_">
-  <*case* match="_regular expression or pattern _" >
-    _Carry out something_
-  </*case*>
+ <c:switch value="some string">
+  <case match="regular expression or pattern" >
+    -- body_1
+  </case>
   ..
-  <*default*>
-   _No match so far? Then .._
-  </*default*>
- </c:*switch*>
+  <otherwise> -- optional
+    -- catch all body
+  </otherwise>
+ </c:switch>
 }}}
 
-Each case is tried in turn _to match_ the given (and normalized) switch value. If a case matches, the appropriate case body is executed. If it happens that no case matches, then the optional default body is executed.
+Each case is tried in turn _to match_ the given (and normalized) string value. If a case matches, the appropriate case body is executed. If it happens that no case matches, then the optional default body is executed. To be of greater value, a regular expression or pattern expression can be used in a case condition.
 
 = Looping =
 
 Flaka has a looping statement. Use task {{FlakaRefTask|1=for}} to iterate over a whitespace separated listed of words. Use {{FlakaRefTask|1=break}} and {{FlakaRefTask|1=continue}} to terminate the loop or to continue the loop with the next item.
 
 {{{
- <c:for var="_name_" in="_string value_">
+ <c:for var="name" in="string">
   <sequential>
-   _-- sequence of task or macros_
+    -- sequence of task or macros
+    -- used <c:continue /> to continue ; and
+    -- <c:break /> to stop looping
   </sequential> 
  </c:for>
 }}}
@@ -185,45 +166,38 @@ Flaka has a looping statement. Use task {{FlakaRefTask|1=for}} to iterate over a
 Variable _name_ can be referenced within the body by using expression _@{name}_. For example:
 
 {{{
- <c:for var="dir" in "src/java test/java">
+ <c:for var="dir" in "'src/java' 'test/java'">
   <sequential>
     <mkdir dir="_@{dir}_" /> 
   </sequential>
  </c:for>
 }}}
 
-Use quote character <b>'</b> to prevent a word containing whitespace characters from being tokenized, i.e. 
+This would create the two folders src/java and test/java in the current working directory (or the directory in which the executed script resides - this is a feature of standard Ant).
 
-{{{
- <c:for var="dir" in " 'C:/Program Files' ">
-  <sequential>
-    <mkdir dir="_@{dir}_" /> 
-  </sequential>
- </c:for>
-}}}
+Use quote character <b>'</b> to prevent a word containing whitespace characters from being tokenized.
 
 = Exception Handling =
 
 == trycatch ==
 
-Flaka contains a task to handle (build) exceptions thrown by tasks, {{FlakaRefTask|1=trycatch}}. This task implements the usual _try/catch/finally_ trinity found in various programming languages (like Java for example):
-
+Flaka contains a task to handle exceptions thrown by tasks, {{FlakaRefTask|1=trycatch}}. This task implements the usual _try/catch/finally_ trinity found in various programming languages (like Java for example):
 
 {{{
  <c:trycatch>
    <try>
-     _-- sequence of task or macros_
+     -- sequence of task or macros
    </try>
    <catch>
-     _-- sequence of task or macros_
+     -- sequence of task or macros
    </catch>
    <finally>
-     _-- sequence of task or macros_
+     -- sequence of task or macros
    </finally>
  </c:trycatch> 
 }}}
 
-Element _try_, _catch_ and _finally_ are optional or can appear multiple times. If _catch_ is used without any argument, then that catch clause will match any build exception. To differentiate between different exception types, _catch_ can additionally be used with a _type_ and _match_ argument. The former can be used to select a particular exception type (like a 'java.lang.NullPointerException), the latter can be used to select an exception based on the message carried. Both arguments are interpreted as pattern expression. For example:
+Element _try_, _catch_ and _finally_ are all optional or can appear multiple times. If _catch_ is used without any argument, then that catch clause will match any *build exception*. To differentiate between different exception types, _catch_ can additionally be used with a _type_ and _match_ argument. The former can be used to select a particular exception type (like a 'java.lang.NullPointerException), the latter can be used to select an exception based on the message carried. Both arguments are interpreted as pattern expression. For example:
 
 {{{
  <c:trycatch>
@@ -236,10 +210,10 @@ Element _try_, _catch_ and _finally_ are optional or can appear multiple times. 
       <echo>Ant initialization problem!!</echo>
       <fail/>
    <catch type="java.lang.*">
-     _-- handle Java runtime problems_
+     -- handle Java runtime problems
    </catch>
    <catch>
-      _-- handle all other build exceptions --_ 
+     -- handle all other build exceptions
    </catch>
   </c:trycatch>
 }}}
@@ -251,7 +225,7 @@ Property _ant.file_ is a standard Ant property that should always be set. If not
 Task {{FlakaRefTask|1=throw}} throws a (build) exception.
 
 {{{
- <c:throw *[*var="_sym_"*]* />
+ <c:throw [var="sym"] />
 }}}
 
 This task can also be used to rethrow an existing exception.
@@ -262,7 +236,7 @@ The (almost) equivalent of a function is a macro in Ant and Flaka. Invoking a ma
 
 {{{
  <M k1="v1" k2="v2" ..>
-   _-- optional body or text_
+   -- optional body or text
  </M>
 }}}
 
