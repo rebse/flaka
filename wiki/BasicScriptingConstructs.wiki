@@ -14,13 +14,13 @@ On a lower level, Flaka is a set of tasks, types and macros. This entities can b
  </project>
 }}}
 
-The namespace prefix used in this document is, as shown above, the character _c_. The prefix itself is not relevant and can thus be changed to your liking. Here is an example of a simple script using Flaka:
+The namespace prefix used in this document is, as shown above, the character c. The prefix itself is not relevant and can thus be changed to your liking. Here is an example of a simple script using Flaka:
 
 {{{ 
-  <project xmlns:_c_="antlib:net.haefelingerit.flaka">
-   <c:*unless* test="-d folder">
+  <project xmlns:c="antlib:net.haefelingerit.flaka">
+   <c:unless test="-d folder">
       <mkdir dir="folder" />
-   </c:*unless*>
+   </c:unless>
  </project>
 }}}
 
@@ -157,7 +157,7 @@ Task {{FlakaRefTask|1=choose}} tests each _when condition_ in turn executing the
 A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of _if_  or _when_ statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the {{FlakaRefTask|1=switch}} task:
 
 {{{
- <c:*switch* value="_some value_">
+ <c:switch value="_some value_">
   <*case* match="_regular expression or pattern _" >
     _Carry out something_
   </*case*>
