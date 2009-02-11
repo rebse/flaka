@@ -2,7 +2,7 @@
 
 * Getting Started
  * [Installation]
- * [Scripting BasicScriptingConstructs] 
+ * [BasicScriptingConstructs Scripting] 
 
 * API Reference
  * [Tasks Tasks]
