@@ -1,0 +1,82 @@
+= Installation For The Impatient =
+* Download latest version of Flaka and ''drop'' <tt>ant-flaka.''x.y.z''.jar</tt> into your local Ant installation. There are various techniques how to ''drop''. Please read-on for refreshment.
+
+{{NewsBox|1=
+Starting with Flaka 2.2,  '''''cvs'' is no longer required.''' Older versions require a ''cvs'' client when building a project using a Baseline. When using an older version, the following requirements must be satisfied:
+* <tt>CVSROOT</tt> must be set
+* <tt>CVS_RSH><tt> must be set when using ''cvs'' via ''ssh''
+* <tt>cvs login</tt> must work when using ''cvs'' via ''pserver''
+}}
+</div>
+
+= Before You Start! =
+<div style="{{FlakaDivSty}}">
+The following requirements must be fulfilled before you can start to use {{Flaka}}:
+
+# {{Flaka}} requires Java 1.4 or newer. You can change the version by setting environment variable <tt>JAVA_HOME</tt>. Have also a look at [http://ant.apache.org/manual/index.html Ant's Manual] for other environment variables to be used.
+# [http://ant.apache.org Ant] version 1.7.0 or newer. 
+# '''Flaka older than 2.2:''' A <tt>cvs</tt> client your <tt>PATH</tt>, <tt>CVSROOT</tt> must be set and you must have been authenticated, i.e. <tt>cvs login</tt> must have been executed successfully.
+</div>
+
+= How to ''drop'' <tt>ant-flaka-x.y.z.jar</tt>? =
+<div style="{{FlakaDivSty}}">
+The most primitive technique is to save <tt>ant-flaka-x.y.z.jar</tt> in Ant's library folder <tt>lib</tt>. If you have no clue where Ant is installed, try 
+
+{{{
+ $ ant -diagnostics | grep ant.home
+ ant.home: /opt/ant/1.7.1
+}}}
+Saving something in Ant's library folder may not work due to lack of permission. There's also the disadvantage that when switching to another Ant installation {{Flaka}} needs to be installed again. Therefore consider to use Ant's standard option '''-lib''': 
+
+{{{
+ $ ant '''-lib''' ant-flaka-x.y.z.jar
+}}}
+
+A pretty nice feature of option <tt>-lib</tt> is that if the argument is a directory, that directory is scanned for jar files. Therefore you may instead want to do something like this:
+{{{
+ $ mkdir $HOME/lib/ant
+ $ cp ant-flaka-x.y.z.jar $HOME/lib/ant
+ $ ant -lib $HOME/lib/ant
+}}}
+This approach has the nice advantage that you simply can drop other jar files into folder <tt>$HOME/lib/ant</tt> to make them reachable  without touching the original Ant installation. As already mentioned, this will get handy when you have either multiple Ant installations. Btw, notice that option <tt>-lib</tt> can be applied more than once if the jars to use reside in various folders. Finally notice that folders are not recursively searched.
+
+When working from the command line it's a bit annoying to provide option <tt>-lib</tt> for each and every call of Ant. Fortunatley, Ant recognizes environment variable '''<tt>ANT_ARGS</tt>''' which can be used to let <tt>-lib</tt> disappear:
+{{{
+ $ ANT_ARGS="-lib $HOME/lib/ant"
+ $ export ANT_ARGS
+}}}
+The drawback with this technique is that you need to make sure that this variable is set in every environment you start up Ant. This sounds easier than done. Luckily, Ant reads file '''<tt>$HOME/.antrc</tt>''' and '''<tt>$HOME/.ant/ant.conf</tt>''' on each and every startup. It's is therefore recommended to set <tt>ANT_ARGS </tt> in one of this files (without the need to export) to make just every plain call to <tt>ant</tt> {{Flaka}} aware. For example:
+{{{
+ $ cat $HOME/.antrc
+ ANT_ARGS="-lib $HOME/lib/ant"
+</div>
+}}}
+= Check whether {{Flaka}} works! =
+<div style="{{FlakaDivSty}}">
+To check whether your setup of {{Flaka}} works,  create a local Java project and try to build it. For example, 
+{{{
+ $ mkdir -p hello/src/demo && cat > hello/src/demo/Hello.java << EOF
+   public class Hello { /* .. */ }
+ EOF
+ $ cat > hello/build.xml << EOF
+ <project xmlns:c="antlib:net.haefelingerit.flaka">
+   <c:init />
+ </project>
+ EOF
+ $ cd hello && ant
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ ::                     HELLO, FLAKA 1.0                        ::
+ ::        use `ant -p' to get a list of useful targets         ::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ [..]
+ BUILD SUCCESSFUL
+ Total time: 2 seconds
+}}}
+The call to Ant/{{Flaka}} builds the package. The result will be file <tt>hello-SNAPSHOT.jar</tt> found in folder <tt>hello/build/dist</tt>:
+{{{
+ $ jar tvf build/dist/hello-SNAPSHOT.jar
+     0 Thu Jan 17 17:04:08 CET 2008 META-INF/
+   667 Thu Jan 17 17:04:06 CET 2008 META-INF/MANIFEST.MF
+   120 Thu Jan 17 17:04:08 CET 2008 Hello.class
+}}}
+
