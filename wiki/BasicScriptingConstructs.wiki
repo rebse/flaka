@@ -1,0 +1,389 @@
+#labels Featured
+ #summary This pages list basic scripting tasks and types introduced by Flaka
+
+<div style="border: 1px solid red;margin: auto 0;">
+<wiki:toc max_depth="1" />
+
+= Basics =
+
+Flaka is a set of tasks, types and macros. This entities can be used like any other Ant entity. See [http://flaka.code.google.com:8080/ant/manual Ant Manual] for a list of standard Ant tasks and types and a list of other 3rdparty contributions. '''To use Flaka''', add ''ant-flaka-x.y.z.jar'' to Ant's classpath and within the buildscript, define a namespace like
+
+{{{
+ <project xmlns:c="antlib:net.haefelingerit.flaka">
+   _build script_
+ </project>
+}}}
+
+The standard namespace prefix used in this document is, as shown above, the character ''c''. The prefix itself is not relevant and can thus be changed to your liking. Then, Flaka entities are used just like other entities. For example, 
+
+{{{ 
+  <project xmlns:''c''="antlib:net.haefelingerit.flaka">
+   <c:'''unless''' test="-d folder">
+      <mkdir dir="folder" />
+   </c:'''unless'''>
+ </project>
+}}}
+
+Here Flaka's task {{FlakaRefTask|1=unless}} is being used to test whether a given folder exists or not (the test is carried out via Flaka's expression language AEL). If not existing, the folder is created using [http://flaka.code.google.com:8080/ant/manual/CoreTasks/mkdir.html '''Ant's standard task mkdir'''].
+
+= Data Types =
+
+== Strings ==
+Like Ant, Flaka supports currently strings and, when applicable, pointer to resources (by referencing a symbol). Ant provides no functionality manipulate a string value and neither does Flaka. However, Flaka's expression language contains string functions to create new strings.
+
+== Symbols ==
+
+Symbols are names carrying associated data. The name of a symbol is a sequence of characters. The allowed characters are basically unlimited. It is recommended to stick with well known characters [a-zA-Z0-9._-]. Symbols can be used as variables, target, task, type or macro names. 
+{{{
+* <property name=''sym'' value=''expr'' /> Use ''sym'' as variable: assign the value of ''expr'' to ''sym''. '''A symbol associated with a string value is called a property'''. Notice that Ant and Flaka provide further ways of creating properties. 
+* <macrodef name=''sym''> .. Use ''sym'' as macro name
+* <target name''sym''> .. Use ''sym'' as target name
+* <taskdef name=''sym''> .. Use ''sym'' as task name
+* <typedef name=''sym''> .. Use ''sym'' as type name
+* id=''sym'' Use ''sym'' as reference: assign the evaluation of task (or macro) to ''id'' 
+}}}
+
+= Properties = 
+
+To reference a property, enclose it's symbol name with curly braces and prefix with the dollar character like:
+
+{{{
+ <property name="x" value="09" />
+ ${x} ''-- '09' ''
+}}}
+
+When referencing a non existing property, i.e. a symbol name not associated with a string value, the reference expression evaluates to itself, i.e. <code>${not-a-property} -- ''${not-a-property}''</code>. Using standard Ant, it is '''not possible to change the association''' between a symbol name and it's string value once established:
+
+{{{
+  <property name="x" value="09" />
+  <property name="x" value="The quick brown fox .."/>
+  ${x} ''-- still '09' !!''
+}}}
+
+It can be done using Flaka: Use task
+* {{FlakaRefTask|1=set}} to enforce ; and task
+* {{FlakaRefTask|1=unset}} to break 
+an association between a symbol and a string value as the following snippet demonstrates.
+
+{{{
+  <c:set name="x" value="09" />
+  <c:set name="x" value="The quick brown fox .."/>
+  ${x} ''-- now  'The quick brown fox ..' !!''
+  <c:unset name="x" />
+  ${x} ''-- ${x}''
+}}}
+
+Properties have their own symbol table (as targets, tasks, macros and types have). This means for example that it is possible to have a property and a task ''sharing'' the same symbol name:
+
+{{{
+  <property name="foobar" ../>
+  <macrodef name="foobar" ../>  ''-- no name clash here !''
+  <c:set name="foobar" ../>     ''-- clash! symbol name reused here!!''
+}}}
+
+= Sequencing =
+
+To evaluate a sequence of expressions (tasks or macros) where only one expression is allowed, use Ant's ''sequential'' task.
+
+{{{
+ <sequential>
+   ''-- any sequence of tasks or macros'' 
+ </sequential>
+}}}
+
+Evaluates each expression in turn. Notice that ''sequential'' returns nothing. Use properties (or other variables) to communicate with the caller if necessary.
+
+= Conditionals =
+
+With standard Ant, task {{AntRefCore|1=condition}} is used to set a property if a condition is given and attributes ''if'' and ''unless'' to execute a task or macro if that property is defined. Flaka defines a couple of control structures to handle conditionals in a simpler way in addition to the ''standard'' way.
+
+== when and unless ==
+
+Task {{FlakaRefTask|1=when}} evaluates ''expr''. If the evaluation gives ''true'', the sequence of tasks are executed. Nothing else happens in case of ''false''. 
+
+{{{
+ <c:when test="''expr''">
+   ''executed if true''
+ </c:when>
+}}}
+
+The logical negation of set ''when'' is task {{FlakaRefTask|1=unless}} which executes the sequence of tasks only in case the evaluation of ''expr'' returns ''false''.
+
+{{{
+ <c:unless test="''expr''">
+  ''executed if false''
+ </c:unless>
+}}}
+
+The body of ''when'' and ''unset'' may contain any sequence of tasks or macros (or a combination of both).
+
+
+
+== if ==
+
+Use task {{FlakaRefTask|1=if}} represents the ''classical'' if statement. 
+
+{{{
+ <c:if test="expr">
+   <sequential>
+    ''-- '''then''': any sequence of task and macros'' 
+   </sequential>
+   <sequential>
+    ''-- '''else''': any sequence of task and macros'' 
+   </sequential>
+ <c:/if>
+}}}
+
+Notice that the ''else'' part is optional. Then ''if'' becomes equal with task {{FlakaRefTask|1=when}}. The usage of ''if'' is kind of deprecated. If no ''else'' part is available, it's better to use either ''when'' or ''unless''. If a ''else'' part is required, it is often better to use task {{FlakaRefTask|1=choose}} or {{FlakaRefTask|1=switch}}.
+
+== choose ==
+
+Task {{FlakaRefTask|1=choose}} tests each ''when condition'' in turn executing the first ''when body'' for which the test returns ''true''. Subsequent ''whens'' are then not further tested (nor executed). If no test evaluates to ''true'', the optional ''catch-all'' clause gets executed.
+
+{{{
+ <c:choose>
+  <when test="''test1''">
+    ''body1''
+  </when>
+  ..
+  <otherwise> ''-- optional''
+    '' catch-all clause''
+  </otherwise>
+ <c:/choose>
+}}}
+
+== switch ==
+
+A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of ''if''  or ''when'' statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the {{FlakaRefTask|1=switch}} task:
+
+{{{
+ <c:'''switch''' value="''some value''">
+  <'''case''' match="''regular expression or pattern ''" >
+    ''Carry out something''
+  </'''case'''>
+  ..
+  <'''default'''>
+   ''No match so far? Then ..''
+  </'''default'''>
+ </c:'''switch'''>
+}}}
+
+Each case is tried in turn ''to match'' the given (and normalized) switch value. If a case matches, the appropriate case body is executed. If it happens that no case matches, then the optional default body is executed.
+
+= Looping =
+
+Flaka has a looping statement. Use task {{FlakaRefTask|1=for}} to iterate over a whitespace separated listed of words. Use {{FlakaRefTask|1=break}} and {{FlakaRefTask|1=continue}} to terminate the loop or to continue the loop with the next item.
+
+{{{
+ <c:for var="''name''" in="''string value''">
+  <sequential>
+   ''-- sequence of task or macros''
+  </sequential> 
+ </c:for>
+}}}
+
+Variable ''name'' can be referenced within the body by using expression ''@{name}''. For example:
+
+{{{
+ <c:for var="dir" in "src/java test/java">
+  <sequential>
+    <mkdir dir="''@{dir}''" /> 
+  </sequential>
+ </c:for>
+}}}
+
+Use quote character <b>'</b> to prevent a word containing whitespace characters from being tokenized, i.e. 
+
+{{{
+ <c:for var="dir" in " 'C:/Program Files' ">
+  <sequential>
+    <mkdir dir="''@{dir}''" /> 
+  </sequential>
+ </c:for>
+}}}
+
+= Exception Handling =
+
+== trycatch ==
+
+Flaka contains a task to handle (build) exceptions thrown by tasks, {{FlakaRefTask|1=trycatch}}. This task implements the usual ''try/catch/finally'' trinity found in various programming languages (like Java for example):
+
+
+{{{
+ <c:trycatch>
+   <try>
+     ''-- sequence of task or macros''
+   </try>
+   <catch>
+     ''-- sequence of task or macros''
+   </catch>
+   <finally>
+     ''-- sequence of task or macros''
+   </finally>
+ </c:trycatch> 
+}}}
+
+Element ''try'', ''catch'' and ''finally'' are optional or can appear multiple times. If ''catch'' is used without any argument, then that catch clause will match any build exception. To differentiate between different exception types, ''catch'' can additionally be used with a ''type'' and ''match'' argument. The former can be used to select a particular exception type (like a 'java.lang.NullPointerException), the latter can be used to select an exception based on the message carried. Both arguments are interpreted as pattern expression. For example:
+
+{{{
+ <c:trycatch>
+   <try>
+      ..
+      <fail message="#PANIC!" unless="ant.file"/>
+      ..
+   </try>
+   <catch match="*#PANIC!*">
+      <echo>Ant initialization problem!!</echo>
+      <fail/>
+   <catch type="java.lang.*">
+     ''-- handle Java runtime problems''
+   </catch>
+   <catch>
+      ''-- handle all other build exceptions --'' 
+   </catch>
+  </c:trycatch>
+}}}
+
+Property ''ant.file'' is a standard Ant property that should always be set. If not, there's something seriously wrong and it does not make much sense to continue. Use attribute ''type'' to catch (runtime) exceptions thrown by the underlying implementation.
+
+== throw ==
+
+Task {{FlakaRefTask|1=throw}} throws a (build) exception.
+
+{{{
+ <c:throw '''['''var="''sym''"''']''' />
+}}}
+
+This task can also be used to rethrow an existing exception.
+
+= Macro Functions  =
+
+The (almost) equivalent of a function is a macro in Ant and Flaka. Invoking a macro ''M'' is done like
+
+{{{
+ <M k1="v1" k2="v2" ..>
+   ''-- optional body or text''
+ </M>
+}}}
+
+For example:
+{{{
+ <macrodef name="hello">
+  <attribute name="msg" />
+  <element name="body" implicit="true" />
+  <sequential>
+   <body />
+  </sequential>
+ </macrodef>
+
+ -- simply call the macro
+ <hello msg="Hello, world!">
+   <echo>@{msg}</echo>
+ </MyMacro>
+
+ -- which evaluates to
+ <echo>Hello, world!</echo>
+}}}
+
+Macros are a standard Ant feature.
+
+= Test Expression Language =
+
+Within tests, the following language can be used to determine whether a condition evaluates to
+true. The condition evaluates to ''true'' if
+
+{{{
+ ( ''EXPRESSION'' )
+   ''EXPRESSION'' is true
+ 
+ ! ''EXPRESSION''
+   ''EXPRESSION'' is false
+ 
+ EXPRESSION1 -a EXPRESSION2
+   both EXPRESSION1 and EXPRESSION2 are true
+ 
+ EXPRESSION1 -o EXPRESSION2
+   either EXPRESSION1 or EXPRESSION2 is true
+ 
+ [-n] STRING
+   the length of STRING is nonzero
+ 
+ -z STRING
+            the length of STRING is zero
+ 
+ STRING1 = STRING2
+            the strings are equal
+ 
+ STRING1 != STRING2
+            the strings are not equal
+ 
+ INTEGER1 -eq INTEGER2
+            INTEGER1 is equal to INTEGER2
+ 
+ INTEGER1 -ge INTEGER2
+            INTEGER1 is greater than or equal to INTEGER2
+ 
+ INTEGER1 -gt INTEGER2
+            INTEGER1 is greater than INTEGER2
+ 
+ INTEGER1 -le INTEGER2
+            INTEGER1 is less than or equal to INTEGER2
+ 
+ INTEGER1 -lt INTEGER2
+            INTEGER1 is less than INTEGER2
+ 
+ INTEGER1 -ne INTEGER2
+            INTEGER1 is not equal to INTEGER2
+ 
+ FILE1 -nt FILE2
+            FILE1 is newer (modification date) than FILE2
+ 
+ FILE1 -ot FILE2
+            FILE1 is older than FILE2
+
+ -d FILE
+            FILE exists and is a directory
+ 
+ -e FILE
+            FILE exists
+ 
+ -f FILE
+            FILE exists and is a regular file
+ 
+ -r FILE
+            FILE exists and is readable
+ 
+ -s FILE
+            FILE exists and has a size greater than zero
+ 
+ -w FILE
+            FILE exists and is writable
+ 
+ -x FILE
+               FILE exists and is executable
+
+ -P STRING
+               Property STRING is defined
+
+ -R STRING
+               Reference STRING is defined
+
+ -T STRING
+               Target STRING is defined
+
+ -M STRING
+               Macro STRING or Task STRING are
+               defined.
+
+
+ -m STRING
+               Macro STRING is defined and
+               STRING is not a Task.
+
+ -t STRING
+               Task STRING is defined and
+               STRING is not a Macro.
+
+}}}
+
+</div>
