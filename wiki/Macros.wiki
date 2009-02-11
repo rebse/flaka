@@ -4,114 +4,74 @@
 
 = all =
 
-Override this macro in order to customize target ''all''. The default implementation of ''all'' does nothing.
+Override this macro in order to customize target all. The default implementation of _all_ does nothing.
 
 = analyse-cvs-tag =
-A CVS tag like <tt>v-1_0</tt> carries meta information that can be useful when building a package. For example, it might be natural to create version <tt>1.0</tt> when building a project that has been checked out with tag <tt>v-1_0</tt>. To support this, *Flaka* defines extension point analyse-cvs-tag. This macro gets automatically called on booting<sup>1</sup> the *Flaka* framework. The purpose of this macro is to analyse a given cvs tag and to set various properties (see below). It is then up to the callee, i.e. the build script using *Flaka*, to make use of this properties. The default implementation of analyse-cvs-tag defines the following  properties (note that each property will be prefixed by a stem). The examples given in the table are based on tag v-uat_3_20_rc_1--b-3_20:
-{| {{Whtable}}
- |-
- ! Property 
- ! Description 
- ! Example 
- |-
- ! ''stem.''typ
- | The tag type
- | v
- |-
- ! ''stem.''env
- | Environment
- | uat
- |-
- ! ''stem.''ver
- | Version
- | 3_20
- |-
- ! ''stem.''rev
- | Revision
- | &nbsp;
- |-
- ! ''stem.''mst
- | Milestone
- | rc_1
- |-
- ! ''stem.''bch
- | Branch Tag
- | b-3_20
- |}
+A CVS tag like `v-1_0` carries meta information that can be useful when building a package. For example, it might be natural to create version `1.0` when building a project that has been checked out with tag `v-1_0`. To support this, *Flaka* defines extension point analyse-cvs-tag. This macro gets automatically called on booting<sup>1</sup> the *Flaka* framework. The purpose of this macro is to analyse a given cvs tag and to set various properties (see below). It is then up to the callee, i.e. the build script using *Flaka*, to make use of this properties. The default implementation of analyse-cvs-tag defines the following  properties (note that each property will be prefixed by a stem). The examples given in the table are based on tag v-uat_3_20_rc_1--b-3_20:
+
+ || Property || Description || Example ||
+ || _stem._typ || The tag type || v ||
+ || _stem._env || Environment ||  uat ||
+ || _stem._ver ||  Version || 3_20 ||
+ || _stem._rev || Revision || &nbsp; ||
+ || _stem._mst || Milestone || rc_1 ||
+ || _stem._bch || Branch Tag || b-3_20 ||
+
 
 Each property listed will be wiped-out by calling analyse-cvs-tag, regardless whether it has been set before or not. It is therefore sufficient to check for the existence of a property in order to check whether an version or environment has been identified within the tag. Note further that analyse-cvs-tag will only break up a given tag in identifiable pieces. Further processing of this pieces are subject to the callee. This allows to reconstruct the original tag out of it's pieces similar to the pseudo code shown below:
 
- original = ${''stem''.typ}-${''stem''.vers}_${''stem''.rev}_${''stem''.mst}--${''stem''.bch}
+{{{
+ original = ${_stem_.typ}-${_stem_.vers}_${_stem_.rev}_${_stem_.mst}--${_stem_.bch}
+}}}
 
 == Tokenizing Algorithm ==
 
 The standard algorithm for tokenizing a CVS tag is outlined below. It this algorithm does not suit certain needs, it can be customized by overriding the extension point analyse-cvs-tag. The algorithm is as following:
 
-# If the tag contains the string "--", then everything following "--" is considered to be a branch tag and will be assigned to stem.bch. Everything before will further processed.
-# If remaining input contains a milestone, then milestone part will be assigned to stem.mst and processing stops for this part. Everything before the milestone will be further processed.
-# If the remaining input does not contain an environmental part, then the input is broken up into stem.typ and stem.ver and processing stops.
-# Otherwise, the input will broken up into stem.typ, stem.env and a remaining version part.
-# If the remaining version part contains less then 4 number sections, all number sections are assigned to stem.ver. Finally, if there are 4 or more than 4 number sections, then the first three number sections are assigned to stem.ver and all remaining number sections to stem.rev.
+ # If the tag contains the string "--", then everything following "--" is considered to be a branch tag and will be assigned to stem.bch. Everything before will further processed.
+ # If remaining input contains a milestone, then milestone part will be assigned to stem.mst and processing stops for this part. Everything before the milestone will be further processed.
+ # If the remaining input does not contain an environmental part, then the input is broken up into stem.typ and stem.ver and processing stops.
+ # Otherwise, the input will broken up into stem.typ, stem.env and a remaining version part.
+ # If the remaining version part contains less then 4 number sections, all number sections are assigned to stem.ver. Finally, if there are 4 or more than 4 number sections, then the first three number sections are assigned to stem.ver and all remaining number sections to stem.rev.
 
 An example is used to illustrate this algorithm further. Assume the following complex tag given: v-uat_3_20_0_197_rc_1--b-3_20. 
 
-# This tag contains a branch tag. Therefore stem.bch would get the value b-3_20. Input for further processing would be v-uat_3_20_0_197_rc_1.
-# Value v-uat_3_20_0_197_rc_1 contains a milestone. Therefore stem.mst becomes rc_1.
-# The remaining input v-uat_3_20_0_197 is further analysed. Since an environment is present, the remaining version 3_20_0_197 is handled in a special way and processing continues. If uat would not be present, stem.ver would become 3_20_0_197 and processing would stop.
-# stem.env becomes uat and stem.typ becomes v.
-# The number of sections in 3_20_0_197 is 4. Therefore stem.ver becomes 3_20_0 and stem.rev becomes 197. Processing stops here.
+ # This tag contains a branch tag. Therefore stem.bch would get the value b-3_20. Input for further processing would be v-uat_3_20_0_197_rc_1.
+ # Value v-uat_3_20_0_197_rc_1 contains a milestone. Therefore stem.mst becomes rc_1.
+ # The remaining input v-uat_3_20_0_197 is further analysed. Since an environment is present, the remaining version 3_20_0_197 is handled in a special way and processing continues. If uat would not be present, stem.ver would become 3_20_0_197 and processing would stop.
+ # stem.env becomes uat and stem.typ becomes v.
+ # The number of sections in 3_20_0_197 is 4. Therefore stem.ver becomes 3_20_0 and stem.rev becomes 197. Processing stops here.
 
 Table below demonstrates the algorithm for a couple of sample values:
 
-{| {{Whtable}}
- ! Tag || typ || env || ver || rev || mst || bch
- |-
- | v-3 ||  v   ||     || 3   ||     ||     ||
- |-
- | v-3_20 ||  v   ||     || 3_20   ||     ||     ||
- |-
- | v-3_20_0_1 ||  v   ||     || 3_20_0_1   ||     ||     ||
- |-
- | v-3_20_0_1_2 ||   v  ||     || 3_20_0_1_2   ||     ||     ||
- |-
- | v-env_3 ||  v   ||  env   || 3   ||     ||     ||
- |-
- | v-env_3_20 ||  v   ||  env   || 3_20   ||     ||     ||
- |-
- | v-env_3_20_0_1 ||   v  || env    || 3_20_0   || 1    ||     ||
- |-
- | v-env_3_20_0_1_2 || v   ||  env   || 3_20_0   || 1_2    ||     ||
- |-
- | v-3_rc_5 ||  v   ||     || 3   ||     ||  rc_5  ||
- |-
- | v-3_20_rc_5 ||  v   ||     || 3_20   ||     || rc_5    ||
- |-
- | v-3_20_0_1_rc_5 ||   v  ||     || 3_20_0_1   ||    || rc_5   ||
- |-
- | v-3_20_0_1_2_rc_5 || v   ||     || 3_20_0_1_2   ||     ||  rc_5  ||
- |-
- | v-env_3_20_0_1_rc_5 ||   v  ||  env   || 3_20_0   || 1   || rc_5    ||
- |-
- | v-env_3_20_0_1_2_rc_5 || v   || env    || 3_20_0   || 1_2    ||  rc_5   ||
- |-
- | v-3_rc_5--b-3_20 ||  v   ||     || 3   ||     ||  rc_5  ||b-3_20
- |-
- | v-3_20_rc_5--b-3_20 ||  v   ||     || 3_20   ||     || rc_5    ||b-3_20
- |-
- | v-3_20_0_1_rc_5--b-3_20 ||   v  ||     || 3_20_0_1   ||    || rc_5   ||b-3_20
- |-
- | v-3_20_0_1_2_rc_5--b-3_20 || v   ||     || 3_20_0_1_2   ||     ||  rc_5  ||b-3_20
- |-
- | v-env_3_20_0_1_rc_5--b-3_20 ||   v  ||  env   || 3_20_0   || 1   || rc_5    ||b-3_20
- |-
- | v-env_3_20_0_1_2_rc_5--b-3_20 || v   || env    || 3_20_0   || 1_2    ||  rc_5   ||b-3_20
- |-
-|}
+
+ || Tag || typ || env || ver || rev || mst || bch ||
+ || v-3 ||  v   ||     || 3   ||     ||     || ||
+ || v-3_20 ||  v   ||     || 3_20   ||     ||     || ||
+ || v-3_20_0_1 ||  v   ||     || 3_20_0_1   ||     ||     || ||
+ || v-3_20_0_1_2 ||   v  ||     || 3_20_0_1_2   ||     ||     || ||
+ || v-env_3 ||  v   ||  env   || 3   ||     ||     || ||
+ || v-env_3_20 ||  v   ||  env   || 3_20   ||     ||     || || 
+ || v-env_3_20_0_1 ||   v  || env    || 3_20_0   || 1    ||     || || 
+ || v-env_3_20_0_1_2 || v   ||  env   || 3_20_0   || 1_2    ||     || ||
+ || v-3_rc_5 ||  v   ||     || 3   ||     ||  rc_5  || ||
+ || v-3_20_rc_5 ||  v   ||     || 3_20   ||     || rc_5    || ||
+ || v-3_20_0_1_rc_5 ||   v  ||     || 3_20_0_1   ||    || rc_5   || ||
+ || v-3_20_0_1_2_rc_5 || v   ||     || 3_20_0_1_2   ||     ||  rc_5  || ||
+ || v-env_3_20_0_1_rc_5 ||   v  ||  env   || 3_20_0   || 1   || rc_5    || ||
+ || v-env_3_20_0_1_2_rc_5 || v   || env    || 3_20_0   || 1_2    ||  rc_5   || ||
+ || v-3_rc_5--b-3_20 ||  v   ||     || 3   ||     ||  rc_5  ||b-3_20 || 
+ || v-3_20_rc_5--b-3_20 ||  v   ||     || 3_20   ||     || rc_5    ||b-3_20 ||
+ || v-3_20_0_1_rc_5--b-3_20 ||   v  ||     || 3_20_0_1   ||    || rc_5   ||b-3_20 ||
+ || v-3_20_0_1_2_rc_5--b-3_20 || v   ||     || 3_20_0_1_2   ||     ||  rc_5  ||b-3_20 ||
+ || v-env_3_20_0_1_rc_5--b-3_20 ||   v  ||  env   || 3_20_0   || 1   || rc_5    ||b-3_20 ||
+ || v-env_3_20_0_1_2_rc_5--b-3_20 || v   || env    || 3_20_0   || 1_2    ||  rc_5   ||b-3_20 ||
+
 
 == Attributes ==
 
-* tag <br />The tag value to be analyzed. Note that enclosing whitespace is ignored. The default value is the value of property ''${project.cvstag}''. The behaviour is undefined if not value is given and property <tt>project.cvstag</tt> is undefined.
-* stem <br />A string value to be used as stem when setting properties - see example below. The default value is ''cvstag''.
+ * tag <br />The tag value to be analyzed. Note that enclosing whitespace is ignored. The default value is the value of property _${project.cvstag}_. The behaviour is undefined if not value is given and property `project.cvstag` is undefined.
+ * stem <br />A string value to be used as stem when setting properties - see example below. The default value is _cvstag_.
 
 == Example I ==
 
@@ -131,7 +91,7 @@ Table below demonstrates the algorithm for a couple of sample values:
 Macro analyse-cvs-tag uses internally property stem __z. 
 
 == Footnotes ==
-1. Usually done by using <tt><c:import /></tt>
+1. Usually done by using `<c:import />`
 
 = apropos =
 
@@ -139,18 +99,20 @@ Customize this macro in order to customize target [Targets#apropos apropos].
 
 = assert =
 
-A macro implementing an ''assert'' statement. The macro throws a build exception if a test fails. 
+A macro implementing an _assert_ statement. The macro throws a build exception if a test fails. 
             
 == Attributes ==
-* test <br/>A mandatory attribute interpreted as test to be carried out. When evaluating to ''false'', a build exception is thrown.        
+ * test <br/>A mandatory attribute interpreted as test to be carried out. When evaluating to _false_, a build exception is thrown.        
     
 == Example==
 
 Assure that a directory is present:
 
+{{{
  <c:assert test="-d some/folder" />
+}}}
 
-This throws an exception like <code>assertion error: test `-d some/folder' failed</code> if folder ''some/folder'' does not exist.
+This throws an exception like <code>assertion error: test `-d some/folder' failed</code> if folder _some/folder_ does not exist.
 
 = auto-init =
 
@@ -162,25 +124,27 @@ This macro is responsible to retrieving the [[Baseline]]. Traditionally the Base
 
 = cat =
 
-A simple macro to dump the content of a file (similar to command ''cat'' found on UNIX/LINUX).
+A simple macro to dump the content of a file (similar to command _cat_ found on UNIX/LINUX).
             
 == Attributes ==
-* src (*Mandatory*)<br/> The file to be dumped
-* level <br/> Whether to dump when Ant is in ''info'', ''verbose'' or ''debug'' mode [info].
-* fail<br/> Whether to throw exception if file can't be dumped or not [true]
+ * src (*Mandatory*)<br/> The file to be dumped
+ * level <br/> Whether to dump when Ant is in _info_, _verbose_ or _debug_ mode [info].
+ * fail<br/> Whether to throw exception if file can't be dumped or not [true]
 
 == Example==
 
+{{{
  <echo message="Hello world!" file="greeting.txt">
  <c:cat src="greeting.txt" />
- ''Hello world!''
+ _Hello world!_
+}}}
 
 = clean =
 
-Use this macro to customize target [Targets#clean clean]. The default implementation of ''clean'' removes the content of the following directories
-* ${obj.dir}
-* ${test.obj.dir}
-* ${testclient.obj.dir}
+Use this macro to customize target [Targets#clean clean]. The default implementation of _clean_ removes the content of the following directories
+ * ${obj.dir}
+ * ${test.obj.dir}
+ * ${testclient.obj.dir}
 
 = clean-dir =
 
@@ -188,15 +152,15 @@ A simple macro removing the content of a directory without removing the director
     
         
 == Attributes ==
-* name <br/> The name of the directory to be cleaned.
+ * name <br/> The name of the directory to be cleaned.
 
 = compile =
 
 Override this macro in order to customize target [Targets#compile compile]. The default implementation invokes the following macros in the order given:
-# [Macros#compile-init compile-init]    
-# [Macros#compile-exec compile-exec]    
-# [Macros#compile-rmi compile-rmi]    
-# [Macros#compile-post compile-post]    
+ # [Macros#compile-init compile-init]    
+ # [Macros#compile-exec compile-exec]    
+ # [Macros#compile-rmi compile-rmi]    
+ # [Macros#compile-post compile-post]    
 
 
 With the exception of [Macros#compile-exec compile-exec] (and [Macros#compile-rmi compile-rmi] for time being), all macros do nothing and are reserved as placeholders. Macro [Macros#compile-exec compile-exec] determines how to compile sources. Currently, it just assumes a Java project and thus invokes macro [Macros#compile-test-exec-java compile-test-exec-java].
@@ -211,7 +175,7 @@ This is the internal and customizable macro responsible for the compilation of J
 
         
 == Attributes ==
-* srcdir <br/>The source directories [<code>${src.dir}</code>]
+ * srcdir <br/>The source directories [<code>${src.dir}</code>]
 
 = compile-init =
 
@@ -227,16 +191,16 @@ The macro is empty by default.
 A customizable macro used to drive RMI code compilation. Used within [Macros#compile compile]. This macro is customizable.
 
 A sketch of the current implementation:
-# If property ''rmi.class.name'' is not empty, then every name classname therein is translated into a file matching pattern used to locate class files within object directory ${obj.dir}. For example, if the classname is "p.C" then ${obj.dir} is being looked up using pattern ''**/p/C.class''. All located classes are passed on to be compiled by [Tasks#rmic rmic]. If no matching class in found, then an exception is thrown.
-* If property ''rmi.class.name'' does not exist or is empty, then patternset ''rmi.class.patternset'' is used to lookup class files in ${obj.dir} and eventually to be passed to [Tasks#rmic rmic]. An exception is thrown if the patternset exists but does not match any files.
+ # If property _rmi.class.name_ is not empty, then every name classname therein is translated into a file matching pattern used to locate class files within object directory ${obj.dir}. For example, if the classname is "p.C" then ${obj.dir} is being looked up using pattern _**/p/C.class_. All located classes are passed on to be compiled by [Tasks#rmic rmic]. If no matching class in found, then an exception is thrown.
+ * If property _rmi.class.name_ does not exist or is empty, then patternset _rmi.class.patternset_ is used to lookup class files in ${obj.dir} and eventually to be passed to [Tasks#rmic rmic]. An exception is thrown if the patternset exists but does not match any files.
 
 = compile-test =
 
 This macro is similar to macro [Macros#compile compile]. It is used to compile unit tests to be executed when invoking target [Targets#test test]. The implementation invokes in order
 
-# [Macros#compile-test-init compile-test-init]
-# [Macros#compile-test-exec compile-test-exec]
-# [Macros#compile-test-post compile-test-post]
+ # [Macros#compile-test-init compile-test-init]
+ # [Macros#compile-test-exec compile-test-exec]
+ # [Macros#compile-test-post compile-test-post]
 
 where [Macros#compile-test-init compile-test-init] shall be used to init the compilation step, [Macros#compile-test-exec compile-test-exec] to exec the compilation, and [Macros#compile-test-post compile-test-post] to do any post processing resp. house cleaning.
 
@@ -249,11 +213,11 @@ A customizable macro driving the compilation of source code required to run any 
 This macro is reponsible for the compilation of any Java based source code required to run unit tests.
         
 == Attributes ==
-* srcdir <br/>The directory containing unit test source code [<code>${test.src.dir}</code>].
+ * srcdir <br/>The directory containing unit test source code [<code>${test.src.dir}</code>].
 
 = compile-test-init =
 
-A customizable macro responsible for the initialization of the ''unit test compilation step''. See also [Macros#compile-test compile-test]. The default implementation does nothing.
+A customizable macro responsible for the initialization of the _unit test compilation step_. See also [Macros#compile-test compile-test]. The default implementation does nothing.
 
 = compile-test-post =
 
@@ -261,38 +225,41 @@ A customizable macro responsible for post-processing of the unit case compilatio
 
 = copy-and-replace =
 
-A useful macro copying all files from a source into a destination folder. This macro is similar to [Tasks#copy copy task]. In addition however, files with extension ''.in'' are interpreted as templates and handled in a special way:
-* Templates files are instantiated in the destination folder by removing ''.in'' from the file's name
-* The template's content is copied as is except that any word starting and ending in character ''@'' is interpreted as token
-* If a token (after having stripped the leading and trailing character ''@'') matches the name of a property defined in the current project, then every occurrence of that token in the template's instance is replace with the value of that property. See examples below on how this works. 
+A useful macro copying all files from a source into a destination folder. This macro is similar to [Tasks#copy copy task]. In addition however, files with extension _.in_ are interpreted as templates and handled in a special way:
+ * Templates files are instantiated in the destination folder by removing _.in_ from the file's name
+ * The template's content is copied as is except that any word starting and ending in character _@_ is interpreted as token
+ * If a token (after having stripped the leading and trailing character _@_) matches the name of a property defined in the current project, then every occurrence of that token in the template's instance is replace with the value of that property. See examples below on how this works. 
 
-Files ending in ''.in'' having a binary content (at least one non-printable character as determined by selector [Types#istext istext] are not treated as templates. In fact they are not even copied over to the destination directory.
+Files ending in _.in_ having a binary content (at least one non-printable character as determined by selector [Types#istext istext] are not treated as templates. In fact they are not even copied over to the destination directory.
 
-If a file already exists in the destination directory, then  it will be overridden. The destination folder ''dst'' will be created if not already existing. 
+If a file already exists in the destination directory, then  it will be overridden. The destination folder _dst_ will be created if not already existing. 
         
 == Attributes ==
-* src <br/>The source folder
-* dst <br/>The destination folder
+ * src <br/>The source folder
+ * dst <br/>The destination folder
 
 == Element ==
-* selector-element <br/>A optional (and implicit) [Types#selectors file selector element]
+ * selector-element <br/>A optional (and implicit) [Types#selectors file selector element]
       
     
 == Example ==
 
-Assume that there is a folder named ''src'' which contains the following files:
-* config.properties.in
-* binary.in (assumed to be a ''binary'' file
-* config.properties
+Assume that there is a folder named _src_ which contains the following files:
+ * config.properties.in
+ * binary.in (assumed to be a _binary_ file
+ * config.properties
 
-The content of file ''config.properties.in'' shall be 
+The content of file _config.properties.in_ shall be 
 
+{{{
  x = hello @x@
  version = @project.version@
  z = @z@
+}}}
 
 and the build script shall look like
 
+{{{
  <project ..>
   <c:inline-properties>
    x = world!
@@ -301,32 +268,34 @@ and the build script shall look like
   <c:copy-and-replace src="src" dst="dst" />
   ..
  </project>
+}}}
 
-Then the content of folder ''dst'' will only contain a file named ''config.properties'' having the following content:
+Then the content of folder _dst_ will only contain a file named _config.properties_ having the following content:
 
+{{{
  <c:cat src="src/config.properties />
- ''x = hello world!''
- ''version = 1.0''
- ''z = @z@''
+ _x = hello world!_
+ _version = 1.0_
+ _z = @z@_
+}}}
 
-There is only ''one'' file in folder ''dst'' cause ''config.properties.in'' and ''config.properties'' are both mapped to the same final name. Cause ''config.in'' is a binary file, that file is not copied. 
+There is only _one_ file in folder _dst_ cause _config.properties.in_ and _config.properties_ are both mapped to the same final name. Cause _config.in_ is a binary file, that file is not copied. 
 
 When copying, non-template files are copied first and templates are instantiated afterwards.
 
-The token ''@z@'' has not been replaced cause there property ''z'' does not exist in the project. Notice that properties are evaluated at the invocation time of macro ''copy-and-replace''.
+The token _@z@_ has not been replaced cause there property _z_ does not exist in the project. Notice that properties are evaluated at the invocation time of macro _copy-and-replace_.
 
 = create-project =
 
 A macro to create a initial project structure for various project types. The following project types are supported:
-* jar=package
-* sar-package
-* jsf-package    
-* war-package
+ * jar=package
+ * war-package    
+ * ear-package
 
 If a unsupported project type is specified, a standard Maven project structure  will be created.
          
 == Attributes ==
-* type <br/>The project type [<code>jar-package</code>]
+ * type <br/>The project type [<code>jar-package</code>]
 
 
 
@@ -345,41 +314,43 @@ A internal macro defining all Flaka targets dynamically (rather than the declara
 A macro intended as container for dependency declarations. The macro does nothing.
  
 == Element ==
-* body <br/>A implicit and optional body. Shall be used to declare a set of dependencies (see macro [Macros#dependency dependency] but actually may contain just any declaration. 
+ * body <br/>A implicit and optional body. Shall be used to declare a set of dependencies (see macro [Macros#dependency dependency] but actually may contain just any declaration. 
       
     
 == Example==
 
 This macro allows that something like this
 
+{{{
  <c:dependencies>
    <dependency .. />
    ..
  </c:dependencies>
+}}}
 
 can be written in an Ant build script.
 
 = dependencies-load =
 
-This macro is responsible for scanning and fetching dependencies. Dependencies (see macro [Macros#dependency dependency]) are scanned in the current build file and, if not found, then other files like ''dependencies.xml'', ''project.xml'' or ''pom.xml'' are consulted. 
+This macro is responsible for scanning and fetching dependencies. Dependencies (see macro [Macros#dependency dependency]) are scanned in the current build file and, if not found, then other files like _dependencies.xml_, _project.xml_ or _pom.xml_ are consulted. 
 
 Each dependency will then be resolved against a [[Baseline]] if a Baseline is given. Eventually each dependency will be retrieved from a depot into a local folder.
 
 For details on the scanning, resolving and retrieval of dependencies have a look at [Tasks#getdeps getdeps].
     
 The following properties are influential:
-* jdepot.csv<br/> A comma separated list of depot urls
-* lib.dir</br> The local download folder
-* project.dep.xml<br/>A list of files to be scanned for dependencies
-* dependencies.load<br/>If set, it is assumed that dependencies have been scanned, resolved and retrieved. This property will be set by this macro if not already set
-* use.baseline<br/>If set to ''false'', dependencies are ''not'' resolved against a Baseline [true]
-* baseline<br/>The baseline to be used (without extension, in upper case) [DEVL]
-* baseline.dir<br />Used when fetching the Baseline from CVS: the path in the CVS repository holding baselines [var/baselines].
-* baseline.cvsrev<br/>The baseline revision [HEAD]
+ * depot.csv<br/> A comma separated list of depot urls
+ * lib.dir</br> The local download folder
+ * project.dep.xml<br/>A list of files to be scanned for dependencies
+ * dependencies.load<br/>If set, it is assumed that dependencies have been scanned, resolved and retrieved. This property will be set by this macro if not already set
+ * use.baseline<br/>If set to _false_, dependencies are _not_ resolved against a Baseline [true]
+ * baseline<br/>The baseline to be used (without extension, in upper case) [DEVL]
+ * baseline.dir<br />Used when fetching the Baseline from CVS: the path in the CVS repository holding baselines [var/baselines].
+ * baseline.cvsrev<br/>The baseline revision [HEAD]
 
         
 == Attributes ==
-* from <br/>Location from where to retrieve dependencies [${jdepot.csv}]
+ * from <br/>Location from where to retrieve dependencies [${depot.csv}]
 
 = dependencies-load-with-baseline =
 
@@ -394,55 +365,61 @@ A macro to emulate a [http://maven.apache.org/guides/introduction/introduction-t
     
         
 == Attributes ==
-* name <br/>Same as ''alias'' if ''org'' is not present, otherwise same as ''artifactid''
-* alias<br />The ''logical'' dependency name (resolved against a Baseline)
-* version <br/>The version string
-* scope <br/>The scope of this dependency 
-* jar <br/>The artifact's basename 
-* artifactid <br/>The artifacts basename without version and type
-* groupid <br/>The logical group name
-* type <br/>The dependency's type
-* url <br/>A download url 
-* org<br />Same as groupid. Note that attribute ''name'' changes if this attribute is present
-* rev<br />Same as ''version''
-* branch<br />The branch of the dependency. 
-* force<br />A boolean to give an indication to conflict manager that this dependency should be forced to this revision 
-* conf<br />An inline mapping configuration spec
-* transitive<br />True to resolve this dependency transitively, false otherwise
-* changing<br /> True if the dependency artifacts may change without revision change, false otherwise    
+ * name <br/>Same as _alias_ if _org_ is not present, otherwise same as _artifactid_
+ * alias<br />The _logical_ dependency name (resolved against a Baseline)
+ * version <br/>The version string
+ * scope <br/>The scope of this dependency 
+ * jar <br/>The artifact's basename 
+ * artifactid <br/>The artifacts basename without version and type
+ * groupid <br/>The logical group name
+ * type <br/>The dependency's type
+ * url <br/>A download url 
+ * org<br />Same as groupid. Note that attribute _name_ changes if this attribute is present
+ * rev<br />Same as _version_
+ * branch<br />The branch of the dependency. 
+ * force<br />A boolean to give an indication to conflict manager that this dependency should be forced to this revision 
+ * conf<br />An inline mapping configuration spec
+ * transitive<br />True to resolve this dependency transitively, false otherwise
+ * changing<br /> True if the dependency artifacts may change without revision change, false otherwise    
 
-Note that [http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html ''Ivy'' attributes branch, force, conf, transitive] and changing are currently not supported.
+Note that [http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html _Ivy_ attributes branch, force, conf, transitive] and changing are currently not supported.
 
 == Element ==
 The following elements have been pioneered by [http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html Maven]]. All of this elements have synonym attributes. If the same element and attribute is given, the element will eventually override. See also task [Tasks#getdeps getdeps] for dependency handling:
 
-* groupId 
-* artifactId 
-* version 
-* jar 
-* type
-* scope 
-* url
-* properties
+ * groupId 
+ * artifactId 
+ * version 
+ * jar 
+ * type
+ * scope 
+ * url
+ * properties
 
     
 == Example==
 
-The following example declares dependency ''log4j'':
+The following example declares dependency _log4j_:
 
+{{{
  <c:dependency>
   <groupId>log4j</groupId>
   <artifactId>log4j</artifactId>
   <version>1.2.9</version>
  </c:dependency>
+}}}
 
 The very same dependency can also be written in a more compact way:
 
+{{{
  <c:dependency groupid="log4j" artifactid="log4j" version="log4j" />
+}}}
 
-If a ''log4j'' is defined in a Baseline, then the declaration can be shortened further to
+If a _log4j_ is defined in a Baseline, then the declaration can be shortened further to
 
+{{{
  <c:dependency alias="log4j" />
+}}}
 
 = depends =
 
@@ -454,44 +431,44 @@ This customizable macro implements target [Targets#deploy deploy]. The default i
 
 = distclean =
 
-This customizable macro implements target [Targets#distclean distclean]. The implementation is supposed to remove all files created during a build process. The default implementation assumes that all generated files are created within folder ''${build.dir}'', thus folder ''${build.dir}'' gets entirely removed.
+This customizable macro implements target [Targets#distclean distclean]. The implementation is supposed to remove all files created during a build process. The default implementation assumes that all generated files are created within folder _${build.dir}_, thus folder _${build.dir}_ gets entirely removed.
 
 
 
 = dotclasspath =
 
-This customizable macro implements target [Targets#.classpath .classpath], supposed to create or update file ''.classpath'' and additionally file ''project.xml''. Both files are used to describe a project using the Eclipse IDE.
+This customizable macro implements target [Targets#.classpath .classpath], supposed to create or update file _.classpath_ and additionally file _project.xml_. Both files are used to describe a project using the Eclipse IDE.
 
-If such a file does not exist, a skeleton file is generated and afterwards updated based on properties like ''src.dir'', ''obj.dir'', ''lib.dir'' etc.
+If such a file does not exist, a skeleton file is generated and afterwards updated based on properties like _src.dir_, _obj.dir_, _lib.dir_ etc.
     
         
 == Attributes ==
-* libdir <br/>The folder containing artifacts [<code>${lib.dir}</code>]
-* echo <br/>When set to true, the final .classpath file is dumped on standard out [<code>true</code>]
-* file <br/>The file to be created or updated [<code>.classpath</code>]
+ * libdir <br/>The folder containing artifacts [<code>${lib.dir}</code>]
+ * echo <br/>When set to true, the final .classpath file is dumped on standard out [<code>true</code>]
+ * file <br/>The file to be created or updated [<code>.classpath</code>]
         
 
 == Element ==
-* body <br/>A XML snippet to be used as skeleton if a .classpath needs to be created from scratch.
+ * body <br/>A XML snippet to be used as skeleton if a .classpath needs to be created from scratch.
 
 = ear-package =
 
-This customizable package is responsible for packaging projects of type ''ear-package''. The default implementation invokes the following macros in the order given:
-# [Macros#ear-package-init ear-package-init]
-# [Macros#ear-package-exec ear-package-exec]
-# [Macros#ear-package-post ear-package-post]
+This customizable package is responsible for packaging projects of type _ear-package_. The default implementation invokes the following macros in the order given:
+ # [Macros#ear-package-init ear-package-init]
+ # [Macros#ear-package-exec ear-package-exec]
+ # [Macros#ear-package-post ear-package-post]
 Each macro is customizable for further fine tuning.
 
 = ear-package-exec =
 
-This customizable macro handles the details of packing an ''ear'' file:
-# The content of folder ''${ear.dir} is copied into a assembly folder replacing tokens in textual files (see [Macros#copy-and-replace copy-and-replace]).
-# A intermediate package file named ''${ear.name}'' gets created in ''${dist.dir}'' which ..
-# additionally will be updated to contain all *.jar, *.war, *.rar or *.ear files found in ''${dist.dir}''
+This customizable macro handles the details of packing an _ear_ file:
+ # The content of folder _${ear.dir} is copied into a assembly folder replacing tokens in textual files (see [Macros#copy-and-replace copy-and-replace]).
+ # A intermediate package file named _${ear.name}_ gets created in _${dist.dir}_ which ..
+ # additionally will be updated to contain all *.jar, *.war, *.rar or *.ear files found in _${dist.dir}_
 
 = ear-package-init =
 
-This macro creates folder ''${build.dir}/tmp/ear'' used by macro [Macros#ear-package-exec ear-package-exec] to assemble the final ear package.
+This macro creates folder _${build.dir}/tmp/ear_ used by macro [Macros#ear-package-exec ear-package-exec] to assemble the final ear package.
 
 = ear-package-post =
 
@@ -503,51 +480,51 @@ This customizable package is supposed to run any post-processing commands to be 
 
 Same as
 
+{{{
  <echo trim="true" level="error">
   -- error message --
  </echo>
+}}}
 
 = exec-target =
 
-This macro invokes a target ''X'' in each subdirectory and additionally invokes macro ''local-X''. This macro is implemented in terms of macro [Macros#run-in-subdirs run-in-subdirs] and [Macros#run-target run-target].
+This macro invokes a target _X_ in each subdirectory and additionally invokes macro _local-X_. This macro is implemented in terms of macro [Macros#run-in-subdirs run-in-subdirs] and [Macros#run-target run-target].
     
         
 == Attributes ==
-* name <br/>The mandatory name of the target to invoke
+ * name <br/>The mandatory name of the target to invoke
 
 = export =
 
-This customizable macro implements target [Targets#export export]. When invoked, it dumps file ''net/haefelingerit/flaka/antlib.xml'' to stdout and additionally in folder ''${build.dir}/antlib'' for further reference. This file is the scripting layer of the *Flaka* containing all the macros defined in this chapter. This file does not contain *Flaka*'s tasks and types cause they are implemented in pure Java. 
+This customizable macro implements target [Targets#export export]. When invoked, it dumps file _net/haefelingerit/flaka/antlib.xml_ to stdout and additionally in folder _${build.dir}/antlib_ for further reference. This file is the scripting layer of the *Flaka* containing all the macros defined in this chapter. This file does not contain *Flaka*'s tasks and types cause they are implemented in pure Java. 
     
         
 == Attributes ==
-* dir <br/>The directory to save the exported file in [<code>${build.dir}/antlib</code>]
+ * dir <br/>The directory to save the exported file in [<code>${build.dir}/antlib</code>]
 
 = fail-if-not-set =
 
 A simple macro throwing an exception if a property is not defined.
         
 == Attributes ==
-* property <br/>The property to be checked.
+ * property <br/>The property to be checked.
 
 = foreach-subdir =
 
 A macro invoking a set of tasks or macros for each argument given in property ${subdirs}.     
         
 == Attributes ==
-* var <br/>The variable reference used in the body [<code>dir</code>]
+ * var <br/>The variable reference used in the body [<code>dir</code>]
         
 == Element ==
-* body <br/>The body to execute for each argument
+ * body <br/>The body to execute for each argument
 
 = guess-project-type =
 
-A customizable macro to guess the current project type. If the project has been guessed, then property ''project.type'' is set appropriately. The default implementation sets property ''project.type'' to
-* jsf-service if file sbin/action.sh (or action.sh) exists
-* war-package if there's a file WEB-INF/web.xml in either ''.'', ''web'' or ''src/main/webapp''
-* ear-package if either ear/META-INF or META-INF/application.xml exists
-* sar-package if src/main/resources/META-INF/jboss-service.xml exists
-* jar-package if all other test failed so far
+A customizable macro to guess the current project type. If the project has been guessed, then property _project.type_ is set appropriately. The default implementation sets property _project.type_ to
+ * war-package if there's a file WEB-INF/web.xml in either _._, _web_ or _src/main/webapp_
+ * ear-package if either ear/META-INF or META-INF/application.xml exists
+ * jar-package if all other test failed so far
 
 
 
@@ -555,72 +532,80 @@ A customizable macro to guess the current project type. If the project has been 
 
 This macro is a shorthand notation for 
 
+{{{
  <c:when test="-d @{name}">
-   ''<then />''
+   _<then />_
  </c:when>
+}}}
     
         
 == Attributes ==
-* name <br/>The folder path to be checked        
+ * name <br/>The folder path to be checked        
 
 == Element ==
-* then <br/>The action to be carried out if the folder exists
+ * then <br/>The action to be carried out if the folder exists
 
 = if-file-exists =
 
 This macro is a shorthand notation for
 
+{{{
  <c:when test="-f @{name}">
-  ''<then />''
+  _<then />_
  </c:when>
+}}}
         
 == Attributes ==
-* name <br/>The file to be checked
+ * name <br/>The file to be checked
         
 
 == Element ==
-* then <br/>The action to be carried out if the file exists
+ * then <br/>The action to be carried out if the file exists
 
 = if-not-set =
 
 This macro is a shorthand notation for 
 
+{{{
  <c:unless test="-P @{property}">
-   ''<then />''
+   _<then />_
  </c:unless>
+}}}
     
         
 == Attributes ==
-* property <br/>The property to be checked
+ * property <br/>The property to be checked
         
 
 == Element ==
-* then <br/>The action to be carried out if the property does not exist
+ * then <br/>The action to be carried out if the property does not exist
 
 = import =
 
 This macro is responsible for booting the *Flaka* framework. This consists of three steps:
-# Create extension points (over ridable macros) in current project
-# Dynamically create targets in the current project
-# Define and create relevant properties and pattern sets
+ # Create extension points (over ridable macros) in current project
+ # Dynamically create targets in the current project
+ # Define and create relevant properties and pattern sets
 
 = info =
 
 A convenient way of writing
 
+{{{
  <echo trim="true" level="info">
-   ''-- message'' 
+   _-- message_ 
  </echo>
+}}}
 
 = init-cvsignore =
 
 This macro appends files and folders to be ignored by CVS:
-* target (used by Maven)
-* .settings 
-* .springBeans
-* repository.xml
-* build (*Flaka*)
-* bin(Maven)
+ * target (used by Maven)
+ * .settings 
+ * .springBeans
+ * repository.xml
+ * build (*Flaka*)
+ * bin(Maven)
 
 = init-directories =
 
@@ -629,53 +614,43 @@ A internal macro ensuring that all required build folders (below ${build.dir}) a
 = init-user-properties =
 
 A macro which determines the way user properties are loaded. They are loaded in the following order:
-# For each environment variable ''X'' a property ''env.X'' gets created 
-# File ''./build.properties'' is loaded
-# File ''./project.properties'' is loaded
-# File ''${env.HOME}/.build.properties'' is loaded
-# File ''${user.home}/.build.properties'' is loaded
+ # For each environment variable _X_ a property _env.X_ gets created 
+ # File _./build.properties_ is loaded
+ # File _./project.properties_ is loaded
+ # File _${env.HOME}/.build.properties_ is loaded
+ # File _${user.home}/.build.properties_ is loaded
 
 = inline-properties =
 
 A very handy way to set a bunch of properties:
 
+{{{
  <c:inline-properties>
    x = a 
    y = ${x}
    # define z as well
    z = hi 'Z'
  <c:/inline-properties>
+}}}
 
-The 'traditional'' way is rather clumsy:
+The 'traditional_ way is rather clumsy:
 
+{{{
  <property name="x" value="a" />
  <property name="y" value="${x}" />
  <property name="z" value="hi 'Z'" />
+}}}
      
 No matter which style is used, the result is the same.
 
-{{achtung|1=Be aware that character backward slash (\) is converted into a forward slash. This is a well known defect. As workaround, use either tasks ''set'' or ''property'' or use character sequence ''\\\\'' instead.}}
+Be aware that character backward slash (\) is converted into a forward slash. This is a well known defect. As workaround, use either tasks _set_ or _property_ or use character sequence _\\\\_ instead.
 
 = install =
 
-This customizable macro implements target [Targets#install install]. If property ''install.dir'' is defined, then all distributables found in ''${dist.dir}'' are copied over.
+This customizable macro implements target [Targets#install install]. If property _install.dir_ is defined, then all distributables found in _${dist.dir}_ are copied over.
         
 == Attributes ==
-* srcdir <br/>The folder containing distributables [<code>${dist.dir}</code>]
-
-= install-service-jar-datadir =
-Please describe what this task is doing.
-    
-    
-== Example I: Basic Usage==
-Show a basic usage example.
-
-= install-service-jar-datadir-makeit =
-Please describe what this task is doing.
-    
-    
-== Example I: Basic Usage==
-Show a basic usage example.
+ * srcdir <br/>The folder containing distributables [<code>${dist.dir}</code>]
 
 = jar-package =
 Please describe what this task is doing.
@@ -713,12 +688,12 @@ Please describe what this task is doing.
     
         
 == Attributes ==
-* destdir <br/>description please. Default: <code>${obj.dir}</code>
-* classpathref <br/>description please. Default: <code>javac.classpath</code>
+ * destdir <br/>description please. Default: <code>${obj.dir}</code>
+ * classpathref <br/>description please. Default: <code>javac.classpath</code>
         
 
 == Element ==
-* javac-element <br/>description please. (*Implict*)
+ * javac-element <br/>description please. (*Implict*)
       
     
 == Example I: Basic Usage==
@@ -733,9 +708,11 @@ A customizable macro implementing target [Targets#javadocs javadocs].
 
 A short-hand notation for writing
 
+{{{
  <echo message="@{message}" level="@{level}" />
+}}}
 
-where ''message'', ''trim'' and ''level'' are attributes.
+where _message_, _trim_ and _level_ are attributes.
 
 == Attributes ==
 message<br/>The message to be displayed []
@@ -744,74 +721,76 @@ trim<br/>Whether to trim the message or not [false]
 
 = make-dist-jar =
 
-A macro to create a jar file [''${jar.name}''] in the distributable directory [''${dist.dir'']. This folder is created if it does not exist. This macro uses macro [Macros#make-epo-jar make-epo-jar] for building the jar which ensures that certain Manifest properties are set.
+A macro to create a jar file [_${jar.name}_] in the distributable directory [_${dist.dir_]. This folder is created if it does not exist. This macro uses macro [Macros#make-jar make-jar] for building the jar which ensures that certain Manifest properties are set.
         
 == Attributes ==
-* jar <br/>The name of the jar file to be created [<code>${jar.name} </code>]
-* dir <br/>The folder in which the file is to be created [ <code>${dist.dir}</code>]
+ * jar <br/>The name of the jar file to be created [<code>${jar.name} </code>]
+ * dir <br/>The folder in which the file is to be created [ <code>${dist.dir}</code>]
         
 
 == Element ==
-* jar-element <br/>Any entity accepted by Ant's standard task ''jar''
+ * jar-element <br/>Any entity accepted by Ant's standard task _jar_
 
 = make-empty-folder =
 
 A convenient writing of 
 
+{{{
   <delete dir="@{dir}" />
   <mkdir dir="@{dir}" />
+}}}
   
 == Attributes ==
-* dir <br/>The folder to be ''cleaned''.
+ * dir <br/>The folder to be _cleaned_.
 
-= make-epo-ear =
+= make--ear =
 Please describe what this task is doing.
     
         
 == Attributes ==
-* ear <br/>description please. (*Mandatory*)
-* appxml <br/>description please. (*Mandatory*)
-* update <br/>description please. Default: <code>false</code>
-* nil <br/>description please. Default: <code></code>
+ * ear <br/>description please. (*Mandatory*)
+ * appxml <br/>description please. (*Mandatory*)
+ * update <br/>description please. Default: <code>false</code>
+ * nil <br/>description please. Default: <code></code>
         
 
 == Element ==
-* ear-element <br/>description please. (*Implict*)
+ * ear-element <br/>description please. (*Implict*)
       
     
 == Example I: Basic Usage==
 Show a basic usage example.
 
-= make-epo-jar =
+= make-jar =
 Please describe what this task is doing.
     
         
 == Attributes ==
-* jar <br/>description please. Default: <code>${dist.dir}/${jar.name}</code>
-* update <br/>description please. Default: <code>false</code>
-* nil <br/>description please. Default: <code></code>
+ * jar <br/>description please. Default: <code>${dist.dir}/${jar.name}</code>
+ * update <br/>description please. Default: <code>false</code>
+ * nil <br/>description please. Default: <code></code>
         
 
 == Element ==
-* jar-element <br/>description please. (*Implict*)
+ * jar-element <br/>description please. (*Implict*)
       
     
 == Example I: Basic Usage==
 Show a basic usage example.
 
-= make-epo-war =
+= make-war =
 Please describe what this task is doing.
     
         
 == Attributes ==
-* war <br/>description please. (*Mandatory*)
-* update <br/>description please. Default: <code>false</code>
-* nil <br/>description please. Default: <code></code>
-* webxml <br/>description please. Default: <code></code>
+ * war <br/>description please. (*Mandatory*)
+ * update <br/>description please. Default: <code>false</code>
+ * nil <br/>description please. Default: <code></code>
+ * webxml <br/>description please. Default: <code></code>
         
 
 == Element ==
-* war-element <br/>description please. (*Implict*)
+ * war-element <br/>description please. (*Implict*)
       
     
 == Example I: Basic Usage==
@@ -822,13 +801,13 @@ Please describe what this task is doing.
     
         
 == Attributes ==
-* src <br/>description please. Default: <code>${dist.dir}/${jar.name}</code>
-* tmpdir <br/>description please. Default: <code>${build.dir}/tmp</code>
-* mode <br/>description please. Default: <code>update</code>
+ * src <br/>description please. Default: <code>${dist.dir}/${jar.name}</code>
+ * tmpdir <br/>description please. Default: <code>${build.dir}/tmp</code>
+ * mode <br/>description please. Default: <code>update</code>
         
 
 == Element ==
-* manifest-element <br/>description please. (*Implict*)
+ * manifest-element <br/>description please. (*Implict*)
       
     
 == Example I: Basic Usage==
@@ -843,7 +822,7 @@ Please describe what this task is doing.
     
         
 == Attributes ==
-* type <br/>description please. Default: <code>${project.type}</code>
+ * type <br/>description please. Default: <code>${project.type}</code>
         
     
 == Example I: Basic Usage==
@@ -861,11 +840,11 @@ Please describe what this task is doing.
     
         
 == Attributes ==
-* vardir <br/>description please. Default: <code>${var.dir}</code>
-* amfdir <br/>description please. Default: <code>${amf.dir}</code>
-* eardir <br/>description please. Default: <code>${ear.dir}</code>
-* dstdir <br/>description please. Default: <code>${dist.dir}</code>
-* varamf <br/>description please. Default: <code>${build.dir}/tmp/amf</code>
+ * vardir <br/>description please. Default: <code>${var.dir}</code>
+ * amfdir <br/>description please. Default: <code>${amf.dir}</code>
+ * eardir <br/>description please. Default: <code>${ear.dir}</code>
+ * dstdir <br/>description please. Default: <code>${dist.dir}</code>
+ * varamf <br/>description please. Default: <code>${build.dir}/tmp/amf</code>
         
     
 == Example I: Basic Usage==
@@ -876,10 +855,10 @@ Show a basic usage example.
 This macro puts a folder or any path like structure  in front of an existing [http://ant.apache.org/manual/using.html#path path}} object.
         
 == Attributes ==
-* refid <br/>A reference to an existing path object
+ * refid <br/>A reference to an existing path object
 
 == Element ==
-* element-path <br/>Any element accepted by a [http://ant.apache.org/manual/using.html#path path] object.
+ * element-path <br/>Any element accepted by a [http://ant.apache.org/manual/using.html#path path] object.
 
 = reload-baseline =
 
@@ -890,42 +869,44 @@ A macro implementing a Baseline reload.
 A convenience way of removing a file from the folder containing distributable.
         
 == Attributes ==
-* jar <br/>The file to be removed [<code>${jar.name}</code>]
-* dir <br/>The folder from which the file is to be removed [<code>${dist.dir}</code>]
+ * jar <br/>The file to be removed [<code>${jar.name}</code>]
+ * dir <br/>The folder from which the file is to be removed [<code>${dist.dir}</code>]
 
 = remove-from-dist-dir =
 
 A macro to remove files from the folder containing distributable. The macro is a short hand notation instead of writing
 
+{{{
  <delete>
    <fileset dir="@{dir}">
-     ''<fileset-element/>''
+     _<fileset-element/>_
    </fileset>
  </delete>
+}}}
 
 == Attributes ==
-* dir <br/>The folder to be cleaned-up [<code>${dist.dir}</code>]
+ * dir <br/>The folder to be cleaned-up [<code>${dist.dir}</code>]
 
 == Element ==
-* fileset-element <br/>Any suitable [http://ant.apache/org/manual/fileset.html fileset] element.
+ * fileset-element <br/>Any suitable [http://ant.apache/org/manual/fileset.html fileset] element.
 
 = resources-copy =
 
-A macro to copy all files but files ending in ''*.java'' from a given source folder into a final destination folder. This macro uses [Macros#copy-and-replace copy-and-replace] for the copying task. This means that files ending in ''*.in'' are handled in a special way as described in [Macros#copy-and-replace copy-and-replace]. 
+A macro to copy all files but files ending in _*.java_ from a given source folder into a final destination folder. This macro uses [Macros#copy-and-replace copy-and-replace] for the copying task. This means that files ending in _*.in_ are handled in a special way as described in [Macros#copy-and-replace copy-and-replace]. 
       
 == Attributes ==
-* dst <br/>The destination folder<code>${obj.dir}</code>
-* src <br/>The source folder<code>${src.dir}</code>
+ * dst <br/>The destination folder<code>${obj.dir}</code>
+ * src <br/>The source folder<code>${src.dir}</code>
 
 = run-in-subdirs =
 
 A macro to run a program in a list of folders.    
         
 == Attributes ==
-* args <br/>The arguments to be passed to each program invocation []
-* dirs <br/>The list of folders [<code>${subdirs}</code>]
-* prog <br/>The program to be executed [<code>${ant.exe}</code>]
-* fail <br/>Whether to stop if there's an error [<code>true</code>]
+ * args <br/>The arguments to be passed to each program invocation []
+ * dirs <br/>The list of folders [<code>${subdirs}</code>]
+ * prog <br/>The program to be executed [<code>${ant.exe}</code>]
+ * fail <br/>Whether to stop if there's an error [<code>true</code>]
 
 = run-local-macro =
 
@@ -935,35 +916,37 @@ A macro to run execute a macro with a given name. The macro must exist to be exe
 
 Set a property if a folder exists. A short hand notation for
 
+{{{
  <c:[Tasks#when when] test="-d '@{dir}'>
   <c:[Tasks#set set]="@{property}" value="" />
  </c:[Tasks#when when]>
+}}}
         
 == Attributes ==
-* property <br/>The property to set
-* dir <br/>The folder to be checked
+ * property <br/>The property to set
+ * dir <br/>The folder to be checked
 
 = set-if-have-file =
 
 A macro setting a property to a folder name if that folder contains at least one matching file. Each folder is tried in the order given.
-By default is the property set for each folder having at least one matching file. If ''keepgoing'' is not ''true'', then processing stops if one folder got found.
+By default is the property set for each folder having at least one matching file. If _keepgoing_ is not _true_, then processing stops if one folder got found.
 
-This macro can be customized further by using elements''info'' and ''filter'' (see below).
+This macro can be customized further by using elements_info_ and _filter_ (see below).
 
 == Attributes ==
-* var <br/>The name of the property to be set
-* in <br/>A list of folders to be tried in order (use whitespace as separator)
-* keepgoing<br/>Whether to continue if a folder got found or not [true]
-* counter<br />The name of the counter property. This property will be unset for each folder [set-if-have-file.counter]
+ * var <br/>The name of the property to be set
+ * in <br/>A list of folders to be tried in order (use whitespace as separator)
+ * keepgoing<br/>Whether to continue if a folder got found or not [true]
+ * counter<br />The name of the counter property. This property will be unset for each folder [set-if-have-file.counter]
 
 == Elements ==
 
-* filter<br/> May contain {{AntRefType|1=fileset.html|2=any fileset element}}. This element is optional.
-* info<br/>May contain any task or macro. This optional element is being invoked after having counted the number of files in a folder. 
+ * filter<br/> May contain {{AntRefType|1=fileset.html|2=any fileset element}}. This element is optional.
+ * info<br/>May contain any task or macro. This optional element is being invoked after having counted the number of files in a folder. 
 
 
 == Example ==
-
+{{{
  <c:set-if-have-file var="d" in="d1 d2 d3>
   <info>
     dir = @{dir} #files = ${@{count}} 
@@ -972,8 +955,9 @@ This macro can be customized further by using elements''info'' and ''filter'' (s
    <include name="**/*.java" />
   </filter>
  </c:set-if-have-file>
+}}}
 
-If we assume that there are Java files in ''d1'' and ''d3'', then the value of property ''d'' would be ''d3'' afterwards. If being called with ''keepgoing="false"'', then ''d'' would be ''d1''.
+If we assume that there are Java files in _d1_ and _d3_, then the value of property _d_ would be _d3_ afterwards. If being called with _keepgoing="false"_, then _d_ would be _d1_.
 
 = set-if-not-set =
 
@@ -981,39 +965,43 @@ The logical opposite of macro [Macros#set-if-set set-if-set].
 
 = subdir =
 
-This macro defines or changes property ''subdirs''. When repeatedly called, the property contains a ''list'' of the argument given each time. For example:
+This macro defines or changes property _subdirs_. When repeatedly called, the property contains a _list_ of the argument given each time. For example:
 
+{{{
  <c:subdir dir="a" />
  <c:subdir dir="b c" />
  <c:subdir dir="d" />
+}}}
 
 Then 
  
+{{{
  <echo>${subdirs}</echo>
  a' 'b c' 'd
+}}}
 
-Notice that property ''subdirs'' is being used as list to be iterated over for making targets in sub folders.    
+Notice that property _subdirs_ is being used as list to be iterated over for making targets in sub folders.    
         
 == Attributes ==
-* dir <br/>The folder to be added
+ * dir <br/>The folder to be added
 
 = test =
 
 A customizable macro implementing target [Targets#test test]. This macro invokes the following macros in the order given:
-# [Macros#test-init test-init]
-# [Macros#test-exec test-exec]
-# [Macros#test-post test-post]
+ # [Macros#test-init test-init]
+ # [Macros#test-exec test-exec]
+ # [Macros#test-post test-post]
 
 = testclient =
 
-A customizable macro implementing target [Targets#testclient testclient] supposed to run HTTP based unit tests. Contrary to similar macros does this macro not call the usual sub macros like ''init'', ''exec'', ''post'' and ''free''. Instead, a complete implementation is provided by this macro including the compilation of Java based source code.
+A customizable macro implementing target [Targets#testclient testclient] supposed to run HTTP based unit tests. Contrary to similar macros does this macro not call the usual sub macros like _init_, _exec_, _post_ and _free_. Instead, a complete implementation is provided by this macro including the compilation of Java based source code.
 
 == Attributes ==
-* objdir <br/>The folder containing the compiled unit tests [<code>${testclient.obj.dir}</code>]
-* classpath <br/>The classpath reference to be used when executing unit tests [<code>testclient.classpath</code>]
-* srcdir <br/>The folder containing the (non compiled) Unit tests  [<code>${testclient.src.dir}</code>]
-* resdir <br />The folder containing any resources that needs to be taken into account [<code>${testclient.res.dir}</code>]
-* fileset <br />A reference to a {{AntRefType|1=fileset.html|2=fileset}} to select a subset of unit tests to be executed [<code>testclient.filset</code>]
+ * objdir <br/>The folder containing the compiled unit tests [<code>${testclient.obj.dir}</code>]
+ * classpath <br/>The classpath reference to be used when executing unit tests [<code>testclient.classpath</code>]
+ * srcdir <br/>The folder containing the (non compiled) Unit tests  [<code>${testclient.src.dir}</code>]
+ * resdir <br />The folder containing any resources that needs to be taken into account [<code>${testclient.res.dir}</code>]
+ * fileset <br />A reference to a {{AntRefType|1=fileset.html|2=fileset}} to select a subset of unit tests to be executed [<code>testclient.filset</code>]
 
 = test-exec =
 
@@ -1021,16 +1009,17 @@ This customizable macro determines which unit tests are to be executed. The defa
 
 = test-init =
 
-This customizable macro is invoked by [Macros#test test] to initialize any upcoming ''unit test''.
+This customizable macro is invoked by [Macros#test test] to initialize any upcoming _unit test_.
 
-The default implementation ensures that resources from folder ''${test.res.dir}'' are copied over into folder ''${test.obj.dir}''. The underlying assumption is that folder ''${test.obj.dir}'' is taken into account when running unit tests.
+The default implementation ensures that resources from folder _${test.res.dir}_ are copied over into folder _${test.obj.dir}_. The underlying assumption is that folder _${test.obj.dir}_ is taken into account when running unit tests.
 
 = test-junit =
 
 This customizable macro is being called by [Macros#test-exec test-exec] to execute Java based unit tests.
 
-The macro defines four (predefined) extension points: ''init'', ''exec'', ''post'' and ''free''. By default, the following code is (somewhat simplified) executed:
+The macro defines four (predefined) extension points: _init_, _exec_, _post_ and _free_. By default, the following code is (somewhat simplified) executed:
 
+{{{
   <{{AntRefOptTask|1=junit.html|2=junit}}>
     <classpath>
       <path refid="@{classpath}"/>
@@ -1042,15 +1031,16 @@ The macro defines four (predefined) extension points: ''init'', ''exec'', ''post
     </batchtest>
     <jvmarg value="-ea"/>   
   </{{AntRefOptTask|1=junit.html|2=junit}}>
+}}}
 
-The variables ''classpath'', ''fileset'' (as shown in the snippet) as well as ''testdir'' are available within all extension points. See attributes below for their default values.
+The variables _classpath_, _fileset_ (as shown in the snippet) as well as _testdir_ are available within all extension points. See attributes below for their default values.
 
-The macro uses property ''test.failed'' to determine whether some unit tests failed. If set after execution, appropriate exception is thrown. This happens after ''post'' and ''free'' have been executed.
+The macro uses property _test.failed_ to determine whether some unit tests failed. If set after execution, appropriate exception is thrown. This happens after _post_ and _free_ have been executed.
 
 == Attributes ==
-* testdir <br />The folder containing compiled test cases [${test.obj.dir}]
-* fileset <br />A reference to a fileset being the unit cases to run [junit.fileset]
-* classpath <br/> The classpath to be used [test.classpath]
+ * testdir <br />The folder containing compiled test cases [${test.obj.dir}]
+ * fileset <br />A reference to a fileset being the unit cases to run [junit.fileset]
+ * classpath <br/> The classpath to be used [test.classpath]
 
 = test-post =
 
@@ -1060,47 +1050,51 @@ This customizable macro is being called after [Macros#test-exec test-exec] and i
 
 A common task is to update an almost final distributable, for example by bundling some required jar files. 
 
-This macro simplifies this task by providing a default file name and location (see attributes below). By default the file ${dist.dir}/${jar.name} will be updated. Despite it's name updates this macro any ''zip'' file and not only ''jar'' files. However, this macro can not update any other file types.
+This macro simplifies this task by providing a default file name and location (see attributes below). By default the file ${dist.dir}/${jar.name} will be updated. Despite it's name updates this macro any _zip_ file and not only _jar_ files. However, this macro can not update any other file types.
 
-Note that the macro works in ''append'' mode. That is, when being called twice with the same file, the file ends up two times in the final zip file. 
+Note that the macro works in _append_ mode. That is, when being called twice with the same file, the file ends up two times in the final zip file. 
         
 == Attributes ==
-* jar <br/>The name of the file to be updated. The file must be relative to attribute ''dir''. The file will be created if it does not exist [<code>${jar.name}</code>]
-* dir <br/>The folder holding the file to be updated. This folder is created if it does not exist [<code>${dist.dir}</code>]
+ * jar <br/>The name of the file to be updated. The file must be relative to attribute _dir_. The file will be created if it does not exist [<code>${jar.name}</code>]
+ * dir <br/>The folder holding the file to be updated. This folder is created if it does not exist [<code>${dist.dir}</code>]
 
 == Element ==
-* zip-element <br/>Any element that might go into a {{AntRefTask|1=Zip.html|2=Ant Zip task}}.
+ * zip-element <br/>Any element that might go into a {{AntRefTask|1=Zip.html|2=Ant Zip task}}.
     
 == Example I==
 
-Assume that a all jar files in ''build/lib'' need to be added to the almost finished distributable:
+Assume that a all jar files in _build/lib_ need to be added to the almost finished distributable:
 
+{{{
  <c:update-dist-jar>
    <{{AntRefType|1=fileset.html|2=fileset}} dir="build">
      <include name="lib/log4j-*.jar" />
    </fileset>
  </c:update-dist-jar>
+}}}
 
-Let's assume that folder ''build/lib'' would contains ''log4j-1.2.9.jar'', then the final distributable file contains 
-''lib/log4j-1.2.9.jar''. 
+Let's assume that folder _build/lib_ would contains _log4j-1.2.9.jar_, then the final distributable file contains 
+_lib/log4j-1.2.9.jar_. 
 
 == Example II ==
 
-Changing the fileset's ''dir'' and the include's ''name'' attribute  in the previous example allows for having either 
+Changing the fileset's _dir_ and the include's _name_ attribute  in the previous example allows for having either 
 
-* build/lib/log4j-1.2.9.jar ; 
-* lib/log4j-1.2.9.jar ; or
-* log4j-1.2.9.jar 
+ * build/lib/log4j-1.2.9.jar ; 
+ * lib/log4j-1.2.9.jar ; or
+ * log4j-1.2.9.jar 
 
-in the final zip file. But what to do if ''log4j-1.2.9.jar'' should end up at a different place? Assume for example that log4j should  go in into folder ''WEB-INF/lib''? Ant offers a handy type named {{AntRefType|1=zipfileset.html|2=zipfileset}} allowing to save a file with an arbitrary path in the final zip file. For example:
+in the final zip file. But what to do if _log4j-1.2.9.jar_ should end up at a different place? Assume for example that log4j should  go in into folder _WEB-INF/lib_? Ant offers a handy type named {{AntRefType|1=zipfileset.html|2=zipfileset}} allowing to save a file with an arbitrary path in the final zip file. For example:
 
+{{{
  <c:update-dist-jar>
    <zipfileset dir="build" prefix="WEB-INF/lib">
      <include name="log4j-*.jar" />
    </zipfileset>
  </c:update-dist-jar>
+}}}
 
-This would create ''WEB-INF/lib/log4j-1.2.9.jar'' in the final package.
+This would create _WEB-INF/lib/log4j-1.2.9.jar_ in the final package.
 
 = upload =
 
@@ -1113,19 +1107,21 @@ A convenience macro to write
 A macro providing a unique interface for uploading artefacts on a depot. This macro relies on task [Tasks#uploadtask uploadtask].
         
 == Attributes ==
-* category <br/>The upload category [<code>${uploadtask.category}</code>]
-* test <br/>Whether to test or not [<code>true</code>]
-* rcfile <br/>The file to read username and password [<code>${uploadtask.rcfile}</code>]
-* folder <br/>The local file system folder to scan for artefacts [<code>${uploadtask.folder}</code>]
-* pattern <br/>A pattern to match filenames in folder [<code>${uploadtask.pattern}</code>]
-* endpoint <br/>The URL to be used for uploading [<code>${uploadtask.endpoint}</code>]
-* debug <br/>Whether to turn on debug output [<code>${uploadtask.debug}</code>]
+ * category <br/>The upload category [<code>${uploadtask.category}</code>]
+ * test <br/>Whether to test or not [<code>true</code>]
+ * rcfile <br/>The file to read username and password [<code>${uploadtask.rcfile}</code>]
+ * folder <br/>The local file system folder to scan for artefacts [<code>${uploadtask.folder}</code>]
+ * pattern <br/>A pattern to match filenames in folder [<code>${uploadtask.pattern}</code>]
+ * endpoint <br/>The URL to be used for uploading [<code>${uploadtask.endpoint}</code>]
+ * debug <br/>Whether to turn on debug output [<code>${uploadtask.debug}</code>]
 
 = upload-test =
 
 A convenience macro to write
 
+{{{
   <c:[Macros#upload-artefacts upload-artefacts] test="true" />
+}}}
 
 = validate-core-properties =
 
@@ -1135,46 +1131,49 @@ A internal macro to check whether [Properties  all core properties] are defined.
 
 A convenience macro to write 
 
+{{{
  <echo trim="true" level="verbose">
-  ''-- my warning message --''
+  _-- my warning message --_
  </echo>
+}}}
 
 = warning =
 
 A convenience macro to write 
 
+{{{
  <echo trim="true" level="warning">
-  ''-- my warning message --''
+  _-- my warning message --_
  </echo>
+}}}
 
 = war-package =
 
-A customizable macro implementing target [Targets#package package] in case the project's type is ''war-package''. This macro calls in order:
-# [Macros#war-package-init war-package-init]
-# [Macros#war-package-exec war-package-exec]
-# [Macros#war-package-post war-package-post]
+A customizable macro implementing target [Targets#package package] in case the project's type is _war-package_. This macro calls in order:
+ # [Macros#war-package-init war-package-init]
+ # [Macros#war-package-exec war-package-exec]
+ # [Macros#war-package-post war-package-post]
 
 = war-package-exec =
 
-This customizable macro is used by [Macros#war-package war-package] to create a initial ''war'' file. The file is complete except that jars to bundle are added later on by macro [Macros#war-package-post war-package-post].
+This customizable macro is used by [Macros#war-package war-package] to create a initial _war_ file. The file is complete except that jars to bundle are added later on by macro [Macros#war-package-post war-package-post].
 
-The name of the file created (and later on updated) is given by property ''war.name'' and to be located in folder ''${dist.dir}'' like any other distributable file.
+The name of the file created (and later on updated) is given by property _war.name_ and to be located in folder _${dist.dir}_ like any other distributable file.
 
 When creating the war file, the following files are taken into account:
-* All class files found in folder ''${obj.dir}''
-* All files in folder ''${web.dir}'' 
+ * All class files found in folder _${obj.dir}_
+ * All files in folder _${web.dir}_ 
 
-Notice that folder ''${web.dir}'' must contain file ''WEB-INF/web.xml'', otherwise a build exception will be thrown.
+Notice that folder _${web.dir}_ must contain file _WEB-INF/web.xml_, otherwise a build exception will be thrown.
 
-{{achtung|1=It appears as if there are no resources bundled. Please check this}}
 
 = war-package-init =
 
-This customizable macro is used by [Macros#war-package war-package] to prepare a packing of a ''war'' file. This macro does nothing by default.
+This customizable macro is used by [Macros#war-package war-package] to prepare a packing of a _war_ file. This macro does nothing by default.
 
 = war-package-post =
 
-This macro is being used by [Macros#war-package war-package] to bundle all required jars in the final war package (i.e. in ''WEB-INF/lib''). All dependencies in scope ''compile'' are automatically bundled except the following dependencies:
-* The dependency with the logical name ''SERVLET_API.jar''
-* All dependencies matching having a logical name matching pattern ''J2EE*.jar''
-* All dependencies in scope ''provided''
+This macro is being used by [Macros#war-package war-package] to bundle all required jars in the final war package (i.e. in _WEB-INF/lib_). All dependencies in scope _compile_ are automatically bundled except the following dependencies:
+ * The dependency with the logical name _SERVLET_API.jar_
+ * All dependencies matching having a logical name matching pattern _J2EE*.jar_
+ * All dependencies in scope _provided_
