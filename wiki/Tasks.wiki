@@ -325,7 +325,7 @@ Note that the third word, c d, contains a whitespace character and that attribut
  * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
  * Task {{RefTask|1=for}} 
  * Task {{RefTask|1=continue}}
- * Quickref [BasicScriptingConstructs#Looping] for an introduction to looping in Flaka
+ * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
 
 = getdeps = 
 
