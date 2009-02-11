@@ -68,9 +68,9 @@ shortened to
  </fileset> 
 }}}
  
-Note the usage of <code>/</code>. This turns <code>compile|provided</code> into a true regular expression allowing
+Note the usage of `/`. This turns `compile|provided` into a true regular expression allowing
 this kind of alternative selection. If a expression is under no circumstances to be interpreted as regular expression 
-set either attribute glob to true or start and end the match pattern with character <code>%</code>. 
+set either attribute glob to true or start and end the match pattern with character `%`. 
 
 == Attribute ==
  * ref, refid [deps.object]<br/> Use this attribute to use a different reference holding all known dependencies. See task [Tasks#getdeps getdeps] for dependency retrieval.
@@ -82,7 +82,7 @@ set either attribute glob to true or start and end the match pattern with charac
  * type <br/>The type
  * path <br/>The complete path relative to a depot 
  * version <br/>The dependency's version
- * glob <br/> (boolean) When set to true interpret every matching string as pattern expression. Otherwise use leading and trailing character to specify the type of pattern (<code>/</code> => regular expression, <code>%</code> => pattern)
+ * glob <br/> (boolean) When set to true interpret every matching string as pattern expression. Otherwise use leading and trailing character to specify the type of pattern (`/` => regular expression, `%` => pattern)
 
 == Example ==
 
