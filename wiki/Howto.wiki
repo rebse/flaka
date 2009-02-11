@@ -1,6 +1,6 @@
-#labels Featured
 #summary A summary of all Macros implemented by Flaka
-<wiki:toc max_depth="1" />
+#labels Featured
+<wiki:toc max_depth="3" />
 
 = Testing Properties, References et cetera =
 == How to check whether a property is defined? ==
@@ -178,4 +178,3 @@ On initalizing Flaka (via [Macros:init macro init])  a couple of macros are exec
  </project
 
 In this example we override macro guess-project-type. First we check whether the framework knows about this particular project type. If this is not the case, i.e. property project.type is not defined, then we do our own guess and finally set the property. 
-
