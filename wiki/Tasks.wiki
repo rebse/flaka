@@ -3,7 +3,7 @@
 <wiki:toc max_depth="1" />
 = break = 
 
-A task mirroring a break statement. When used within a {{RefTask|1=for}}-loop, the loop will be terminated. If this task is used outside of a {{RefTask|1=for}}-loop, a build exception will be thrown.
+A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
 
 == Example ==
 {{{
@@ -25,8 +25,8 @@ Being executed, the following will be dumped on stdout:
 
 == References ==
  * Classname: net.haefelingerit.flaka.Break Break.html (*Javadoc*)] [Break.java (*Source*)]
- * Task {{RefTask|1=for}} 
- * Task {{RefTask|1=continue}}
+ * Task [Tasks#for for] 
+ * Task [Tasks#continue continue]
 
 = choose = 
 
@@ -95,7 +95,7 @@ A simple task to install or uninstall a special component handler supposed to ge
 
 = continue = 
 
-A task mirroring a continue statement. When used within a {{RefTask|1=for}}-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
+A task mirroring a continue statement. When used within a [Tasks#for for]-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
 
 == Example ==
 
@@ -120,8 +120,8 @@ This would print:
 
 == References ==
  * Classname: net.haefelingerit.flaka.Continue [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Continue.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Continue.java (*Source*)]
- * Task {{RefTask|1=for}} 
- * Task {{RefTask|1=break}}
+ * Task [Tasks#for for] 
+ * Task [Tasks#break break]
 
 = create-target = 
 
@@ -271,7 +271,7 @@ Report all files in the folder containing this Ant build file.
  </c:find>
 }}}
 
-Note that this function dirname needs to be enabled by installing Flaka's property handler {{RefTask|1=property-handler}} once.
+Note that this function dirname needs to be enabled by installing Flaka's property handler [Tasks#property-handler property-handler] once.
 
 
 
@@ -323,8 +323,8 @@ Note that the third word, c d, contains a whitespace character and that attribut
 
 == References ==
  * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
- * Task {{RefTask|1=for}} 
- * Task {{RefTask|1=continue}}
+ * Task [Tasks#for for] 
+ * Task [Tasks#continue continue]
  * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
 
 = getdeps = 
@@ -465,7 +465,7 @@ Note that leading and trailing whitespace characters are always stripped before 
 
 = ifndef = 
 
-This task a shortcut for using task {{RefTask|1=ifdef}} and attribute invert:
+This task a shortcut for using task [Tasks#ifdef ifdef] and attribute invert:
 
 {{{
  <c:indef ... />  == <c:ifdef invert="true" ... /> 
@@ -473,7 +473,7 @@ This task a shortcut for using task {{RefTask|1=ifdef}} and attribute invert:
 
 == References ==
  * Classname: net.haefelingerit.flaka.IfNDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfNDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfNDef.java (*Source*)]
- * Task {{RefTask|1=ifdef}}
+ * Task [Tasks#ifdef ifdef]
 
 = initssl =
 
@@ -1089,7 +1089,7 @@ When being executed, Ant would receive a build exception (re-thrown within the c
 
 == References ==
  * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
- * Task {{RefTask|1=trycatch}}
+ * Task [Tasks#trycatch trycatch]
 
 = trycatch = 
 
@@ -1181,7 +1181,7 @@ Giving:
 
 = unless = 
 
-This task is the logical opposite of task {{RefTask|1=when}}. It's body is only executed if the condition evaluates to false. See {{RefTask|1=when}} for details.
+This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
 
 == Example ==
 
