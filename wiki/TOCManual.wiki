@@ -1,15 +1,15 @@
 #summary One-sentence summary of this page.
 
-* Getting Started
- * [Installation]
- * [Flaka Getting Started ..]
- * [BasicScriptingConstructs Scripting] 
- * [TestEL Test Expr Lang]
+* Basics
+  * [Flaka Getting Started ..]
+  * [Installation]
+  * [BasicScriptingConstructs Scripting] 
 
 * API Reference
  * [Tasks Tasks]
  * [Types Types]
  * [Macros Macros]
+ * [TestEL Test Expr Lang]
 
 * HOWTOs
  * [Howto Howto]
