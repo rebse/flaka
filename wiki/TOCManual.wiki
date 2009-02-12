@@ -3,6 +3,7 @@
 * Getting Started
  * [Installation]
  * [BasicScriptingConstructs Scripting] 
+ * [Tests Test Expr Lang]
 
 * API Reference
  * [Tasks Tasks]
