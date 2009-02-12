@@ -200,7 +200,7 @@ The following example deletes all binary files from folder src.
 
 Ant provides so called mapper types used to translate (i.e. map) a filename in another one. A typical mapper is for example a mapper translating a *.java file in it's appropriate *.class file (by translating each '/' into a '.' and by changing the extension). See {{AntRefType|1=mapper.html|2=Ant's manual page}} for a list of mappers.
 
-A useful mapper is {{AntRefType|1=mapper.html#glob|2= the glob mapper}} providing the basic functionality to change filenames on simple patterns. The following example would create a safe copy of all Java source files.
+A useful mapper is [http://ant.apache.org/manual/CoreTypes/mapper.html#glob  the glob mapper] providing the basic functionality to change filenames on simple patterns. The following example would create a safe copy of all Java source files.
 
 {{{
  <copy todir="backup">
@@ -225,10 +225,10 @@ The question is what happens with all the other files that might exist in folder
 This would copy all files in folder src and only rename *.java files. Yes, this example is not very striking! 
 
 == Attribute ==
-See type {{AntRefType|1=mapper.html#glob|2=glob}} for a list of supported attributes
+See type [http://ant.apache.org/manual/CoreTypes/mapper.html#glob glob] for a list of supported attributes
 
 == Element ==
-See type {{AntRefType|1=mapper.html#glob|2=glob}} for a list of supported attributes
+See type [http://ant.apache.org/manual/CoreTypes/mapper.html#glob glob] for a list of supported attributes
 
 == Reference ==
  * Implementation: {{ViewCVS|1=net/haefelingerit/GlobMap.java}}

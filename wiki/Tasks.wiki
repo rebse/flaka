@@ -218,7 +218,7 @@ would set the following properties:
 
 = export = 
 
-Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target {{RefTarget|1=export}}.  
+Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
 
 == Attributes ==
  * dst The destination to dump the file to. If dst is <tt>-</tt>, the file will be dumped to stdout.
