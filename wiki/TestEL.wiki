@@ -34,7 +34,7 @@ This tests are available on files and folders.
  -s FILE    FILE exists and has a size greater than zero
  -w FILE    FILE exists and is writable
  -x FILE    FILE exists and is executable
-}}
+}}}
 
 There are also contitionals to compare two files:
 {{{
