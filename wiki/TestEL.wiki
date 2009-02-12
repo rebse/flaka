@@ -1,14 +1,14 @@
+#summary This describes the test expression language
 #labels Featured
-#summary This describes the test expression language 
 
 <div style="border: 1px solid red;margin: auto 0;">
 <wiki:toc max_depth="1" />
 
-= Introduction =
+=Introduction=
 
 Flaka contains a conditionals expression language to simplify the way of expressing tests. The language has it's roots in popular Shells like bash etc. For a good reference, see also the [http://www.gnu.org/software/bash/manual/bashref.html#Bash-Conditional-Expressions appropriate section on conditional expressions] in the bash reference manual. Please be aware, that not all conditionals are implemented and not all behave in the same way as the _original_.
 
-= Test Expression Language =
+=Test Expression Language=
 
 Within Flaka, the test expression language can be used in all attributes named _test_. Here are some examples:
 {{{
@@ -20,7 +20,7 @@ Within Flaka, the test expression language can be used in all attributes named _
  ..
 }}}
 
-== Testing Files and Folders 
+==Testing Files and Folders==
 
 When testing a file or folder, please be aware that relative files are tested relative to the base directory. This directory is usually the folder containing the build script. It can be changed in the build script by setting the project's attribute _basedir_.
 
@@ -42,7 +42,7 @@ There are also contitionals to compare two files:
  FILE1 -ot FILE2  FILE1 is older than FILE2
 }}}
 
-== Testing Strings ==
+==Testing Strings==
 
 The most basic operations are used to check whether the string is empty (number of characters is zero) or not.
 {{{
@@ -56,7 +56,7 @@ Two strings can also be compared. Case is significant.
  STRING1 != STRING2  the strings are not equal
 }}}
 
-== Testing Numbers ==
+==Testing Numbers==
 
 Some basic operations on (integral) numbers are supported:
 
@@ -71,7 +71,7 @@ Some basic operations on (integral) numbers are supported:
 
 Remeber to use = when comparing strings and eq when comparing numbers.
 
-== Testing Ant specific items ==
+==Testing Ant specific items==
 The following conditionals can be used to test specific Ant entities:
 {{{
  -P STRING     Property STRING is defined
@@ -83,7 +83,7 @@ The following conditionals can be used to test specific Ant entities:
 }}}
 
 
-== Combinations
+==Combinations==
 
 Test conditionals can be combined using the following boolean operators:
 {{{
