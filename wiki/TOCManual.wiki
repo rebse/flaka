@@ -2,6 +2,7 @@
 
 * Getting Started
  * [Installation]
+ * [Flaka Getting Started ..]
  * [BasicScriptingConstructs Scripting] 
  * [TestEL Test Expr Lang]
 
