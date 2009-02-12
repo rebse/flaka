@@ -1,0 +1,27 @@
+#labels Featured
+#summary Getting Started
+
+<wiki:toc max_depth="2" />
+
+= Getting Started =
+
+On a lower level, Flaka is a set of tasks, types and macros. This entities can be used [http://http://ant.apache.org/manual like any other entity provided by standard Ant]. [Installation Just add _ant-flaka-x.y.z.jar_ to Ant's classpath] and make Flaka's entities available withing the buildscript via a namespace
+
+{{{
+ <project xmlns:c="antlib:net.haefelingerit.flaka">
+   [..]
+ </project>
+}}}
+
+The namespace prefix used in this document is, as shown above, the character c. The prefix itself is not relevant and can thus be changed to your liking. Here is an example of a simple script using Flaka:
+
+{{{ 
+  <project xmlns:c="antlib:net.haefelingerit.flaka">
+   <c:unless test="-d folder">
+      <mkdir dir="folder" />
+   </c:unless>
+ </project>
+}}}
+
+Here Flaka's task {{FlakaRefTask|1=unless}} is being used to test whether a given folder exists or not (the test is carried out via Flaka's expression language AEL). If not existing, the folder is created using [http://ant.apache.org/manual/CoreTasks/mkdir.html task mkdir] provided by Ant.
+
