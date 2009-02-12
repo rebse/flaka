@@ -1,0 +1,100 @@
+#labels Featured
+#summary This describes the test expression language 
+
+<div style="border: 1px solid red;margin: auto 0;">
+<wiki:toc max_depth="1" />
+
+= Introduction =
+
+Flaka contains a conditionals expression language to simplify the way of expressing tests. The language has it's roots in popular Shells like bash etc. For a good reference, see also the [http://www.gnu.org/software/bash/manual/bashref.html#Bash-Conditional-Expressions appropriate section on conditional expressions] in the bash reference manual. Please be aware, that not all conditionals are implemented and not all behave in the same way as the _original_.
+
+= Test Expression Language =
+
+Within Flaka, the test expression language can be used in all attributes named _test_. Here are some examples:
+{{{
+ <c:when test="-d folder" />  -- test folder
+ <c:when test="-f file -a -w file" /> -- file exists and is writeable
+ <c:choose>
+  <when test="-z '${x}' />    -- test whether $x is empty 
+ <c:/choose>
+ ..
+}}}
+
+== Testing Files and Folders 
+
+When testing a file or folder, please be aware that relative files are tested relative to the base directory. This directory is usually the folder containing the build script. It can be changed in the build script by setting the project's attribute _basedir_.
+
+This tests are available on files and folders.
+
+{{{
+ -d FILE    FILE exists and is a directory
+ -e FILE    FILE exists
+ -f FILE    FILE exists and is a regular file
+ -r FILE    FILE exists and is readable
+ -s FILE    FILE exists and has a size greater than zero
+ -w FILE    FILE exists and is writable
+ -x FILE    FILE exists and is executable
+}}
+
+There are also contitionals to compare two files:
+{{{
+ FILE1 -nt FILE2  FILE1 is newer (modification date) than FILE2
+ FILE1 -ot FILE2  FILE1 is older than FILE2
+}}}
+
+== Testing Strings ==
+
+The most basic operations are used to check whether the string is empty (number of characters is zero) or not.
+{{{
+ -n STRING  the length of STRING is nonzero
+ -z STRING  the length of STRING is zero
+}}}
+
+Two strings can also be compared. Case is significant.
+{{{
+ STRING1 = STRING2   the strings are equal
+ STRING1 != STRING2  the strings are not equal
+}}}
+
+== Testing Numbers ==
+
+Some basic operations on (integral) numbers are supported:
+
+{{{
+ INT1 -eq INT2      INT1 is equal to INT2
+ INT1 -ge INT2      INT1 is greater than or equal to INT2
+ INT1 -gt INT2      INT1 is greater than INT2
+ INT1 -le INT2      INT1 is less than or equal to INT2
+ INT1 -lt INT2      INT1 is less than INT2
+ INT1 -ne INT2      INT1 is not equal to INT2
+}}}
+
+Remeber to use = when comparing strings and eq when comparing numbers.
+
+== Testing Ant specific items ==
+The following conditionals can be used to test specific Ant entities:
+{{{
+ -P STRING     Property STRING is defined
+ -R STRING     Reference STRING is defined
+ -T STRING     Target STRING is defined
+ -M STRING     STRING is either a Task or a Macro
+ -m STRING     STRING is a Macro and not a Task.
+ -t STRING     STRING is a Task and not a Macro.
+}}}
+
+
+== Combinations
+
+Test conditionals can be combined using the following boolean operators:
+{{{
+ EXPR1 -a EXPR2   true if EXPR1 and EXPR2 are true
+ EXPR1 -o EXPR2   true if EXPR1 or EXPR2 is true
+ ! _EXPR_         true if EXPR is false
+}}}
+ 
+Furthmore, to change evaluation order, the following is also supported:
+{{{
+ ( EXPR )         true if EXPR is true
+}}}
+
+</div>
