@@ -1,5 +1,5 @@
-#labels Featured
 #summary A summary of all Tasks implemented by Flaka
+#labels Featured
 <wiki:toc max_depth="1" />
 = break = 
 
@@ -360,11 +360,11 @@ is defined in terms of a logical dependency defined in a Baseline. However, the 
 
 
 == Attributes ==
- *baseline <br />The Baseline to use when resolving aliased dependencies. Optional, []
- *src <br /> The comma separated list of files to scan for dependencies [${ant.file}]
- *dst <br /> The folder to save retrieved dependencies [.]
- *depotlist <br />The (comma separated) list of depots to retrieve dependencies from. If not given, property jdepot.csv will be looked up. If still not given, an exception will be thrown. 
- *stem <br />A prefix to be used when setting various property or reference names
+ * baseline <br />The Baseline to use when resolving aliased dependencies. Optional, []
+ * src <br /> The comma separated list of files to scan for dependencies [${ant.file}]
+ * dst <br /> The folder to save retrieved dependencies [.]
+ * depotlist <br />The (comma separated) list of depots to retrieve dependencies from. If not given, property jdepot.csv will be looked up. If still not given, an exception will be thrown. 
+ * stem <br />A prefix to be used when setting various property or reference names
 
 == Example I ==
 
@@ -1458,4 +1458,3 @@ The same setup as before gives, when no root element is applied, the following:
 
 == References ==
  * Classname: net.haefelingerit.flaka.XmlMerger [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/XmlMerger.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/XmlMerger.java (*Source*)] 
-
