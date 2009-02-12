@@ -1,5 +1,5 @@
-#labels Featured
 #summary Getting Started
+#labels Featured
 
 <wiki:toc max_depth="2" />
 
@@ -23,5 +23,4 @@ The namespace prefix used in this document is, as shown above, the character c. 
  </project>
 }}}
 
-Here Flaka's task {{FlakaRefTask|1=unless}} is being used to test whether a given folder exists or not (the test is carried out via Flaka's expression language AEL). If not existing, the folder is created using [http://ant.apache.org/manual/CoreTasks/mkdir.html task mkdir] provided by Ant.
-
+Here Flaka's task [Tasks#unless unless] is being used to test whether a given folder exists or not. The test is carried out via Flaka's [TestEL conditional expression language]. If not existing, the folder is created using [http://ant.apache.org/manual/CoreTasks/mkdir.html task mkdir] provided by Ant.
