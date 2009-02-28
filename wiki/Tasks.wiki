@@ -21,7 +21,20 @@ This would output
 World
 }}}
 
-There is `no` default value for attribute `comment` to be compatible with standard `echo`.
+There is `no` default value for attribute `comment` to be compatible with standard `echo`. If you wish to set a default, then use the standard Ant task `presetdef` like shown below:
+{{{
+ <presetdef name="echo">
+  <c:echo comment=";" />
+ </presetdef>
+
+ ..
+
+ <echo>
+    ;; ignored
+ </echo>
+}}}
+The slight disadvantage of this approach is that it will shadow the original Ant task.
+
 
 = break = 
 
