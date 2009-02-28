@@ -4,6 +4,7 @@
   * [Flaka Getting Started ..]
   * [Installation]
   * [BasicScriptingConstructs Scripting] 
+  * [EL Expression Language]
 
 * API Reference
  * [Tasks Tasks]
