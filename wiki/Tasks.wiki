@@ -9,6 +9,18 @@ Attribute `debug` enables additional debug output for this particular task. As u
 
 Attribute `comment` allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{literal(value)}.*$`. Every character sequence matching this regular expression will not show up in the output. Notice the usage of `literal(value)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` would start a line to be ignored.  
 
+{{{
+<c:echo comment=";">
+  ;; ignore me Hello
+World.
+</c:echo>
+}}}
+This would output 
+{{{
+
+World
+}}}
+
 = break = 
 
 A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
