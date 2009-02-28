@@ -49,7 +49,7 @@ Flaka's `echo` is derived from standard `echo`. In addition some additional feat
 == Implicit Objects ==
 
 The following implicit objects are available by default:
-* *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
+  * *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
   * *property* Use this object to query project properties.
   * *var* A object containing all project references. 
   * *reference* Same as *var*
