@@ -1,6 +1,6 @@
 #summary A summary of all Tasks implemented by Flaka
 #labels Featured
-<wiki:toc max_depth="1" />
+<wiki:toc />
 = break = 
 
 A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
