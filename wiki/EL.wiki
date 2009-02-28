@@ -1,0 +1,28 @@
+#summary Expression Language Details
+
+= Introduction =
+
+The Java Unified Expression Language (JSR-245) is a special purpose programming language offering a simple way of accessing data objects. The language has its roots in Java web applications for embedding expressions into web pages. While the expression language is part of the JSP specification, it does in no way depend on the JSP specification. To the contrary, the language can be made available in a variety of context.
+
+One such context is Ant scripting. Ant makes it difficult to access data objects. For example, there is no way of querying the underlying data object for the base folder (the folder containing the build script). This is now easy:
+
+{{{
+<echo>
+  Absolute path of base folder 
+  #{project.baseDir.absolutePath}
+  
+  The parent folder
+  #{project.baseDir.parent}
+  
+  The 'foo' property
+  #{empty property.foo ? 'bar' : foo}
+
+  #{property['ant.file']
+}}}
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
