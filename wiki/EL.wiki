@@ -7,7 +7,7 @@ The Java Unified Expression Language (JSR-245) is a special purpose programming 
 One such context is Ant scripting. Ant makes it difficult to access data objects. For example, there is no way of querying the underlying data object for the base folder (the folder containing the build script). This is now easy:
 
 {{{
-<echo>
+<c:echo>
   Absolute path of base folder 
   #{project.baseDir.absolutePath}
   
@@ -18,12 +18,37 @@ One such context is Ant scripting. Ant makes it difficult to access data objects
   #{empty property.foo ? 'bar' : foo}
 
   #{property['ant.file']
-</echo>
+</c:echo>
 }}}
 
 = Details =
+== Enabling/Disabling EL ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+By default, EL is disabled. EL can be enabled by setting property _ant.el_ to any value. 
+
+== Implicit Objects ==
+
+The following implicit objects are available by default:
+* *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
+* *property* Use this object to query project properties.
+* *var* A object containing all project references. 
+* *reference* Same as *var*
+* *target* Use this object to query a target
+* *taskdef* Query taskdefs
+* *macrodefs* Macros
+* *tasks*  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace.
+* *filter*  A object containing all filters defined in this project.
+
+== Basic Usage ==
+
+EL expressions can only be used in Flaka tasks cause EL is not a standard Ant feature. Thus the following code will *NOT* work:
+{{{
+<echo>3*4=#{3*4}</echo>
+-- 3*4=#{3*4}
+}}}
+Task `echo` is a standard Ant task and Ant is only able to resolve properties. One needs to use a task which _understands_ EL. Therefore, use `echo` provided by Flaka:
+{{{
+<c:echo>3*4=#{3*4}</c:echo>
+-- 3*4=12
+}}}
+Flaka's `echo` is derived from standard `echo`. In addition some additional features are available. One feature, as demonstrated above, is the evaluation of embedded EL expressions. Other features are described [Task#echo here].
