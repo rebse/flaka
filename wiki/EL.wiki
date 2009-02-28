@@ -18,6 +18,7 @@ One such context is Ant scripting. Ant makes it difficult to access data objects
   #{empty property.foo ? 'bar' : foo}
 
   #{property['ant.file']
+</echo>
 }}}
 
 = Details =
