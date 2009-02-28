@@ -5,7 +5,7 @@
 = echo =
 This task is an extension of Ant's standard echo task. In addition, attributes `debug` and `comment` are supported. 
 
-Attribute `debug` enables additional debug output for this particular task. As usual, such additional output will be written to stderr regardless of whether debug has been globally enabled on Ant or not. The standard Ant loggers and listeneres are ignored.
+Attribute `debug` enables additional debug output for this particular task. As usual, such additional output will be written to stderr regardless of whether debug has been globally enabled on Ant or not. The standard Ant loggers and listeneres are ignored. The default value is `false`, i.e. no additional output is created.
 
 Attribute `comment` allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{literal(value)}.*$`. Every character sequence matching this regular expression will not show up in the output. Notice the usage of `literal(value)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` would start a line to be ignored.  
 
@@ -20,6 +20,8 @@ This would output
 
 World
 }}}
+
+There is `no` default value for attribute `comment` to be compatible with standard `echo`.
 
 = break = 
 
