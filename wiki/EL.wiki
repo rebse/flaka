@@ -30,14 +30,14 @@ By default, EL is disabled. EL can be enabled by setting property _ant.el_ to an
 
 The following implicit objects are available by default:
 * *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
-* *property* Use this object to query project properties.
-* *var* A object containing all project references. 
-* *reference* Same as *var*
-* *target* Use this object to query a target
-* *taskdef* Query taskdefs
-* *macrodefs* Macros
-* *tasks*  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace.
-* *filter*  A object containing all filters defined in this project.
+  * *property* Use this object to query project properties.
+  * *var* A object containing all project references. 
+  * *reference* Same as *var*
+  * *target* Use this object to query a target
+  * *taskdef* Query taskdefs
+  * *macrodefs* Macros
+  * *tasks*  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace.
+  * *filter*  A object containing all filters defined in this project.
 
 == Basic Usage ==
 
@@ -51,4 +51,4 @@ Task `echo` is a standard Ant task and Ant is only able to resolve properties. O
 <c:echo>3*4=#{3*4}</c:echo>
 -- 3*4=12
 }}}
-Flaka's `echo` is derived from standard `echo`. In addition some additional features are available. One feature, as demonstrated above, is the evaluation of embedded EL expressions. Other features are described [Task#echo here].
+Flaka's `echo` is derived from standard `echo`. In addition some additional features are available. One feature, as demonstrated above, is the evaluation of embedded EL expressions. Other features are described [Tasks#echo here].
