@@ -8,7 +8,7 @@ One such context is Ant scripting. Ant makes it difficult to access data objects
 
 {{{
 <c:echo>
-  Absolute path of base folder 
+  Absolute path (as string) of base folder 
   #{project.baseDir.absolutePath}
   
   The parent folder
@@ -131,3 +131,39 @@ Then we evaluate EL expressions in using Flaka's echo (again, we could have used
 	  descr   => #{project.description}
 </c:echo>
 }}}
+
+
+== File and Folders ==
+
+Files and folders is Ant's bread and butter. A couple of properties are defined on file objects to simplify scripting (see below). Most important is however how to _get_ a file object in the first place. This is most easily done by using string property `tofile`:
+{{{
+  'myfolder'.tofile.isdir 
+}}}
+In this example of an EL expression, string `myfolder` is converted in a File object using property `tofile`. In addition, the so created object is checked whether it is a folder or not.
+
+The following _properties_ are defined on File objects:
+|| Property || Type || Meaning ||
+|| `parent` || File || parent of file or folder as file object ||
+|| `absolute`|| File || file or folder as absolute file object ||
+|| `exists` || bool || check whether file or folder exists ||
+|| `isfile` || bool || check whether a file ||
+|| `isdir`  || bool || check whether a folder (directory) ||
+|| `ishidden` || bool || check whether a hidden file or folder ||
+|| `isread` || bool || check whether a file or folder is readable ||
+|| `iswrite` || bool || check whether a file or folder is writable ||
+|| `size`   || int  || number of bytes in a (existing) file; 0 otherwise||
+|| `length` || int  || same as `size` ||
+|| `mtime`  || Date || last modification date  ||
+|| `list`   || File[] || array of files in folder ; otherwise `null` ||
+|| `string` || String || file name as string object ||
+|| `uri`    || URI  || file as URI object ||
+|| `url`    || URL  || file as URL object ||
+|| `delete` || bool || deletes the file or folder (true); false otherwise ||
+|| `mkdir`  || bool || creates the folder (and intermediate) folders (true); false otherwise ||
+
+== Functions ==
+
+The following functions are defined:
+
+|| Function || Type || Meaning ||
+|| `size(object)`   || int  || Returns the object's size. The size of the object is given by the number of entities it contains. This is 0 (zero) for all primitive types. Otherwise the size is determined by an underlying `size()` method or `size` or `length` attribute of the object in question. || 
