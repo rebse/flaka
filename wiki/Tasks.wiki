@@ -763,8 +763,8 @@ This task is similar to task [Tasks#set set]. It allows to set a couple of varia
 
 == Attributes ==
 
- * *comment* <br /> The comment character sequence [;]
- * *type*    <br /> Whether to assign variables ("var") or properties ("property") [var]
+ * *comment* <br /> The comment character sequence \[;\]
+ * *type*    <br /> Whether to assign variables ("var") or properties ("property") \[var\]
 
 == Elements ==
 
@@ -829,10 +829,12 @@ When evaluating, property expressions are evaluated _before_ EL expressions. Con
 }}}
 
 Undefined property references are removed. Consider:
+{{{
 <c:mset>
   ;; assume that z is not a property
   z = '${z}' 
 </c:mset>
+}}}
 Here, z will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
 
 == References ==
