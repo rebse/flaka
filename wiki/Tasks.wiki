@@ -720,66 +720,123 @@ A task to invoke a target dynamically.
 
 = set =
 
-The default policy of Ant is to never override a property once the property is defined. Sometimes it might be handy to escape this policy and to override on purpose. This where set comes into the game. Note that using set is essentially the same as wiping the property out using [[AntEpoline/API/unset | unset]] followed by assigning the property a value again.
-
-Notice that so called user properties are never overridden. User properties are those provided on the command line and parsed (i.e. taken into account) by Ant. Notice that system properties are not user properties. A system property is a property that is set by other means than via the command line or within the build script (i.e. via tasks). A typical way to set a system property is via option -D passed to the Java VM. Consider:
-
-{{{
- $ ant -Dk=v   -- k is a user property
- $ java -Dk=v ... org.apache.tools.ant.launch.Launcher ..   -- k is a system property
-}}}
+Task `set` is used to set a variable or property.
 
 == Attributes ==
 
- * var<br />The property to assign a value. Note that leading and trailing whitespace characters are ignored. Although possible, whitespace within the name is accepted but should be avoided by all means. This attribute has two synonyms namely property and name. The behavior is undefined if a combinations of this attributes is used and no exception is thrown or warning given. 
- * value <br />The value to be assigned. Leading and trailing whitespace characters are ignored. It is legal to use this attribute without using attribute var. In such a case, no property assignment will take place and neither a warning is given nor exception is thrown. [""]
- * override<br/>By default properties are overridden. To increase the flexibility of this task, this attribute can be used to switch back to standard Ant behavior. In such a case a property is only written if it does not already exist. [true]
- * preserve<br/>The logical opposite of override, when true then a value of an already existing property is not overridden. Do not use this attribute in combination with attribute override, otherwise the behaviour is undefined. [false]
- * debug <br/>This inherited attribute turns on extra debug information. If turned on, a debug message like <tt>overriding prop `z' with |foobar|, was |7|</tt> will be send to the standard error stream (bypassing all internal Ant debug facilities). [false]
+ * var<br /> The name of the variabled to be assigned. []
+ * property <br /> The name of the property to be assigned. []
+ * value <br /> The value to be assigned. Leading and trailing whitespace characters are ignored. []
+ * debug <br/> Turn on extra debug information. If turned on, a debug messages will be send to the standard error stream (bypassing all internal Ant debug facilities). [false]
+
+All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result in a build error. If in doubt, turn on extra debug information.
+
+== Behaviour ==
+
+If attribute `property` and `value` is given, then `value` is evaluated according to standard property evaluation rules into a string and assigned to as property `var`. Assignment takes place unconditionally, even if `var` referes to a so called _user property_. This assignment behaviour is very much different from standard Ant behaviour on properties where a property is only set if not already defined. If `value` contains only whitespace characters, then the empty string (`""`) will be assigned.
+
+If attribute `var` and `value` is given, then `value` is considered a EL expression and evaluated accordingly into an object instance. This instance will then be assigned. If the instance evaluates to `nil` then `var` is being _removed_ from the reference table. As a special note for those familiar with the Java EL language, notice that `value` is evaluated as _true EL expression_. This means that `value` is internally evaluated as `#{ <lt;value> }`. See also the examples below.
+
+If `value` is given but neither `var` nor `property` nothing will happen (except from dumping a debug message if requested). The same is true if `value` is missing. If `var`, `property` and `value` is given, then all actions as described above are carried and no debug message is generated. 
+
+== Examples ==
+
+In this example, a property and a variabled both named `foo` are set to string value `"bar"`.
+{{{
+<c:set property="foo" value="  bar " />
+<c:set var="foo"      value=" 'bar'  />
+
+<c:echo>
+ The value of 
+  * property 'foo' is ${foo}
+  * variable 'foo' is #{foo}
+</c:echo>
+}}}
+Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variable value. Ant's standard echo task wont work until EL has been enabled on a project basis. 
+
+== References ==
+ * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
+
+= mset =
+
+This task is similar to task [Tasks#set set]. It allows to set a couple of variables or properties in one go. In addition, comments are allowed for additional readability and comfort.
+
+== Attributes ==
+
+ * *comment* <br /> The comment character sequence [;]
+ * *type*    <br /> Whether to assign variables ("var") or properties ("property") [var]
 
 == Elements ==
 
-This task accepts (since 2.1.7) an implicit text element to set a bunch of properties. For example:
+This task accepts implicit text.
 
+== Examples ==
+
+In essence is XML not particular easy to read for humans. When assigning a couple of varables and properties it becomes obvious. Task `mset` helps to reduce the clutter. For example:
 {{{
-  <c:set>
-    y = 1
-    x = 2
-    z = 3
-  </c:set>
+  <c:mset>
+    f = 'folder'
+    ; turn f into a file object
+    f = f.tofile
+    b = f.isdir ? true : false
+  </c:mset>
 }}}
 
-It is perfectly valid to use the implicit text field in conjunction with var. Some care needs to be taken when using a textual element, cause not all set properties are supported yet. Consider:
- * Attributes preserve and override are not taken into account. The standard behaviour is to always override (except for for user properties)
-Consider also that a variable needs to exist when being referenced. The following snippet does therefore not work as (perhaps) expected:
+In this example, `f` is first assigned to be string `"folder"`. The comment line - the one starting with character `;` - tells what the next line is going to do: turn `f` into a file object which can then be used further (for example, to check whether `f` is a directory or not.
+
+In the very same way a couple of properties can be set:
 {{{
-  <c:set>
-    x = ${y}
-    y = 1
-  </c:set>
-}}}
-Here property x does not get the value 1.  Instead x gets the literal string value ${y}. It is recommended not to rely on this feature cause this behaviour is to be changed in an upcoming version.
-
-== Example I ==
-
-An advanced example assigning property references:
-
-{{{
-  <echo>
-    ${z}             // 7 
-    ${y}             // ${y}
-  </echo>
-  <c:set debug="true" override="true">
-    y = ${z}         // overriding prop `y' with |7|, was |null|          
-    x = ${y}         // overriding prop `x' with |${y}|, was |null|
-    z = foobar       // overriding prop `z' with |foobar|, was |7|
-  </c:set>
+<c:mset type="property" comment="#">
+  # A comment \
+    comment continues here
+  x = ${ant.file}
+  y = \
+     ${x}
+  z = x
+</c:mset>
 }}}
 
-The example shows that assigning properties takes place before evaluation of references. Take property <tt>y</tt> for example. This property will take the value of property <tt>z</tt>, i.e. <tt>7</tt>, regardless whether <tt>z</tt> gets a value assigned in the same set statement.
+This example defines properties `x`, `y` and `z`. To make things more interesting, continuation lines are shown in the comment and the assignment of `y` as well. After this assignment has been carried out, property `x` contains the full path of the current build file as string, and so does `y`. Property `z` however will be the string `x`.
+
+== Behaviour ==
+
+The comment character sequence is `";"` by default. It can be changed to an arbitrary sequence using attribute `comment`. Once set, it can't be changed during the execution of this task. A comment characters are used to identify lines to be ignored from execution. Such a line is given if the first non whitespace characters of that line are identical with the sequence of comment characters. In other words, a line is being ingnored if matches the regular expression `^\s*&lt;comment>`. The comment characters itself are not interpreted as regular expression characters. Therefore a given comment sequence like `"(#|;)"` does not mean that either `";"` or `"#"` start a comment. Instead it means that a comment line starts with the characters `"(#|;)"` which would be rather awkward (while perfectly _legal_). 
+
+To support readability continuation lines are supported. Such a line is indicated by having `\` as last character. Be careful not to put any whitespace characters after `\`, otherwise the line will not be recognized as such. Continuation lines are also working on comments as the example above shows. If a line is a continuation line, the last character `\` is removed, the line is accumulated and the next line is read. If finally a non contination line is read (and only then), a evaluation of the so accumulated line takes place: If the accumlated line is a comment it will be ignored and otherwise either treated as property or variable assignment.
+
+Apart from continuation lines are leading and trailing whitespace characters ignored. For example, the property assignment ` x = foo bar ` will assign the string `foo bar` to property `x`. Notice that whitespace before and after `x` and before and _after_ `foo bar` is ignored. This is slightly different from reading Java properties where whitespace after `foo bar` would _not_ have been ignored!
+ 
+When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating a variable means that the right side of the assignment is evaluated as EL expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is just treated as a string of characters.
+
+Notice that it is perfectly legal to use property references when defining variables as the following example shows:
+{{{
+<c:mset>
+ f = '${ant.file}'
+ ; This works only for certain Flaka tasks unless globally enabled.
+ F = '#{f}'
+</c:mset>
+}}}
+The example also shows that EL expressions can be used when defining variables. This works for Flaka tasks where this is explicitly mentioned. It does not work by default until globally enabled.
+
+When evaluating, property expressions are evaluated _before_ EL expressions. Consider:
+{{{
+<c:mset>
+  ;; let s hold string ant.file
+  s = 'ant.file'
+  ;; bad, f will become nil.
+  f = ${#{s}}
+</c:mset>
+}}}
+
+Undefined property references are removed. Consider:
+<c:mset>
+  ;; assume that z is not a property
+  z = '${z}' 
+</c:mset>
+Here, z will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
 
 == References ==
- * Classname: net.haefelingerit.flaka.Set [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Set.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Set.java (*Source*)]
+ * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
 
 = set-default-target = 
 

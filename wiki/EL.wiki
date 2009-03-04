@@ -1,5 +1,5 @@
 #summary Expression Language Details
-
+<wiki:toc />
 = Introduction =
 
 The Java Unified Expression Language (JSR-245) is a special purpose programming language offering a simple way of accessing data objects. The language has its roots in Java web applications for embedding expressions into web pages. While the expression language is part of the JSP specification, it does in no way depend on the JSP specification. To the contrary, the language can be made available in a variety of context.
@@ -24,7 +24,7 @@ One such context is Ant scripting. Ant makes it difficult to access data objects
 = Details =
 == Enabling/Disabling EL ==
 
-By default, EL is disabled. EL can be enabled by setting property _ant.el_ to any value. 
+By default, EL is enabled. EL can be enabled by setting property _ant.el_ to `false` (exactly as written). 
 
 
 == Basic Usage ==
@@ -132,6 +132,12 @@ Then we evaluate EL expressions in using Flaka's echo (again, we could have used
 </c:echo>
 }}}
 
+== Properties ==
+
+To check whether a property exists or not try 
+{{{
+property.foobar ? 'exists' : 'absent'
+}}} 
 
 == File and Folders ==
 
@@ -144,7 +150,7 @@ In this example of an EL expression, string `myfolder` is converted in a File ob
 The following _properties_ are defined on File objects:
 || Property || Type || Meaning ||
 || `parent` || File || parent of file or folder as file object ||
-|| `absolute`|| File || file or folder as absolute file object ||
+|| `toabs`|| File || file or folder as absolute file object ||
 || `exists` || bool || check whether file or folder exists ||
 || `isfile` || bool || check whether a file ||
 || `isdir`  || bool || check whether a folder (directory) ||
@@ -155,11 +161,19 @@ The following _properties_ are defined on File objects:
 || `length` || int  || same as `size` ||
 || `mtime`  || Date || last modification date  ||
 || `list`   || File[] || array of files in folder ; otherwise `null` ||
-|| `string` || String || file name as string object ||
-|| `uri`    || URI  || file as URI object ||
-|| `url`    || URL  || file as URL object ||
+|| `tostr` || String || file name as string object ||
+|| `touri`    || URI  || file as URI object ||
+|| `tourl`    || URL  || file as URL object ||
 || `delete` || bool || deletes the file or folder (true); false otherwise ||
 || `mkdir`  || bool || creates the folder (and intermediate) folders (true); false otherwise ||
+
+When evaluating a condition to a bool value, a File object is checked for existence. For example, the following condition evaluates always to `true`:
+
+{{{
+ <c:set  var="f" value="'${ant.file}'.tofile " />
+ <c:when test=" f " /> -- evaluates to 'true'; is same as
+ <c:when test=" f.exists " />  
+}}}
 
 == Functions ==
 
@@ -167,3 +181,18 @@ The following functions are defined:
 
 || Function || Type || Meaning ||
 || `size(object)`   || int  || Returns the object's size. The size of the object is given by the number of entities it contains. This is 0 (zero) for all primitive types. Otherwise the size is determined by an underlying `size()` method or `size` or `length` attribute of the object in question. || 
+|| isnil(object)    || bool || Evaluates to `true` if object is the `nil` entity; otherwise `false`. This function can be used to check whether a reference (var) or property exists. Operator `empty` can't be used for this task, cause `empty` returns `true` if either not existing or if literatly _empty_ (for example the empty string).
+
+
+== Conditions ==
+
+Conditions are expressions which are evaluated to return either `true` or `false`. EL defines the usual operators (`not`, `and` and `or`) to construct arbitratry complex conditions.
+
+{{{
+<c:when test="f.isdir and (not f.ishidden)">
+  -- do something with this 'regular' folder ..
+</c:when>
+}}}
+
+Notice that the enclosing `#{..}` is not required and not even allowed. 
+
