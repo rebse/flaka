@@ -724,33 +724,36 @@ Task `set` is used to set a variable or property.
 
 == Attributes ==
 
- * var<br /> The name of the variabled to be assigned. ()
- * property <br /> The name of the property to be assigned. ()
- * value <br /> The value to be assigned. Leading and trailing whitespace characters are ignored. ()
- * debug <br/> Turn on extra debug information. If turned on, a debug messages will be send to the standard error stream (bypassing all internal Ant debug facilities). (false)
+ * var<br /> The name of the variabled to be assigned. (string:nil)
+ * property <br /> The name of the property to be assigned. (boolean:false)
+ * value <br /> The value to be assigned. Leading and trailing whitespace characters are ignored. (string:nil)
+ * debug <br/> Turn on extra debug information. If turned on, a debug messages will be send to the standard error stream (bypassing all internal Ant debug facilities). (boolean:false)
 
 All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result in a build error. If in doubt, turn on extra debug information.
 
 == Behaviour ==
 
-If attribute `property` and `value` is given, then `value` is evaluated according to standard property evaluation rules into a string and assigned to as property `var`. Assignment takes place unconditionally, even if `var` referes to a so called _user property_. This assignment behaviour is very much different from standard Ant behaviour on properties where a property is only set if not already defined. If `value` contains only whitespace characters, then the empty string (`""`) will be assigned.
+The content of attribute `value` will be evaluated as EL expression. If no value is given or EL is disabled, then value evaluates to `nil`. Leading and trailing whitespace characters are ignored. As a special note for those familiar with the Java EL language, notice that `value` is evaluated as _true EL expression_. This means that `value` is internally evaluated as `#{ <lt;value> }`. See also the examples below.
 
-If attribute `var` and `value` is given, then `value` is considered a EL expression and evaluated accordingly into an object instance. This instance will then be assigned. If the instance evaluates to `nil` then `var` is being _removed_ from the reference table. As a special note for those familiar with the Java EL language, notice that `value` is evaluated as _true EL expression_. This means that `value` is internally evaluated as `#{ <lt;value> }`. See also the examples below.
+If attribute `property` is `false`, then the evaluated content of `value` will be assigned to be the content of variable `var`. If such a variable exists, the variable will be overridden otherwise created. If `value` evaluates to `nil` (i.e. the null object), then `var` will be removed.
 
-If `value` is given but neither `var` nor `property` nothing will happen (except from dumping a debug message if requested). The same is true if `value` is missing. If `var`, `property` and `value` is given, then all actions as described above are carried and no debug message is generated. 
+If `property` is `true`, then `value` will be evaluated into an object as before and additionally streamed into a string value. This string value will then be taken to create a property if that property does not already exist. This behaviour is in line with traditional Ant behaviour on properties. If `value` evaluates to `nil` then no property assignment takes place and the property is also _not_ removed.
 
+If `value` is given but not `var` nothing will happen (except from dumping a debug message if requested). 
 == Examples ==
 
 In this example, a property and a variabled both named `foo` are set to string value `"bar"`.
 {{{
-<c:set property="foo" value="  bar " />
-<c:set var="foo"      value=" 'bar'  />
+<c:set var="foo" value=" 'bar' " />
+<c:set var="foo" value=" 'bar' " property="true"/>
 
 <c:echo>
  The value of 
-  * property 'foo' is ${foo}
-  * variable 'foo' is #{foo}
-</c:echo>
+  * property 'foo' is ${foo}  -- bar
+  * variable 'foo' is #{foo}  -- bar
+ foo's ..
+  * length is   #{size(foo)}  -- 3
+ </c:echo>
 }}}
 Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variable value. Ant's standard echo task wont work until EL has been enabled on a project basis. 
 
@@ -763,8 +766,8 @@ This task is similar to task [Tasks#set set]. It allows to set a couple of varia
 
 == Attributes ==
 
- * *comment* <br /> The comment character sequence (;)
- * *type*    <br /> Whether to assign variables ("var") or properties ("property") (var)
+ * *comment*  <br /> The comment character sequence (string:;)
+ * *property* <br /> Whether to assign variables or properties (boolean:false)
 
 == Elements ==
 
@@ -772,7 +775,7 @@ This task accepts implicit text.
 
 == Examples ==
 
-In essence is XML not particular easy to read for humans. When assigning a couple of varables and properties it becomes obvious. Task `mset` helps to reduce the clutter. For example:
+XML not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `mset` helps to reduce the clutter. For example:
 {{{
   <c:mset>
     f = 'folder'
@@ -786,7 +789,7 @@ In this example, `f` is first assigned to be string `"folder"`. The comment line
 
 In the very same way a couple of properties can be set:
 {{{
-<c:mset type="property" comment="#">
+<c:mset property="true" comment="#">
   # A comment \
     comment continues here
   x = ${ant.file}
@@ -804,21 +807,20 @@ The comment character sequence is `";"` by default. It can be changed to an arbi
 
 To support readability continuation lines are supported. Such a line is indicated by having `\` as last character. Be careful not to put any whitespace characters after `\`, otherwise the line will not be recognized as such. Continuation lines are also working on comments as the example above shows. If a line is a continuation line, the last character `\` is removed, the line is accumulated and the next line is read. If finally a non contination line is read (and only then), a evaluation of the so accumulated line takes place: If the accumlated line is a comment it will be ignored and otherwise either treated as property or variable assignment.
 
-Apart from continuation lines are leading and trailing whitespace characters ignored. For example, the property assignment ` x = foo bar ` will assign the string `foo bar` to property `x`. Notice that whitespace before and after `x` and before and _after_ `foo bar` is ignored. This is slightly different from reading Java properties where whitespace after `foo bar` would _not_ have been ignored!
+Apart from continuation lines are leading and trailing whitespace characters ignored. For example, the property assignment ` x = 'foo bar' ` will assign the string `foo bar` to property `x`. Notice that whitespace before and after `x` and before and _after_ `'foo bar'` is ignored. This is slightly different from reading Java properties where whitespace after `'foo bar'` would _not_ have been ignored!
  
-When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating a variable means that the right side of the assignment is evaluated as EL expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is just treated as a string of characters.
+When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating means that the right side of the assignment is evaluated as EL expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is evaluted into an object and additionally streamed into a sequence of characters (string).
 
-Notice that it is perfectly legal to use property references when defining variables as the following example shows:
+== Further Examples ==
+Notice that it is perfectly legal to use property or variable references as the following example shows:
 {{{
 <c:mset>
  f = '${ant.file}'
- ; This works only for certain Flaka tasks unless globally enabled.
  F = '#{f}'
 </c:mset>
 }}}
-The example also shows that EL expressions can be used when defining variables. This works for Flaka tasks where this is explicitly mentioned. It does not work by default until globally enabled.
 
-When evaluating, property expressions are evaluated _before_ EL expressions. Consider:
+Be aware that property references are evaluated _before_ EL expressions. Consider:
 {{{
 <c:mset>
   ;; let s hold string ant.file
@@ -827,15 +829,16 @@ When evaluating, property expressions are evaluated _before_ EL expressions. Con
   f = ${#{s}}
 </c:mset>
 }}}
+The second example will not work because in a first step all `${..}` are resolved. Unresolved references like are _discarded_. Therefere task `mset` does not even see reference `#{s}` in this example and thus can't resolve it.
 
-Undefined property references are removed. Consider:
+Undefined property references are discarded. Consider:
 {{{
 <c:mset>
   ;; assume that z is not a property
   z = '${z}' 
 </c:mset>
 }}}
-Here, z will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
+Here, `z` will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
 
 == References ==
  * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
