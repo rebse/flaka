@@ -737,7 +737,7 @@ The content of attribute `value` will be evaluated as EL expression. If no value
 
 If attribute `property` is `false`, then the evaluated content of `value` will be assigned to be the content of variable `var`. If such a variable exists, the variable will be overridden otherwise created. If `value` evaluates to `nil` (i.e. the null object), then `var` will be removed.
 
-If `property` is `true`, then `value` will be evaluated into an object as before and additionally streamed into a string value. This string value will then be taken to create a property if that property does not already exist. This behaviour is in line with traditional Ant behaviour on properties. If `value` evaluates to `nil` then no property assignment takes place and the property is also _not_ removed.
+If `property` is `true`, then `value` will be evaluated into an object as before and additionally streamed into a string value. Streaming object `nil` ends up in the empty string. This streamed string value will then be taken to create a property if that property does not already exist. This behaviour is in line with traditional Ant behaviour on properties. Notice that a property is also set in case attribute `value` is absent. This behaviour differs slightly from Ant where a property is only set of if attribute `value` is present.
 
 If `value` is given but not `var` nothing will happen (except from dumping a debug message if requested). 
 == Examples ==
