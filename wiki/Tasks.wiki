@@ -13,7 +13,7 @@ This tasks supports all inherited attributes. In addition, further supported att
 
  * *comment* allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{<escaped(comment)>}`. Every line matching this regular expression will not show up in the output. Notice the usage of `escaped(comment)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` (and possible leading whitespace) is ignored from output. By default, line starting with character `;` (like in Lisp) are ignored. (string:;)
 
- * *indent* allows to prefix each line with `indent` whitespace characters. See also Behaviour below. (integer:0)
+ * *shift* allows to prefix each line with `shift` whitespace characters. See also Behaviour below. The number given must be a positive integral number or zero. (integer:0)
 
  * *ic* allows to set the indentation character (see explanation below). (char,>)
 
@@ -46,7 +46,7 @@ This would output
 
 A (accumulated) line starting with the characters given in attribute `comment` (perhabs lead by whitespace characters) is a *comment line*. Such lines are removed from output. Notice that continuation lines are supported on comment lines as well.
 
-A rather anoying feature of Ant's standard task is to print the echo's text including _all_ whitespace and line ending characters. This makes pretty formatting rather cruel and worse, subject to the formatting of your favorite XML editor. To allow a decent formatting, a couple of features have been implemented which are presented now. Let's start with simple message:
+A rather anoying feature of Ant's standard task is to print the echo's text including _all_ whitespace and line ending characters. This makes pretty formatting rather cruel and worse, subject to the formatting of your favorite XML editor. To allow a *decent formatting*, a couple of features have been implemented which are presented now. Let's start with simple message:
 
 {{{
 <echo>
