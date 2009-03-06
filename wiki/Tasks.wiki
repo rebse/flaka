@@ -116,6 +116,7 @@ The overall idea is simply to treat the indendentation characgter as whitespace 
 Excellent, now our output is idempotent regarding XML formatting.
 
 As a last wish, how about shifting the whole output by `N` whitespace characters? This is achieved by setting attribute `indent` to the desired shift level. For example:
+{{{
 <c:echo ic=">" indent="2">
 ..hello
 ..>>world
