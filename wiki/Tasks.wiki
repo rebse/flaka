@@ -75,7 +75,7 @@ To better illustrate the point, I have used `.` to indicate a whitespace charact
 [echo]
 [echo] ..foobar
 }}}
-As already mentioned, this is like politics because now get something we definitly don't want: Two lines are printed and additionally those whitespace characters are popping up. Oh no ..
+As already mentioned, this is like politics because now we get something we definitly didn't want to have in the first place: _Two_ lines are printed and additionally those whitespace characters are popping up. Oh no ..
 
 Let's try and see Flaka's `echo` behaviour:
 {{{
@@ -88,18 +88,6 @@ This ouputs
 [c:echo] foobar
 }}}
 and this is exactly what we want to have. Only a single line is printend and now matter how much whitespace there is in front of `foobar`, it's all discarded.
-
-So far so good, but what about to intentionally have whitespace in front of `foobar`, i.e. *how to get some indentation*? This is done by attribute `indent` which accepts a positive integral number (including zero):
-{{{
-<c:echo indent="4">
-..foobar
-</c:echo>
-}}}
-This would output 
-{{{
-[c:echo] ....foobar
-}}}
-Perfect!
 
 Another example where, again, character `.` indicates a whitespace character:
 {{{
@@ -114,6 +102,7 @@ The author's intention is to have `world` intended by two characters. Again, the
 [c:echo] world
 }}}
 All _extra_ whitespace has been removed! Ok, that's not what we wanted. However, there is something called a `indentation character`, `ic` for short:
+{{{
 <c:echo ic=">">
 ..hello
 ..>>world
@@ -124,7 +113,7 @@ The overall idea is simply to treat the indendentation characgter as whitespace 
 [c:echo] hello
 [c:echo] ..world
 }}}
-Excellent, now our output is idempotent regarding formatting.
+Excellent, now our output is idempotent regarding XML formatting.
 
 As a last wish, how about shifting the whole output by `N` whitespace characters? This is achieved by setting attribute `indent` to the desired shift level. For example:
 <c:echo ic=">" indent="2">
