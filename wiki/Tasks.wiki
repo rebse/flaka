@@ -115,14 +115,14 @@ The overall idea is simply to treat the indendentation characgter as whitespace 
 }}}
 Excellent, now our output is idempotent regarding XML formatting.
 
-As a last wish, how about shifting the whole output by `N` whitespace characters? This is achieved by setting attribute `indent` to the desired shift level. For example:
+As a last wish, how about shifting the whole output by `N` whitespace characters? This is achieved by setting attribute `shift` to the desired level. For example:
 {{{
-<c:echo ic=">" indent="2">
+<c:echo shift="2">
 ..hello
 ..>>world
 </c:echo>
 }}}
-gives
+Notice that attribute `ic` is not used here cause `>` is the default ic character. This gives
 {{{
 [c:echo] ..hello
 [c:echo] ....world
