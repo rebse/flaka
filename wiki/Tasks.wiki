@@ -3,23 +3,41 @@
 <wiki:toc />
 
 = echo =
-This task is an extension of Ant's standard echo task. In addition, attributes `debug` and `comment` are supported. 
+This task is an extension of Ant's standard `echo` task. 
 
-Attribute `debug` enables additional debug output for this particular task. As usual, such additional output will be written to stderr regardless of whether debug has been globally enabled on Ant or not. The standard Ant loggers and listeneres are ignored. The default value is `false`, i.e. no additional output is created.
+== Attributes ==
 
-Attribute `comment` allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{literal(value)}.*$`. Every character sequence matching this regular expression will not show up in the output. Notice the usage of `literal(value)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` would start a line to be ignored.  
+This tasks supports all inherited attributes. In addition, further supported attributes are:
 
+ * *debug* enables additional debug output for this particular task. As usual, such additional output will be written to stderr regardless of whether debug has been globally enabled on Ant or not. The standard Ant loggers and listeneres are ignored. The default value is `false`, i.e. no additional output is created. (boolean:false)
+
+ * *comment* allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{<escaped(comment)>}`. Every line matching this regular expression will not show up in the output. Notice the usage of `escaped(comment)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` (and possible leading whitespace) is ignored from output. By default, line starting with character `;` (like in Lisp) are ignored. (string:;)
+
+ * *indent* allows to prefix each line with `indent` whitespace characters. See also Behaviour below. (integer:0)
+
+== Elements ==
+
+This task accepts implicit text.
+
+== Example ==
+
+The following is a typical example to print the famous `Hello, World` message.
 {{{
-<c:echo comment=";">
-  ;; ignore me Hello
+<c:echo>
+; ignore \
+me (still a comment here)
+Hello\
+,
 World.
 </c:echo>
 }}}
-This would output 
-{{{
 
-World
+This would output
+{{{
+[c:echo] Hello,
+[c:echo] World
 }}}
+
 
 There is `no` default value for attribute `comment` to be compatible with standard `echo`. If you wish to set a default, then use the standard Ant task `presetdef` like shown below:
 {{{
