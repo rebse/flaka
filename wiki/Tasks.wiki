@@ -651,10 +651,49 @@ A task to create a, possible nested, directory structure.
 == References ==
  * Classname: net.haefelingerit.flaka.Mkdir [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Mkdir.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Mkdir.java (*Source*)]
 
-= property = 
+= properties = 
 
-# TODO: skip it?
-Same as Ant's standard task to set a property.
+A task to set multiple properties in one go. 
+
+== Attributes ==
+
+ * *comment*  <br /> The comment character sequence (string:;)
+
+== Elements ==
+
+This task accepts a implicit text element.
+
+== Example ==
+
+Here is a simple example demonstrating features of this task:
+{{{
+<c:properties>
+  ; this is \
+  a comment
+
+  ; assume that variable 'foo' has been defined here and that
+  ; foo.name resolves into 'foo', then the next line will set
+  ; property foo to be the string `foo'.
+  foo     = #{foo.name}
+  ; next lines creates property `foobar' to be the string `foobar'.
+  foobar  = ${name}bar
+</c:properties>
+}}}
+
+== Behaviour ==
+
+This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as EL expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
+{{{
+<c:mset type="property">
+  foobar = 'foobar'
+</c:mset>
+<c:properties>
+  foobar = foobar
+</c:properties>
+}}}
+Notice the usage of the quote character `'` in the former example and the absence of it in the latter.
+
+Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved and the left and right side of a property statement.
 
 == References ==
  * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
