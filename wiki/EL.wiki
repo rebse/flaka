@@ -45,18 +45,19 @@ The gory details of _EL_ are laid out in  the [http://flaka.googlecode.com/files
 }}}
 The expression in line (1) is a algebraic while (2) contains a boolean expression. The result of (1) depends on the resolution of variable `x` and similar does (2) on `a` and `b`.
 
-== Data Types ==
+= Data Types =
 _EL_'s data types are integral and floating point numbers, strings, boolean and type `null`. Example data values of each type, except type `null`, are given above (1-3). Type `null` has once instance value also named `null`. While `null` can't be used to formulate an expression, it is important to understand that the result of evaluating an expression can be `null`. For example, the evaluation of a variable named `x` is the data object associated with that name. If no data is associcated however (i.e. if `x` is undefined), then `x` evaluates to `null`.
 
-== Operators ==
+= Operators =
 Four _operators_ are defined in _EL_:
  # `empty` checks whether a variable is empty or not and returns either `true` or `false`. It is important to understand that `null` is considered empty.
  #  condition operator `c ? a : b` evaluates `c` in a boolean context and returns the evaluation of expression `a` if `c` evaluates to `true`; otherwise `eval(b)` will be the result of this operator.
  # `.` and ;
- # `[]` are property operators described in [#Properties section _Properties_] below.
-== Properties ==
+ # `[]` are property operators described in [#Properties Properties] below.
 
-Every data object in _EL_ may have properties associated. Which properties are available is not standardized in the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf _EL_ specification]. In fact, this depends heavily on the underlying implementation or specification. What _EL_ specifies however, is how to query a property:
+= Properties =
+
+Every data object in _EL_ may have properties associated. Which properties are available has not been standardized in the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf specification]. In fact, this depends heavily on the underlying implementation and usage domain. What _EL_ specifies however, is how to query a property:
 {{{
 a.b.c
 }}}
@@ -68,7 +69,7 @@ which means that first variable `a` is evaluted, then property `b` is looked up 
 
 Perhaps the most important point to notice is looking up a property on `null` is not an error but perfectly legal. No exception gets raised and no warning message generated. In fact, the result of such a operation is just `null` again.
 
-From a practial point a question might be asked how to query a property which happens to contain the dot (`.`) character. In the example above, `a.b.c` does not lookup property `b.c` on `a`. But what if we just want to do so? In that case, property operator `[]` comes to rescue:
+From a practial point a question might be asked how to query a property which happens to contain the dot (`.`) character. In `a.b.c` example shown above, how would we lookup property `b.c` on `a`? Operator `[]` comes to rescue:
 {{{
  a['b']        => a.b
  (a['b'])['c'] => a.b.c
@@ -78,13 +79,44 @@ From a practial point a question might be asked how to query a property which ha
  a['b.c']      => query property 'b.c' on a 
 }}}
 
-So far, properties don't seem of any good use. The picture changes perhaps this this example:
+So far, properties don't seem of any good use. The picture changes perhaps with this example:
 {{{
  'abc'.toupper           => 'ABC'
  'abc'.length*4          => 12
  'abc'['tofile'].mkdir   => true/false
 }}}
 The last example demonstrates that there might also be [http://en.wikipedia.org/wiki/Side_effect_(computer_science) side effects] querying a property. In the example above, which is specific for Flaka, a directory `abc` gets created and the whole expression evaluates to `true` if the directory could get created and `false` otherwise.
+
+= Implicit Objects =
+
+Properties are good to query the state or features of data objects. The question is however how do we a data object to query in the first place? To start with something, _EL_ allows the implementation to provide _implicit_ objects and [#Functions]. 
+
+The following implicit objects are defined by Flaka:
+  * *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
+  * *property* Use this object to query project properties.
+  * *var* A object containing all project references. 
+  * *reference* Same as *var*
+  * *target* Use this object to query a target
+  * *taskdef* Query taskdefs
+  * *macrodefs* Macros
+  * *tasks*  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace.
+  * *filter*  A object containing all filters defined in this project.
+
+Assume for example that a property `foo` has been defined like 
+{{{
+<!-- standard Ant -->
+<property name="foo" value="bar" />
+}}}
+Then `property.foo` or `property['foo']` or even `project.properties.foo` would evaluate to string `bar`. 
+
+= Functions =
+
+_EL_ also allows the implementation to provide top level functions. The following sections describe functions provided by Flaka.
+
+|| Function || Type || Meaning ||
+|| `size(object)`   || int  || Returns the object's size. The size of the object is given by the number of entities it contains. This is 0 (zero) for all primitive types. Otherwise the size is determined by an underlying `size()` method or `size` or `length` attribute of the object in question. || 
+|| isnil(object)    || bool || Evaluates to `true` if object is the `nil` entity; otherwise `false`. This function can be used to check whether a reference (var) or property exists. Operator `empty` can't be used for this task, cause `empty` returns `true` if either not existing or if literatly _empty_ (for example the empty string).
+
 
 
 A EL expression is in general written as `#{..}` or `${..}`. The latter form is deprecated because this is Ant's way to query a property. Only if `${foo}` can't be resolved by Ant as property will `${foo}` be subject to EL evaluation. However, this only happens if 
@@ -104,20 +136,48 @@ Task `echo` is a standard Ant task and Ant is only able to resolve properties. O
 }}}
 Flaka's `echo` is derived from standard `echo`. In addition some additional features are available. One feature, as demonstrated above, is the evaluation of embedded EL expressions. Other features of `echo` are described [Tasks#echo here].
 
-== Implicit Objects ==
+= String Properties =
 
-The following implicit objects are available by default:
-  * *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
-  * *property* Use this object to query project properties.
-  * *var* A object containing all project references. 
-  * *reference* Same as *var*
-  * *target* Use this object to query a target
-  * *taskdef* Query taskdefs
-  * *macrodefs* Macros
-  * *tasks*  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace.
-  * *filter*  A object containing all filters defined in this project.
+= File Properties =
 
-== Example ==
+Files and folders is Ant's bread and butter. A couple of properties are defined on file objects to simplify scripting (see below). Most important is however how to _get_ a file object in the first place. This is most easily done by using string property `tofile`:
+{{{
+  'myfolder'.tofile.isdir 
+}}}
+In this example of an EL expression, string `myfolder` is converted in a File object using property `tofile`. In addition, the so created object is checked whether it is a folder or not.
+
+The following _properties_ are defined on File objects:
+|| Property || Type || Meaning ||
+|| `parent` || File || parent of file or folder as file object ||
+|| `toabs`|| File || file or folder as absolute file object ||
+|| `exists` || bool || check whether file or folder exists ||
+|| `isfile` || bool || check whether a file ||
+|| `isdir`  || bool || check whether a folder (directory) ||
+|| `ishidden` || bool || check whether a hidden file or folder ||
+|| `isread` || bool || check whether a file or folder is readable ||
+|| `iswrite` || bool || check whether a file or folder is writable ||
+|| `size`   || int  || number of bytes in a (existing) file; 0 otherwise||
+|| `length` || int  || same as `size` ||
+|| `mtime`  || Date || last modification date  ||
+|| `list`   || File[] || array of files in folder ; otherwise `null` ||
+|| `tostr` || String || file name as string object ||
+|| `touri`    || URI  || file as URI object ||
+|| `tourl`    || URL  || file as URL object ||
+|| `delete` || bool || deletes the file or folder (true); false otherwise ||
+|| `mkdir`  || bool || creates the folder (and intermediate) folders (true); false otherwise ||
+
+When evaluating a condition to a bool value, a File object is checked for existence. For example, the following condition evaluates always to `true`:
+
+{{{
+ <c:set  var="f" value="'${ant.file}'.tofile " />
+ <c:when test=" f " /> -- evaluates to 'true'; is same as
+ <c:when test=" f.exists " />  
+}}}
+
+
+
+
+= Example =
 
 The following larger example shows EL usage examples. Before starting, we define a couple of entities:
 {{{
@@ -190,67 +250,5 @@ Then we evaluate EL expressions in using Flaka's echo (again, we could have used
 </c:echo>
 }}}
 
-== Properties ==
 
-To check whether a property exists or not try 
-{{{
-property.foobar ? 'exists' : 'absent'
-}}} 
-
-== File and Folders ==
-
-Files and folders is Ant's bread and butter. A couple of properties are defined on file objects to simplify scripting (see below). Most important is however how to _get_ a file object in the first place. This is most easily done by using string property `tofile`:
-{{{
-  'myfolder'.tofile.isdir 
-}}}
-In this example of an EL expression, string `myfolder` is converted in a File object using property `tofile`. In addition, the so created object is checked whether it is a folder or not.
-
-The following _properties_ are defined on File objects:
-|| Property || Type || Meaning ||
-|| `parent` || File || parent of file or folder as file object ||
-|| `toabs`|| File || file or folder as absolute file object ||
-|| `exists` || bool || check whether file or folder exists ||
-|| `isfile` || bool || check whether a file ||
-|| `isdir`  || bool || check whether a folder (directory) ||
-|| `ishidden` || bool || check whether a hidden file or folder ||
-|| `isread` || bool || check whether a file or folder is readable ||
-|| `iswrite` || bool || check whether a file or folder is writable ||
-|| `size`   || int  || number of bytes in a (existing) file; 0 otherwise||
-|| `length` || int  || same as `size` ||
-|| `mtime`  || Date || last modification date  ||
-|| `list`   || File[] || array of files in folder ; otherwise `null` ||
-|| `tostr` || String || file name as string object ||
-|| `touri`    || URI  || file as URI object ||
-|| `tourl`    || URL  || file as URL object ||
-|| `delete` || bool || deletes the file or folder (true); false otherwise ||
-|| `mkdir`  || bool || creates the folder (and intermediate) folders (true); false otherwise ||
-
-When evaluating a condition to a bool value, a File object is checked for existence. For example, the following condition evaluates always to `true`:
-
-{{{
- <c:set  var="f" value="'${ant.file}'.tofile " />
- <c:when test=" f " /> -- evaluates to 'true'; is same as
- <c:when test=" f.exists " />  
-}}}
-
-== Functions ==
-
-The following functions are defined:
-
-|| Function || Type || Meaning ||
-|| `size(object)`   || int  || Returns the object's size. The size of the object is given by the number of entities it contains. This is 0 (zero) for all primitive types. Otherwise the size is determined by an underlying `size()` method or `size` or `length` attribute of the object in question. || 
-|| isnil(object)    || bool || Evaluates to `true` if object is the `nil` entity; otherwise `false`. This function can be used to check whether a reference (var) or property exists. Operator `empty` can't be used for this task, cause `empty` returns `true` if either not existing or if literatly _empty_ (for example the empty string).
-
-
-== Conditions ==
-
-Conditions are expressions which are evaluated to return either `true` or `false`. EL defines the usual operators (`not`, `and` and `or`) to construct arbitratry complex conditions.
-
-{{{
-<c:when test="f.isdir and (not f.ishidden)">
-  -- do something with this 'regular' folder ..
-</c:when>
-}}}
-
-Notice that the enclosing `#{..}` is not required and not even allowed. 
 
