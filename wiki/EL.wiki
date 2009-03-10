@@ -2,32 +2,96 @@
 <wiki:toc />
 = Introduction =
 
-The Java Unified Expression Language (JSR-245) is a special purpose programming language offering a simple way of accessing data objects. The language has its roots in Java web applications for embedding expressions into web pages. While the expression language is part of the JSP specification, it does in no way depend on the JSP specification. To the contrary, the language can be made available in a variety of context.
+The [http://en.wikipedia.org/wiki/Unified_Expression_Language Java Unified Expression Language] [http://www.jcp.org/en/jsr/detail?id=245 (JSR-245)] is a special purpose programming (albeit not turing complete) language offering a simple way of accessing data objects. The language has its roots in Java web applications for embedding expressions into web pages. While the expression language is part of the JSP specification, it does in no way depend on the JSP specification. To the contrary, the language can be made available in a variety of contexts.
 
-One such context is Ant scripting. Ant makes it difficult to access data objects. For example, there is no way of querying the underlying data object for the base folder (the folder containing the build script). This is now easy:
+One such context is Ant scripting. Ant makes it difficult to access data objects. For example, there is no way of querying the underlying data object for the base folder (the folder containing the build script). All that Ant offers is the path name of this folder as _string_ object. This makes it for example rather cumbersome to report the last modification time of this folder. With the help of EL (sort for Unified Expression Language) this becomes an easy task:
 
 {{{
 <c:echo>
-  Absolute path (as string) of base folder 
-  #{project.baseDir.absolutePath}
-  
-  The parent folder
-  #{project.baseDir.parent}
-  
-  The 'foo' property
-  #{empty property.foo ? 'bar' : foo}
+  ;; basedir is a standard Ant property 
+  folder = ${basedir}
 
-  #{property['ant.file']
+  ;; report last modification time (as Date object)
+  last modified = #{ '${basedir}'.tofile.mtime }
+
+  ;; dump the full name of this build file 
+  ;; where 'ant.file' is a standard property
+  this build file is #{property['ant.file'] }
 </c:echo>
 }}}
 
-= Details =
-== Enabling/Disabling EL ==
+Being executed, this snippet produces something like 
+{{{
+[c:echo] folder = /projects/flaka/test
+[c:echo] 
+[c:echo] last modified = Mon Mar 09 13:52:29 CET 2009
+[c:echo] 
+[c:echo] this build file is /projects/flaka/test/tryme.xml
+}}}
+as output. Notice the usage of task [Tasks#echo echo]. When being tried with [http://ant.apache.org/manual/CoreTasks/echo.html Ant's standard echo task], a totally different output needs to be expected. Most important, EL references `#{..}` are not resolved but rather print as given.
 
-By default, EL is enabled. EL can be enabled by setting property _ant.el_ to `false` (exactly as written). 
 
+= Enabling/Disabling EL =
 
-== Basic Usage ==
+By default, _EL_ is enabled. _EL_ can be disabled by setting property `ant.el` to `false` (exactly as written). 
+
+= Basics =
+
+The gory details of _EL_ are laid out in the official JSR 245 specification. The [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf final release as PDF] can be retrieved from the [http://code.google.com/p/flaka/downloads/list download page].
+
+In short however, _EL_ let's you formulate [http://en.wikipedia.org/wiki/Expression_(programming) programming expressions] like 
+{{{
+  7 * (5.0+x)            ;; 1
+  a and not (b or true)  ;; 2
+  empty x ? 'foo' : x[0] ;; 3
+
+  a.b.c                 ;; 3
+  a['a.b']              ;; 4
+  empty a.b             ;; 5
+  list(1,b,i+1)         ;; 6
+}}}
+The expression in line (1) is a algebraic while (2) contains a boolean expression. The result of (1) depends on the resolution of variable `x` and similar does (2) on `a` and `b` (although `b` does not really matter here). 
+
+== Data Types ==
+_EL_'s data types are integral and floating point numbers, strings, boolean and type `null`. Example data values of each type, except type `null`, are given above (1-3). Type `null` has once instance value also named `null`. While `null` can't be used to formulate an expression, it is important to understand that the result of evaluating an expression can be `null`. For example, the evaluation of a variable named `x` is the data object associated with that name. If no data is associcated however (i.e. if `x` is undefined), then `x` evaluates to `null`.
+
+== Operators ==
+Two _operators_ are defined in _EL_:
+ # `empty` checks whether a variable is empty or not and returns either `true` or `false`. It is important to understand that `null` is considered empty.
+ #  condition operator `c ? a : b` evaluates `c` in a boolean context and returns the evaluation of expression `a` if `c` evaluates to `true`; otherwise `eval(b)` will be the result of this operator.
+  
+== Properties ==
+
+Every data object in _EL_ may have properties associated. Which properties are available is not standardized in the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf _EL_ specification]. In fact, this depends heavily on the underlying implementation or specification. What _EL_ specifies however, is how to query a property:
+{{{
+a.b.c
+}}}
+This expression can be translated into pseudo code as
+{{{
+ (property 'c' (property 'b' (eval a)))
+}}}
+which means that first variable `a` is evaluted, then property `b` is looked up on the evaluation result (giving a new evaluation result) and finally `c` is looked up giving the final result. 
+
+Perhaps the most important point to notice is looking up a property on `null` is not an error but perfectly legal. No exception gets raised and no warning message generated. In fact, the result of such a operation is just `null` again.
+
+From a practial point a question might be asked how to query a property which happens to contain the dot (`.`) character. In the example above, `a.b.c` does not lookup property `b.c` on `a`. But what if we just want to do so? In that case, property operator `[]` comes to rescue:
+{{{
+ a['b']        => a.b
+ (a['b'])['c'] => a.b.c
+ a['b']['c']   => a.b.c
+ a[b]          => can't be expressed using '.'
+ a[b.c]        => neither this ..
+ a['b.c']      => query property 'b.c' on a 
+}}}
+
+So far, properties don't seem of any good use. The picture changes perhaps this this example:
+{{{
+ 'abc'.toupper           => 'ABC'
+ 'abc'.length*4          => 12
+ 'abc'['tofile'].mkdir   => true/false
+}}}
+The last example demonstrates that there might also be [http://en.wikipedia.org/wiki/Side_effect_(computer_science) side effects] querying a property. In the example above, which is specific for Flaka, a directory `abc` gets created and the whole expression evaluates to `true` if the directory could get created and `false` otherwise.
+
 
 A EL expression is in general written as `#{..}` or `${..}`. The latter form is deprecated because this is Ant's way to query a property. Only if `${foo}` can't be resolved by Ant as property will `${foo}` be subject to EL evaluation. However, this only happens if 
   # property `foo` does not exists (as already mentioned)
