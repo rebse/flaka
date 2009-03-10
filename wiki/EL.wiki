@@ -37,29 +37,23 @@ By default, _EL_ is enabled. _EL_ can be disabled by setting property `ant.el` t
 
 = Basics =
 
-The gory details of _EL_ are laid out in the official JSR 245 specification. The [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf final release as PDF] can be retrieved from the [http://code.google.com/p/flaka/downloads/list download page].
-
-In short however, _EL_ let's you formulate [http://en.wikipedia.org/wiki/Expression_(programming) programming expressions] like 
+The gory details of _EL_ are laid out in  the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf the official JSR 245 specification] and are not repeated here. In short however, _EL_ let's you formulate [http://en.wikipedia.org/wiki/Expression_(programming) programming expressions] like 
 {{{
-  7 * (5.0+x)            ;; 1
-  a and not (b or true)  ;; 2
-  empty x ? 'foo' : x[0] ;; 3
-
-  a.b.c                 ;; 3
-  a['a.b']              ;; 4
-  empty a.b             ;; 5
-  list(1,b,i+1)         ;; 6
+  7 * (5.0+x) >= 0        ;; 1
+  a and not (b || false)  ;; 2
+  empty x ? 'foo' : x[0]  ;; 3
 }}}
-The expression in line (1) is a algebraic while (2) contains a boolean expression. The result of (1) depends on the resolution of variable `x` and similar does (2) on `a` and `b` (although `b` does not really matter here). 
+The expression in line (1) is a algebraic while (2) contains a boolean expression. The result of (1) depends on the resolution of variable `x` and similar does (2) on `a` and `b`.
 
 == Data Types ==
 _EL_'s data types are integral and floating point numbers, strings, boolean and type `null`. Example data values of each type, except type `null`, are given above (1-3). Type `null` has once instance value also named `null`. While `null` can't be used to formulate an expression, it is important to understand that the result of evaluating an expression can be `null`. For example, the evaluation of a variable named `x` is the data object associated with that name. If no data is associcated however (i.e. if `x` is undefined), then `x` evaluates to `null`.
 
 == Operators ==
-Two _operators_ are defined in _EL_:
+Four _operators_ are defined in _EL_:
  # `empty` checks whether a variable is empty or not and returns either `true` or `false`. It is important to understand that `null` is considered empty.
  #  condition operator `c ? a : b` evaluates `c` in a boolean context and returns the evaluation of expression `a` if `c` evaluates to `true`; otherwise `eval(b)` will be the result of this operator.
-  
+ # `.` and ;
+ # `[]` are property operators described in [#Properties section _Properties_] below.
 == Properties ==
 
 Every data object in _EL_ may have properties associated. Which properties are available is not standardized in the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf _EL_ specification]. In fact, this depends heavily on the underlying implementation or specification. What _EL_ specifies however, is how to query a property:
