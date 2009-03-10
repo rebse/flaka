@@ -31,10 +31,91 @@ Being executed, this snippet produces something like
 as output. Notice the usage of task [Tasks#echo echo]. When being tried with [http://ant.apache.org/manual/CoreTasks/echo.html Ant's standard echo task], a totally different output needs to be expected. Most important, EL references `#{..}` are not resolved but rather print as given.
 
 
-= Enabling/Disabling EL =
+= Disabling EL =
 
-By default, _EL_ is enabled. _EL_ can be disabled by setting property `ant.el` to `false` (exactly as written). 
+By default, _EL_ is enabled. _EL_ can be disabled by setting property `ant.el` to `false` (exactly as written). For example:
+{{{
+<!-- globally disable EL --->
+<property name="ant.el" value="false" />
+}}} 
+If the property is not set, or set to a different value, then _EL_ is enabled.
 
+= EL in Action =
+
+The following example shows _EL_ in action.
+{{{
+<c:mset>
+  root = '/'.tofile
+  list = list()
+</c:mset>
+<c:for var="file" in=" root.list ">
+  <c:when test=" file.isdir and not file.isread ">
+    <c:mset>
+      list = append(file,list)
+    </c:mset>
+  </c:when>
+</c:for>
+<c:echo>
+  ;; how many unreadable directories ??
+  There are #{size(list)} unreadable directories in #{root}.
+  And here they are #{list}.
+</c:echo>
+}}}
+
+Executed on MacOS 10.5.6 (aka "Leopard"), this gives:
+{{{
+[c:echo] There are 2 unreadable directories in /.
+[c:echo] And here they are [/.Trashes, /.Spotlight-V100].
+}}}
+
+= EL's Availability =
+
+_EL_ expressions can only be used in tasks which are _EL_ ready. This are:
+
+ * [Tasks#set], [Tasks#mset]
+ * [Tasks#properties]
+ * [Tasks#when], [Tasks#unless]
+ * [Tasks#for]
+ * [Tasks#echo]
+
+Further tasks to follow. It is further worked on to provide a task which enables _EL_ on a core level. This would allow to use _EL_ expressions similar to Ant property references `${..}`.
+
+= EL Expression References =
+
+Those not familiar with  [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf EL's specification], [http://en.wikipedia.org/wiki/JavaServer_Pages JSP] or [http://en.wikipedia.org/wiki/JavaServer_Faces JSF] may safely skip this section. 
+
+For those familiar, the _term EL expression_ is used in a slightly different way in this documentation than in the specification. According to the specification, `#{..}` is an EL expression. 
+
+Not so in this documentation. Here only the inner part, denoted by `..` while `#{ ..}` is considered a _reference to an EL expression_. A reference to an expression is used in contexts which are not evaluated by default. Take task [Tasks:#echo] as example. Clearly, when writing 
+{{{
+<c:echo>
+ Hello world.
+</c:echo>
+}}}
+we expect an output exactly as written. It would be nice to indicate however, that we want to have a part of the input evaluated as EL expression. This and only this is what `#{..}` is good for:
+{{{
+<c:echo>
+ Hello #{ who }
+</c:echo>
+}}}
+
+In other contexts, like in `<c:when test=" empty x " />`, a EL expression is expected anyway and it does not make the slightest sense to require the expression to be quoted like `#{ empty x }`.
+
+Notice however, that in all contexts where a expression is expected, a expression reference can be used. This allows for advanced meta programming like shown in the following example:
+{{{
+<c:mset>
+  metavar = 'i'
+  ii = 0
+</c:mset>
+<c:for var=" #{metavar}#{metavar} " in=" list('a','b') " >
+  <c:set var=" #{metavar}#{metavar} " value=" #{metavar}#{metavar} + 1 " />
+<c:/for>
+<c:echo>
+  The value of 'ii' is #{ ii }
+  ;; the value of 'ii' will be 2
+<c:/echo>
+}}}
+ 
 = Basics =
 
 The gory details of _EL_ are laid out in  the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf the official JSR 245 specification] and are not repeated here. In short however, _EL_ let's you formulate [http://en.wikipedia.org/wiki/Expression_(programming) programming expressions] like 
