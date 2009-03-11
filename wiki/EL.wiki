@@ -223,6 +223,7 @@ _EL_ also allows the implementation to provide top level functions. The followin
 {{{
 append('a,list('b'),'c') -- ('a','b','c')
 }}}
+||
 
 = String Properties =
 
