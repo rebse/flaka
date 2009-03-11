@@ -74,11 +74,11 @@ Executed on MacOS 10.5.6 (aka "Leopard"), this gives:
 
 _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
 
- * [Tasks#set], [Tasks#mset]
- * [Tasks#properties]
- * [Tasks#when], [Tasks#unless]
- * [Tasks#for]
- * [Tasks#echo]
+ * [Tasks#set set], [Tasks#mset mset]
+ * [Tasks#properties properties]
+ * [Tasks#when when], [Tasks#unless unless]
+ * [Tasks#for for]
+ * [Tasks#echo echo]
 
 Further tasks to follow. It is further worked on to provide a task which enables _EL_ on a core level. This would allow to use _EL_ expressions similar to Ant property references `${..}`.
 
@@ -88,33 +88,41 @@ Those not familiar with  [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.p
 
 For those familiar, the _term EL expression_ is used in a slightly different way in this documentation than in the specification. According to the specification, `#{..}` is an EL expression. 
 
-Not so in this documentation. Here only the inner part, denoted by `..` while `#{ ..}` is considered a _reference to an EL expression_. A reference to an expression is used in contexts which are not evaluated by default. Take task [Tasks:#echo] as example. Clearly, when writing 
+Not so in this documentation. Here only the inner part, denoted by `..` while `#{ ..}` is considered a _reference to an EL expression_. A reference to an expression is used in contexts which are not evaluated by default. Take task [Tasks#echo echo] as example. Clearly, when writing 
 {{{
 <c:echo>
- Hello world.
+ I said 'Hello world'!
 </c:echo>
 }}}
 we expect an output exactly as written. It would be nice to indicate however, that we want to have a part of the input evaluated as EL expression. This and only this is what `#{..}` is good for:
 {{{
 <c:echo>
- Hello #{ who }
+ I said '#{ what }'!
 </c:echo>
 }}}
 
-In other contexts, like in `<c:when test=" empty x " />`, a EL expression is expected anyway and it does not make the slightest sense to require the expression to be quoted like `#{ empty x }`.
+In other contexts, like in `<c:when test=" condition " />`, a EL expression is expected anyway and it does not make the slightest sense to require the expression to be referenced. As an example, assume that we want to check whether a property named 'foobar' exists. Instead of writing
+{{{
+<c:when test=" #{has.property.foobar} " />   -- don't!
+}}}
+as seen in popular JSP tag libraries, just write
+{{{
+<c:when test=" has.property.foobar " />   -- yes!
+}}}
+and forget about that unnecessary clutter.
 
 Notice however, that in all contexts where a expression is expected, a expression reference can be used. This allows for advanced meta programming like shown in the following example:
 {{{
 <c:mset>
   metavar = 'i'
-  ii = 0
+  i = 0
 </c:mset>
 <c:for var=" #{metavar} " in=" list('a','b') " >
   <c:set var=" #{metavar} " value=" #{metavar} + 1 " />
 <c:/for>
 <c:echo>
-  The value of 'ii' is #{ ii }
-  ;; the value of 'ii' will be 2
+  The value of 'i' is #{ i }
+  ;; the value of 'i' will be 2
 <c:/echo>
 }}}
  
