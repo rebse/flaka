@@ -197,7 +197,6 @@ The following implicit objects are defined by Flaka:
 An example for an EL expression fetching property `foo` is:
 {{{
 property.foo
-property['foo']
 project.properties.foo
 }}}
 
@@ -216,7 +215,14 @@ _EL_ also allows the implementation to provide top level functions. The followin
 
 || Function || Type || Meaning ||
 || `size(object)`   || int  || Returns the object's size. The size of the object is given by the number of entities it contains. This is 0 (zero) for all primitive types. Otherwise the size is determined by an underlying `size()` method or `size` or `length` attribute of the object in question. || 
-|| isnil(object)    || bool || Evaluates to `true` if object is the `nil` entity; otherwise `false`. This function can be used to check whether a reference (var) or property exists. Operator `empty` can't be used for this task, cause `empty` returns `true` if either not existing or if literatly _empty_ (for example the empty string). ||
+|| `null(object)`    || bool || Evaluates to `true` if object is the `nil` entity; otherwise `false`. This function can be used to check whether a reference (var) or property exists. Operator `empty` can't be used for this task, cause `empty` returns `true` if either not existing or if literatly _empty_ (for example the empty string). ||
+|| `file(object)`   || File || Creates and returns a file object out of `object`. If `object` is already a file, the object is simply returned. Otherwise, the object is streamed into a string and that string is taken as the file's path name. ||
+|| concat(object..) || string || Creates a string by concatenating all stringized objects. If no object is provided, the empty string is returned. ||
+|| list(object..) || list || Returns a list where the list's elements consists of the objects provided. If no objects are provided, the empty list is returned. ||
+|| append(object..) || list || This function is similar to `list`. It takes the objects in order and creates a list elements out of them. If a object is a list, then elements of that list are inserted instead of the list object itself. For example: 
+{{{
+append('a,list('b'),'c') -- ('a','b','c')
+}}}
 
 = String Properties =
 
