@@ -323,7 +323,44 @@ Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines
 
 === References ===
  * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
+= unset =
 
+The unset statement allows for the removal of a resource within a project. As of version 2.1.5, unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
+
+{{{
+ <c:unset var="v1 v2 v3" />
+}}}
+
+This example demonstrates how to remove properties v1, v2 and v3 regardless whether they exist before or not. Be aware that unset also removes properties given via the command line (aka user properties).
+
+=== Attributes ===
+ * var <br>The name of the property or properties to be removed. Use whitespace characters, preferably the blank character as shown in the examples, for separation. Instead of attribute var, attribute name and property can be used although this name are deprecated. The behavior of unset is undefined if a combination of this attributes, like in <c:unset var="x" property="y" />, is used.
+
+=== Example I ===
+
+This example demonstrates the usage. Notice that property v2 is set via the command line, i.e. a so called user property in Ant terminology.
+
+{{{
+ <property name="v1" value="v1" />
+ <echo>v1 = ${v1} | v2 = ${v2}</echo>
+ <c:unset var=" v1 v2 " />
+ <echo>v1 = ${v1} | v2 = ${v2}</echo>
+}}}
+
+This will give:
+
+{{{
+ $ ant -Dv2=v2
+ v1 = v1    | v2 = v2
+ v1 = ${v1} | v2 = ${v2}
+}}}
+
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
+
+
+= Looping =
 == for == 
 
 A task that implements a loop statement.
@@ -418,6 +455,58 @@ This would print:
  * Classname: net.haefelingerit.flaka.Continue [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Continue.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Continue.java (*Source*)]
  * Task [Tasks#for for] 
  * Task [Tasks#break break]
+
+
+= Conditional Tasks =
+
+== when == 
+
+Task when represents a else-less if statement. 
+
+=== Attributes ===
+ * test<br/>A test condition that must evaluate to true in order to execute the body of this if statement.
+=== Elements ===
+ * Any task or macro instance
+
+=== Example I ===
+
+The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
+
+{{{
+ <c:when test=" -f '${file}'">
+  <echo>
+    <loadfile property="__z__" />
+    <echo message="${__z__}" />
+  </echo>
+ </c:when>
+}}}
+
+Note that the example is bit artificial cause Ant's loadfile task is sufficient. Further note that the argument ${file} has been quoted in the test condition in order to force a proper parsing of the condition. The parsing algorithm is based on whitespace. A blank or tab in ${file} would therefore cause a syntax error. The enclosing quotes enforce that ${file} will not be broken into pieces.
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
+
+
+
+== unless ==
+
+This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
+
+=== Example ===
+
+This example shows how to create a folder named libdir if such a folder does not already exist.
+
+{{{
+ <c:unless test="-d 'libdir'">
+  <mkdir dir="libdir" />
+ </c:unless>
+}}}
+
+
+
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
 
 == choose == 
 
@@ -592,53 +681,9 @@ For further processing, properties like g.s1 and g.e1 are set. Property g.s1 con
 
 === References ===
  * Classname: net.haefelingerit.flaka.Switch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Switch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Switch.java (*Source*)]
-= throw = 
 
-A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard task {{AntRefCore|1=fail}}.
-
-Note that throw would re-throw the last thrown exception - regardless of the current context. The following would therefore work:
-
-{{{
- <c:trycatch>
-  <try> 
-    <fail message="4711" />
-  </try>
-  <catch>
-    -- handle the exception ..
-  <catch>
- </c:trycatch>
- ..
- .. -- very much later
- .. 
- <c:throw /> -- re-throws "4711" exception!!!
-}}}
-
-=== Attributes ===
- * reference<br/>The name of the reference holding the previously thrown exception [trycatch.object]
- * var<br/>Same as reference
-
-=== Example ===
-
-A typical usage example:
-
-{{{
- <c:trycatch>
-  <try> ..<fail message="4711"/> </try>
-  <catch>
-    <echo>caught exception ..</echo>
-    <c:throw />
-  </c:catch>
- </c:trycatch>
-}}}
-
-When being executed, Ant would receive a build exception (re-thrown within the catch clause) containing "4711" and terminate.
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
- * Task [Tasks#trycatch trycatch]
-
-= trycatch = 
+= Exception Handing =
+== trycatch == 
 
 A task mirroring try-catch-finally exception handling found in various languages.
 
@@ -726,89 +771,51 @@ Giving:
 === References ===
  * Classname: net.haefelingerit.flaka.TryCatch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/TryCatch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/TryCatch.java (*Source*)]
 
-= unless = 
+== throw ==
 
-This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
+A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard task {{AntRefCore|1=fail}}.
+
+Note that throw would re-throw the last thrown exception - regardless of the current context. The following would therefore work:
+
+{{{
+ <c:trycatch>
+  <try> 
+    <fail message="4711" />
+  </try>
+  <catch>
+    -- handle the exception ..
+  <catch>
+ </c:trycatch>
+ ..
+ .. -- very much later
+ .. 
+ <c:throw /> -- re-throws "4711" exception!!!
+}}}
+
+=== Attributes ===
+ * reference<br/>The name of the reference holding the previously thrown exception [trycatch.object]
+ * var<br/>Same as reference
 
 === Example ===
 
-This example shows how to create a folder named libdir if such a folder does not already exist.
+A typical usage example:
 
 {{{
- <c:unless test="-d 'libdir'">
-  <mkdir dir="libdir" />
- </c:unless>
+ <c:trycatch>
+  <try> ..<fail message="4711"/> </try>
+  <catch>
+    <echo>caught exception ..</echo>
+    <c:throw />
+  </c:catch>
+ </c:trycatch>
 }}}
 
-
+When being executed, Ant would receive a build exception (re-thrown within the catch clause) containing "4711" and terminate.
 
 
 === References ===
- * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
-
-= unset =
-
-The unset statement allows for the removal of a resource within a project. As of version 2.1.5, unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
-
-{{{
- <c:unset var="v1 v2 v3" />
-}}}
-
-This example demonstrates how to remove properties v1, v2 and v3 regardless whether they exist before or not. Be aware that unset also removes properties given via the command line (aka user properties).
-
-=== Attributes ===
- * var <br>The name of the property or properties to be removed. Use whitespace characters, preferably the blank character as shown in the examples, for separation. Instead of attribute var, attribute name and property can be used although this name are deprecated. The behavior of unset is undefined if a combination of this attributes, like in <c:unset var="x" property="y" />, is used.
-
-=== Example I ===
-
-This example demonstrates the usage. Notice that property v2 is set via the command line, i.e. a so called user property in Ant terminology.
-
-{{{
- <property name="v1" value="v1" />
- <echo>v1 = ${v1} | v2 = ${v2}</echo>
- <c:unset var=" v1 v2 " />
- <echo>v1 = ${v1} | v2 = ${v2}</echo>
-}}}
-
-This will give:
-
-{{{
- $ ant -Dv2=v2
- v1 = v1    | v2 = v2
- v1 = ${v1} | v2 = ${v2}
-}}}
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
-
-= when = 
-
-Task when represents a else-less if statement. 
-
-=== Attributes ===
- * test<br/>A test condition that must evaluate to true in order to execute the body of this if statement.
-=== Elements ===
- * Any task or macro instance
-
-=== Example I ===
-
-The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
-
-{{{
- <c:when test=" -f '${file}'">
-  <echo>
-    <loadfile property="__z__" />
-    <echo message="${__z__}" />
-  </echo>
- </c:when>
-}}}
-
-Note that the example is bit artificial cause Ant's loadfile task is sufficient. Further note that the argument ${file} has been quoted in the test condition in order to force a proper parsing of the condition. The parsing algorithm is based on whitespace. A blank or tab in ${file} would therefore cause a syntax error. The enclosing quotes enforce that ${file} will not be broken into pieces.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
-
+ * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
+ * Task [Tasks#trycatch trycatch]
 
 = Special Purpose Tasks =
 
@@ -825,7 +832,7 @@ A simple task to install or uninstall a special component handler supposed to ge
  * Classname: net.haefelingerit.flaka.InstCompH [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InstCompH.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InstCompH.java (*Source*)]
 
 
-= create-target = 
+== create-target ==
 
 Use this task to create a dynamic target within the current project. Usually targets are declaratively written within a build file. The following target
 
@@ -854,7 +861,7 @@ Note: The current version allows only the specification of one task or macro wit
 === References ===
  * Classname: net.haefelingerit.flaka.CreateTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/CreateTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/CreateTarget.java (*Source*)]
 
-= cvsstat = 
+== cvsstat == 
 
 This task is similar to using `cvs stat -v file`.
 
@@ -918,7 +925,7 @@ would set the following properties:
 === References ===
  * Classname: net.haefelingerit.flaka.CvsStat [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/CvsStat.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/CvsStat.java (*Source*)]
 
-= export = 
+== export == 
 
 Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
 
@@ -932,7 +939,7 @@ Use this task to dump a file within the Flaka package to stdout or a file.  This
 === References ===
  * Classname: net.haefelingerit.flaka.Export [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Export.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Export.java (*Source*)]
 
-= find = 
+== find == 
 
 A file reporting task inspired by UNIX's find command. Ant lacks such a simple task to report all or certain files in a folder.
 
@@ -975,10 +982,6 @@ Report all files in the folder containing this Ant build file.
 
 Note that this function dirname needs to be enabled by installing Flaka's property handler [Tasks#property-handler property-handler] once.
 
-
-
-
-
 === References ===
  * Classname: net.haefelingerit.flaka.Find [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Find.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Find.java (*Source*)]
 
@@ -990,7 +993,7 @@ Note that this function dirname needs to be enabled by installing Flaka's proper
  * Task [Tasks#continue continue]
  * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
 
-= getdeps = 
+== getdeps ==
 
 A task to retrieve dependencies.
 
@@ -1070,7 +1073,7 @@ Retrieve dependencies from a list of depots into local folder build/lib (which m
 === References ===
  * Classname: net.haefelingerit.flaka.GetDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/GetDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/GetDeps.java (*Source*)]
 
-= ifdef = 
+== ifdef == 
 
 A general task to check whether something is defined, where something can be a property,  reference, task, macro, target, type or Java class. If all conditions evaluate to true, then all elements listed in body of this task are executed.
 
@@ -1126,7 +1129,7 @@ Note that leading and trailing whitespace characters are always stripped before 
 === References ===
  * Classname: net.haefelingerit.flaka.IfDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfDef.java (*Source*)]
 
-= ifndef = 
+== ifndef == 
 
 This task a shortcut for using task [Tasks#ifdef ifdef] and attribute invert:
 
@@ -1138,7 +1141,7 @@ This task a shortcut for using task [Tasks#ifdef ifdef] and attribute invert:
  * Classname: net.haefelingerit.flaka.IfNDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfNDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfNDef.java (*Source*)]
  * Task [Tasks#ifdef ifdef]
 
-= initssl =
+== initssl ==
 
 A task to initialize SSL. The current implementation ensures a SSL implementation is available. Furthermorem this task allows to install a trust store to verify certificates provided by a SSL server.
 
@@ -1174,7 +1177,7 @@ Such a property will not make it into your JVM's system properties. They will on
 
 
 
-= property-by-regex = 
+== property-by-regex == 
 
 A task to compose a property based on existing properties.
 
@@ -1278,7 +1281,7 @@ A list of functions provided by installing property-handler:
 === References ===
  * Classname: net.haefelingerit.flaka.Require [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Require.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Require.java (*Source*)]
 
-= run-macro = 
+== run-macro == 
 
 A task to invoke a macro or task (or a list of them) dynamically. 
 
@@ -1303,7 +1306,7 @@ The current version does not support calling macros or tasks with arguments.
 === References ===
  * Classname: net.haefelingerit.flaka.RunMacro [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunMacro.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunMacro.java (*Source*)]
 
-= run-target = 
+== run-target == 
 
 A task to invoke a target dynamically.
 
@@ -1325,7 +1328,7 @@ A task to invoke a target dynamically.
 === References ===
  * Classname: net.haefelingerit.flaka.RunTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunTarget.java (*Source*)]
 
-= set-default-target = 
+== set-default-target == 
 
 A task to define the project's default target. 
 
@@ -1351,7 +1354,7 @@ This example changes the default target to be called from this to foobar.
  * Classname: net.haefelingerit.flaka.SetDefault [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/SetDefault.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/SetDefault.java (*Source*)]
 
 
-= taskdotclasspath =
+== taskdotclasspath ==
 
 This task can be used to perform low level operations on a .classpath file. Supported operations are appending or removing classpath entries or to query the existence of certain entries. Operating on a non existing file does not throw a build exception nor will anything happen, i.e. appending to a non existing file will not create the file. It is expected that other tasks, for example the standard Ant task echoxml are being used to create an initial .classpath file.
 
@@ -1517,79 +1520,7 @@ A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.
 === References ===
  * Classname: net.haefelingerit.flaka.HttpUploadTask [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/HttpUploadTask.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/HttpUploadTask.java (*Source*)]
 
-= wc = 
-
-This task is inspired by the Unix command wc. Currently wc counts directories or files in an implicit fileset. Count words in files is currently not supported. A typical example:
-
-{{{
- <c:wc dir="." type="f" var="counter" />
- 
- <c:when test="${counter} -gt 0">
-  <echo>
-    You have `${counter}' files in your working directory.
-  </echo>
- <c:/when>
-}}}
-
-Here all files in the current working directory are counted. The counted number of files is stored in a variable for later usage as shown above.
-
-Implementation Note: This task is an implicit {{AntRefCoreType|1=fileset}} and supports therefore all attributes and elements supported by that type.
-
-=== Attributes ===
-Task wc supports the following attributes:
- * dir  
- * type
- * var
- * implicit fileset attributes, see standard Ant type {{AntRefCoreType|1=fileset}}
-
-Attribute dir selects the directory or directories to be scanned. The attribute's value is expected to be a whitespace separated list of strings. Quote a string argument if it contains a whitespace. Here's an example scanning three directories in one go:
-
-{{{
- <c:wc dir="a b 'c d'" />
-}}}
-
-While task wc supports implicit filesets and selectors it's often useful to have a shortcut to just count files or directories. This selection is supported by attribute type. If code is not given, then files and directories are counted. Otherwise, if type  contains a f then files are counted and similar d takes directories into account. Note that also a combination of both is possible. For example,
-
-{{{
- <c:wc type="df" .. />
-}}}
-
-counts directories and files. Note that each type descriptor is only once taken into account, i.e. type="ffd" does not count files twice.
-
-The result of wc, i.e. the number of counted items can be saved in a project property. The name of the property is specified via attribute var. If a property is not given, then Flaka will use _ as value and the same happens if var is an empty string, i.e. only contains whitespace characters. The property denoted by var does not need to exist. If it exists, it will be overridden. That's why the attribute has been named var and not property. Property are not override able in standard Ant (they are when suing Flaka though). 
-
-=== Elements ===
-
-All standard {{AntRefCoreType|1=fileset}} elements are applicable and can be further used to restrict the selection on which counting takes place. For example, to count all files having extension .java one would use
-
-{{{
- <c:wc ..>
-  <include name="**/*.java" />
- </c:wc>
-}}}
-
-
-=== Pitfalls ===
-
-wc behaves like an implicit fileset. As consequence not all files are taken into account. For example, directories named CVS are excluded from any fileset by default. Note that this is standard Ant behavior.
-
-Note that wc adds the number of counted files to the variable given and how this addition is done, depends on the value denoted by attribute var. If vars value is a well formed integer, then wc will add the counted number to that value. Contrary, if vars value is not well formed, then wc will perform a string concatenation operation. Here are two examples demonstrating
-this behavior. In both examples we assume that wc would count a total of 10 files. Then we would get:
-
-{{{
- <c:set var="x" value="5" />
- <c:wc  dir="." var="x" />     
- <echo>${x}</echo>          => 15
- <c:set var="y" value="total" />
- <c:wc  dir="." var="y" />     
- <echo>${y}</echo>          => total 10
-}}}
-
-=== References ===
- * Manual page of type {{AntRefCoreType|1=fileset}} 
- * Classname: net.haefelingerit.flaka.WC [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/WC.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/WC.java (*Source*)]
-
-= writedeps = 
+== writedeps ==
 
 A task to format dependencies in various predefined styles. In order to use this task, dependencies need to be defined and retrieved. See examples for details.
 
@@ -1647,7 +1578,7 @@ other supported formats are:
 === References ===
  * Classname: net.haefelingerit.flaka.WriteDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/WriteDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/WriteDeps.java (*Source*)]
 
-= xmlmerge = 
+== xmlmerge == 
 
 A simple task to merge XML files. 
 
