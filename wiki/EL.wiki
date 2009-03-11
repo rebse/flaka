@@ -239,7 +239,6 @@ Some mathematical functions are defined as well:
 || rand()      || double || Returns a double value with a positive sign, greater than or equal to 0.0 and less than 1.0. ||
 
 <wiki:comment>Why do I need to insert this page break here</wiki:comment>
-<br />
 
 = String Properties =
 
