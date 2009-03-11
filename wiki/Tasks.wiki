@@ -1,6 +1,6 @@
 #summary A summary of all Tasks implemented by Flaka
 #labels Featured
-<wiki:toc depth="2"/>
+<wiki:toc max_depth="2"/>
 
 = Elementary Tasks =
 == echo ==
