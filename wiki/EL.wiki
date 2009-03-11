@@ -178,6 +178,8 @@ So far, properties don't seem of any good use. The picture changes perhaps with 
 }}}
 The last example demonstrates that there might also be [http://en.wikipedia.org/wiki/Side_effect_(computer_science) side effects] querying a property. In the example above, which is specific for Flaka, a directory `abc` gets created and the whole expression evaluates to `true` if the directory could get created and `false` otherwise.
 
+See further down which properties are available on various data types.
+
 = Implicit Objects =
 
 Properties are good to query the state of data objects. The question is however, how do we get a data object to query in the first place? To start with _something_, [EL] allows the implementation to provide _implicit_ objects and [#Functions top level functions (see below)]. 
@@ -241,11 +243,42 @@ Some mathematical functions are defined as well:
 
 <wiki:comment>Why do I need to insert this page break here</wiki:comment>
 
-= String Properties =
+= Available Properties =
 
-bla bla
+In general properties are mapped as _attribute_ on the underlying data object. In Java, every _getX_ method taking no arguments identifies property _x_. As an example, assume that we have 
+{{{
+public class Foo {
+ public .. getBar() { .. }
+}
+}}}
+then an data object of type _Foo_ will have property _bar_ and thus the following expression `x.bar` would eventually call `Foo.getBar()` assuming that `x` evaluates to an object of type `Foo`. Such properties are the *natural* properties of a type.
 
-= File Properties =
+== Primitve Types ==
+
+Primite data types (int, double, bool, null) have no properties.
+
+== List and Arrays ==
+
+Besides their _natural_ properties (see discussion above) are _index_ properties available:
+{{{
+list('a','b')[1]  => 'b'
+}}}
+Negative indexes are currently not supported. If an index is specfies an not existing element, `null` is returned.
+
+
+== String Properties ==
+
+Besides _natural_ properties (see discussion above) are the following properties supported:
+
+|| Property || Type || Meaning ||
+|| length   || int  || number of characters in this string ||
+|| size     || int  || same as property `length` ||
+|| tolower  || string || return this string in lowercase characters only ||
+|| toupper  || string || return this string in uppercase characters only ||
+|| trim     || string || remove leading and trailing whitespace characters ||
+|| tofile   || file  || create a file based on this string; the so created will be relative to the current build file's base foder if the string's value does not denote a absolute path. Furthermore, the empty string will create a file object denoting the project's base folder (i.e. the folder containing the build script currently executed). 
+
+== File Properties ==
 
 Files and folders is Ant's bread and butter. A couple of properties are defined on file objects to simplify scripting (see below). Most important is however how to _get_ a file object in the first place. This is most easily done by using string property `tofile`:
 {{{
@@ -282,7 +315,7 @@ When evaluation a expr in a string context, a string representation of the final
 || string                || if string is empty || `false` otherwise ||
 || null                  || never  || always || 
 || boolean               || if true || otherwise ||
-
+|| _other_               || always  || never ||
 <wiki:comment>
 List all conversions
 </wiki:comment>
