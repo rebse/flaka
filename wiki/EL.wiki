@@ -238,7 +238,7 @@ Some mathematical functions are defined as well:
 || max(double,double) || double || Returns the larget of two double values. ||
 || rand()      || double || Returns a double value with a positive sign, greater than or equal to 0.0 and less than 1.0. ||
 
-
+Hmm?
 
 = String Properties =
 
