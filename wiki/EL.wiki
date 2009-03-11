@@ -281,7 +281,7 @@ When evaluation a expr in a string context, a string representation of the final
 || file                  || if the file exists || `false` otherwise ||
 || string                || if string is empty || `false` otherwise ||
 || null                  || never  || always || 
-|| boolean               || if true || otherwise
+|| boolean               || if true || otherwise ||
 
 <wiki:comment>
 List all conversions
