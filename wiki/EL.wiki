@@ -28,7 +28,7 @@ Being executed, this snippet produces something like
 [c:echo] 
 [c:echo] this build file is /projects/flaka/test/tryme.xml
 }}}
-as output. Notice the usage of task [Tasks#echo echo]. When being tried with [http://ant.apache.org/manual/CoreTasks/echo.html Ant's standard echo task], a totally different output needs to be expected. Most important, EL references `#{..}` are not resolved but rather print as given.
+as output. Notice the usage of task [Tasks#echo echo]. When being tried with [http://ant.apache.org/manual/CoreTasks/echo.html Ant's standard echo task], a totally different output needs to be expected. Most important, [#EL_References EL references] `#{..}` are not resolved but rather print as given.
 
 
 = Disabling EL =
@@ -42,15 +42,17 @@ If the property is not set, or set to a different value, then _EL_ is enabled.
 
 = EL in Action =
 
-The following example shows _EL_ in action.
+The code snippet following shows _EL_ in action. The idea is to list all unreadable files in a certain directory (here the root folder). The snippet shows how EL is used in [EL_Ready_Tasks Flaka tasks].
 {{{
 <c:mset>
+  ;; The right side is evaluated as EL expression!
   root = '/'.tofile
   list = list()
 </c:mset>
 <c:for var="file" in=" root.list ">
   <c:when test=" file.isdir and not file.isread ">
     <c:mset>
+      ;; append() is EL function.
       list = append(file,list)
     </c:mset>
   </c:when>
@@ -68,7 +70,7 @@ Executed on MacOS 10.5.6 (aka "Leopard"), this gives:
 [c:echo] And here they are [/.Trashes, /.Spotlight-V100].
 }}}
 
-= EL's Availability =
+= EL Ready Tasks =
 
 _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
 
@@ -80,7 +82,7 @@ _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
 
 Further tasks to follow. It is further worked on to provide a task which enables _EL_ on a core level. This would allow to use _EL_ expressions similar to Ant property references `${..}`.
 
-= EL Expression References =
+= EL References =
 
 Those not familiar with  [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf EL's specification], [http://en.wikipedia.org/wiki/JavaServer_Pages JSP] or [http://en.wikipedia.org/wiki/JavaServer_Faces JSF] may safely skip this section. 
 
@@ -107,8 +109,8 @@ Notice however, that in all contexts where a expression is expected, a expressio
   metavar = 'i'
   ii = 0
 </c:mset>
-<c:for var=" #{metavar}#{metavar} " in=" list('a','b') " >
-  <c:set var=" #{metavar}#{metavar} " value=" #{metavar}#{metavar} + 1 " />
+<c:for var=" #{metavar} " in=" list('a','b') " >
+  <c:set var=" #{metavar} " value=" #{metavar} + 1 " />
 <c:/for>
 <c:echo>
   The value of 'ii' is #{ ii }

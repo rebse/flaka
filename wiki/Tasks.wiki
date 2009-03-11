@@ -19,7 +19,7 @@ This tasks supports all inherited attributes. In addition, further supported att
 
 == Elements ==
 
-This task accepts implicit text.
+This task accepts implicit text. Text may contain Ant property references `${..}` or [EL Flaka EL] references `#{..}`.
 
 == Example ==
 
@@ -851,16 +851,19 @@ A task to invoke a target dynamically.
 
 = set =
 
-Task `set` is used to set a variable or property.
+Task `set` is used to set a single variable or property. If you want to set more than one variable or property, consider to use task [#mset mset] or [#properties properties] (properties only).
 
 == Attributes ==
 
- * var<br /> The name of the variabled to be assigned. (string:nil)
- * property <br /> The name of the property to be assigned. (boolean:false)
- * value <br /> The value to be assigned. Leading and trailing whitespace characters are ignored. (string:nil)
- * debug <br/> Turn on extra debug information. If turned on, a debug messages will be send to the standard error stream (bypassing all internal Ant debug facilities). (boolean:false)
+|| Attribute || Type || Default || [EL] || Meaning ||
+|| var       || string || nil   ||  r   || The name of the variabled to be assigned.  ||
+|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
+|| value     || string || nil   ||  =   || The value to be assigned.                  ||
+|| debug     || bool   || false ||      || Turn on extra debug information.           ||
 
 All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result in a build error. If in doubt, turn on extra debug information.
+
+*Column EL:* A `r` indicates that [EL_References EL references] can be used. A `=` means that the whole value given is evaluated as EL expression. If the cell is empty, then EL is not enabled. 
 
 == Behaviour ==
 
