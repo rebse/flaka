@@ -231,9 +231,9 @@ _EL_ also allows the implementation to provide top level functions. The followin
 || log(double) || double || The mathematical logarithm function of base `e` ||
 || pow(double) || double || Returns the value of the first argument raised to the power of the second argument. || 
 || sqrt(double) || double || Returns the correctly rounded positive square root of a double value. ||
-|| abs(double) || double || Returns the absolute value of a double value.
-|| min(double,double) || double | Returns the smaller of two double values. ||
-|| max(double,double) || double | Returns the larget of two double values. ||
+|| abs(double) || double || Returns the absolute value of a double value. ||
+|| min(double,double) || double || Returns the smaller of two double values. ||
+|| max(double,double) || double || Returns the larget of two double values. ||
 || rand()      || double || Returns a double value with a positive sign, greater than or equal to 0.0 and less than 1.0. ||
 
 = String Properties =
