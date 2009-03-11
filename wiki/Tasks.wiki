@@ -277,6 +277,94 @@ Here, `z` will be evaluated to the empty string and not to `"${z}"`. This behavi
 === References ===
  * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
 
+== properties == 
+
+A task to set multiple properties in one go. 
+
+=== Attributes ===
+
+ * *comment*  <br /> The comment character sequence (string:;)
+
+=== Elements ===
+
+This task accepts a implicit text element.
+
+=== Example ===
+
+Here is a simple example demonstrating features of this task:
+{{{
+<c:properties>
+  ; this is \
+  a comment
+
+  ; assume that variable 'foo' has been defined here and that
+  ; foo.name resolves into 'foo', then the next line will set
+  ; property foo to be the string `foo'.
+  foo     = #{foo.name}
+  ; next lines creates property `foobar' to be the string `foobar'.
+  foobar  = ${name}bar
+</c:properties>
+}}}
+
+=== Behaviour ===
+
+This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
+{{{
+<c:mset type="property">
+  foobar = 'foobar'
+</c:mset>
+<c:properties>
+  foobar = foobar
+</c:properties>
+}}}
+Notice the usage of the quote character `'` in the former example and the absence of it in the latter.
+
+Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved and the left and right side of a property statement.
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
+
+== for == 
+
+A task that implements a loop statement.
+
+=== Attributes ===
+
+ * var<br/>The variable holding each loop item. This variable can be referenced within the body like @{var}} where var is the string used in this attribute. If not used, then x will be the default.
+ * in<br/> The list of arguments to be iterated over. Defaults to the empty string. The argument is tokenized using whitespace as separator. Use <b>'</b> to protect a word containing whitespace characters from being tokenized.
+
+=== Elements ===
+
+ The body of this task may contain an arbitrary number of elements.
+
+=== Example I ===
+
+This is the shortest possible for statement. It's legal albeit completely useless.
+{{{
+ <c:for />
+}}}
+
+=== Example II ===
+
+Iterating over a list of words. 
+
+{{{
+ <c:for var="x" in=" list('a', 'b', 'c d','e') ">
+   <c:echo>
+      #{x}
+   </c:echo>
+ </c:for>
+}}}
+
+This prints:
+
+{{{
+ [c:echo] a
+ [c:echo] b
+ [c:echo] c d
+ [c:echo] e
+}}}
+
 
 == break == 
 
@@ -302,6 +390,34 @@ Being executed, the following will be dumped on stdout:
  * Classname: net.haefelingerit.flaka.Break Break.html (*Javadoc*)] [Break.java (*Source*)]
  * Task [Tasks#for for] 
  * Task [Tasks#continue continue]
+
+== continue == 
+
+A task mirroring a continue statement. When used within a [Tasks#for for]-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
+
+=== Example ===
+
+{{{
+ <c:for var="i" in=" list(1,2,3,4,5,6) ">
+   <c:when test=" i > 3 ">
+     <c:continue />
+   </c:when>
+   <c:echo>i = #{i}</echo>
+  </c:for>
+}}}
+
+This would print:
+
+{{{
+[c:echo] i = 1
+[c:echo] i = 2
+[c:echo] i = 3
+}}}
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Continue [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Continue.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Continue.java (*Source*)]
+ * Task [Tasks#for for] 
+ * Task [Tasks#break break]
 
 == choose == 
 
@@ -368,35 +484,6 @@ A simple task to install or uninstall a special component handler supposed to ge
 === References ===
  * Classname: net.haefelingerit.flaka.InstCompH [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InstCompH.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InstCompH.java (*Source*)]
 
-= continue = 
-
-A task mirroring a continue statement. When used within a [Tasks#for for]-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
-
-=== Example ===
-
-{{{
- <c:for var="i" in=" 1  2  3  4  5  6 ">
-    <sequential>
-      <c:when test="@{i} -gt '3'">
-        <c:continue />
-      </c:when>
-      <echo>i = @{i}</echo>
-    </sequential>
-  </c:for>
-}}}
-
-This would print:
-
-{{{
-    [echo] i = 1
-    [echo] i = 2
-    [echo] i = 3
-}}}
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Continue [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Continue.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Continue.java (*Source*)]
- * Task [Tasks#for for] 
- * Task [Tasks#break break]
 
 = create-target = 
 
@@ -555,45 +642,6 @@ Note that this function dirname needs to be enabled by installing Flaka's proper
 === References ===
  * Classname: net.haefelingerit.flaka.Find [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Find.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Find.java (*Source*)]
 
-= for = 
-
-Task that implements a loop statement.
-
-=== Attributes ===
- * var<br/>The variable holding each loop item. This variable can be referenced within the body like @{var}} where var is the string used in this attribute. If not used, then x will be the default.
- * in<br/> The list of arguments to be iterated over. Defaults to the empty string. The argument is tokenized using whitespace as separator. Use <b>'</b> to protect a word containing whitespace characters from being tokenized.
-
-=== Elements ===
-
- * sequential<br/> The body of this task must either contain a single sequential element or must be empty. The sequential element acts as container for any task or macro instance.
-
-=== Example I ===
-
-This is the shortest possible for statement. It's legal albeit completely useless.
-{{{
- <c:for />
-}}}
-
-=== Example II ===
-
-Iterating over a list of words. 
-
-{{{
- <c:for in="a b 'c d' e">
-   <sequential>
-    <echo>@{x}</echo>
-   <sequential>
- </c:for>
-}}}
-
-Note that the third word, c d, contains a whitespace character and that attribute var is not used. This prints:
-
-{{{
- [echo] a
- [echo] b
- [echo] c d
- [echo] e
-}}}
 
 
 === References ===
@@ -784,67 +832,7 @@ Such a property will not make it into your JVM's system properties. They will on
 === References ===
  * Classname: net.haefelingerit.flaka.InitSSL [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InitSSL.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InitSSL.java (*Source*)]
 
-= list-tasks = 
 
-A simple task listing all tasks known at execution time within the current project. The listing is dumped on standard output. This task does not support any attributes nor any elements. It's purpose is mainly for debugging.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.ListTasks [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/ListTasks.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/ListTasks.java (*Source*)]
-
-= make-dir = 
-
-TODO: change this to mkdir
-A task to create a, possible nested, directory structure.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Mkdir [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Mkdir.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Mkdir.java (*Source*)]
-
-= properties = 
-
-A task to set multiple properties in one go. 
-
-=== Attributes ===
-
- * *comment*  <br /> The comment character sequence (string:;)
-
-=== Elements ===
-
-This task accepts a implicit text element.
-
-=== Example ===
-
-Here is a simple example demonstrating features of this task:
-{{{
-<c:properties>
-  ; this is \
-  a comment
-
-  ; assume that variable 'foo' has been defined here and that
-  ; foo.name resolves into 'foo', then the next line will set
-  ; property foo to be the string `foo'.
-  foo     = #{foo.name}
-  ; next lines creates property `foobar' to be the string `foobar'.
-  foobar  = ${name}bar
-</c:properties>
-}}}
-
-=== Behaviour ===
-
-This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
-{{{
-<c:mset type="property">
-  foobar = 'foobar'
-</c:mset>
-<c:properties>
-  foobar = foobar
-</c:properties>
-}}}
-Notice the usage of the quote character `'` in the former example and the absence of it in the latter.
-
-Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved and the left and right side of a property statement.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
 
 = property-by-regex = 
 
