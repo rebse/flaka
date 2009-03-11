@@ -1,6 +1,6 @@
 #summary A summary of all Tasks implemented by Flaka
 #labels Featured
-<wiki:toc />
+<wiki:toc depth="2"/>
 
 = Elementary Tasks =
 == echo ==
@@ -323,7 +323,8 @@ Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines
 
 === References ===
  * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
-= unset =
+
+== unset ==
 
 The unset statement allows for the removal of a resource within a project. As of version 2.1.5, unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
 
