@@ -682,7 +682,7 @@ Here is a simple example demonstrating features of this task:
 
 == Behaviour ==
 
-This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as EL expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
+This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
 {{{
 <c:mset type="property">
   foobar = 'foobar'
@@ -856,27 +856,43 @@ Task `set` is used to set a single variable or property. If you want to set more
 == Attributes ==
 
 || Attribute || Type || Default || [EL] || Meaning ||
-|| var       || string || nil   ||  r   || The name of the variabled to be assigned.  ||
+|| var       || string ||       ||  r   || The name of the variabled to be assigned.  ||
 || property  || bool   || false ||      || Set a variable (false) or  property (true) ||
-|| value     || string || nil   ||  =   || The value to be assigned.                  ||
+|| value     || string ||       ||  =   || The value to be assigned.                  ||
 || debug     || bool   || false ||      || Turn on extra debug information.           ||
 
-All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result in a build error. If in doubt, turn on extra debug information.
+All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
 
-*Column EL:* A `r` indicates that [EL_References EL references] can be used. A `=` means that the whole value given is evaluated as EL expression. If the cell is empty, then EL is not enabled. 
+*EL:* A `r` indicates that [EL_References EL references] can be used. A `=` means that the whole value given is evaluated as [EL] expression. If the cell is empty, then [EL] is not enabled. 
 
 == Behaviour ==
 
-The content of attribute `value` will be evaluated as EL expression. If no value is given or EL is disabled, then value evaluates to `nil`. Leading and trailing whitespace characters are ignored. As a special note for those familiar with the Java EL language, notice that `value` is evaluated as _true EL expression_. This means that `value` is internally evaluated as `#{<value>}`. See also the examples below.
+The content of attribute `value` will be evaluated as [EL] expression. If [EL] is disabled, then `value` will be taken literally. If no value is given or consists only of whitespace characters, then `value` evaluates to the internal `nil` value. 
 
-If attribute `property` is `false`, then the evaluated content of `value` will be assigned to be the content of variable `var`. If such a variable exists, the variable will be overridden otherwise created. If `value` evaluates to `nil` (i.e. the null object), then `var` will be removed.
+If attribute `property` is `false`, then the evaluated content of `value` will be assigned to be the content of variable `var`. If such a variable exists, the variable will be overridden and otherwise created. If `value` evaluates to `nil`, then `var` will be removed.
 
-If `property` is `true`, then `value` will be evaluated into an object as before and additionally streamed into a string value. Streaming object `nil` ends up in the empty string. This streamed string value will then be taken to create a property if that property does not already exist. This behaviour is in line with traditional Ant behaviour on properties. Notice that a property is also set in case attribute `value` is absent. This behaviour differs slightly from Ant where a property is only set of if attribute `value` is present.
+{{{
+<!-- assign a string value -->
+<c:set var="x" value="  'some string value' />
+<c:echo>
+  x defined ? #{ has.var.x }  -- true
+</c:echo>
+
+<!-- assign a nil value -->
+<c:set var="x" />
+
+<c:echo>
+  x defined ? #{ has.var.x } -- false !!
+</c:echo>
+}}}
+
+If `property` is `true`, then the evaluated `value` is additionally streamed into a string value. Streaming object `nil` ends up in the empty string. This streamed string value will then be taken to create a property if that property does not already exist. Otherwise, the assignment is ignored and silently discarded. This behaviour is in line with traditional Ant behaviour on properties. Notice that a property _is_ set in case `value` evaluated into `nil`. This behaviour differs slightly from Ant where a property is only set of if attribute `value` is present.
 
 If `value` is given but not `var` nothing will happen (except from dumping a debug message if requested). 
+
 == Examples ==
 
-In this example, a property and a variabled both named `foo` are set to string value `"bar"`.
+In this example, a property and a variable named `foo` are set to string value `"bar"`.
 {{{
 <c:set var="foo" value=" 'bar' " />
 <c:set var="foo" value=" 'bar' " property="true"/>
@@ -889,7 +905,7 @@ In this example, a property and a variabled both named `foo` are set to string v
   * length is   #{size(foo)}  -- 3
  </c:echo>
 }}}
-Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variable value. Ant's standard echo task wont work until EL has been enabled on a project basis. 
+Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variable value. Ant's standard echo task wont work until [EL] has been enabled on a project basis. 
 
 == References ==
  * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
@@ -900,12 +916,16 @@ This task is similar to task [Tasks#set set]. It allows to set a couple of varia
 
 == Attributes ==
 
- * *comment*  <br /> The comment character sequence (string:;)
- * *property* <br /> Whether to assign variables or properties (boolean:false)
+|| Attribute || Type || Default || [EL] || Meaning ||
+|| comment   || string ||       ||      || The comment character sequence.            ||
+|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
+|| debug     || bool   || false ||      || Turn on extra debug information.           ||
+
+All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
 
 == Elements ==
 
-This task accepts implicit text.
+This task accepts implicit text. Text may contain any amount of [EL] references. Continuation and comment lines are supported. 
 
 == Examples ==
 
@@ -943,7 +963,7 @@ To support readability continuation lines are supported. Such a line is indicate
 
 Apart from continuation lines are leading and trailing whitespace characters ignored. For example, the property assignment ` x = 'foo bar' ` will assign the string `foo bar` to property `x`. Notice that whitespace before and after `x` and before and _after_ `'foo bar'` is ignored. This is slightly different from reading Java properties where whitespace after `'foo bar'` would _not_ have been ignored!
  
-When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating means that the right side of the assignment is evaluated as EL expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is evaluted into an object and additionally streamed into a sequence of characters (string).
+When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating means that the right side of the assignment is evaluated as [EL] expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is evaluted into an object and additionally streamed into a sequence of characters (string).
 
 == Further Examples ==
 Notice that it is perfectly legal to use property or variable references as the following example shows:
@@ -954,7 +974,7 @@ Notice that it is perfectly legal to use property or variable references as the 
 </c:mset>
 }}}
 
-Be aware that property references are evaluated _before_ EL expressions. Consider:
+Be aware that property references are evaluated _before_ [EL] expressions. Consider:
 {{{
 <c:mset>
   ;; let s hold string ant.file
