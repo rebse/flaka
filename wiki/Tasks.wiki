@@ -471,8 +471,348 @@ This would execute all macros and tasks listed in the otherwise clause since no 
 
 === References ===
  * Classname: net.haefelingerit.flaka.Choose [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Choose.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Choose.java (*Source*)]
+== switch ==
 
-= component-handler = 
+A switch statement as found in typical programming languages. A sequence of case statement is tried to match a given value. The case body of the first matching case value is evaluated. A typical example:  
+
+{{{
+ <c:switch value="${myvalue}">
+  <case match="*.jar">            -- #1
+   -- string ending in .jar
+  </case>
+  <case match="/(1|2|3)/">        -- #2
+    -- one or two or three
+  </case>
+  <case match="/-\d+/">           -- #3
+    -- negative number
+  </case>
+  <default>
+   -- neither of the above 
+  </default>
+ <c:case>
+}}}
+
+Notice the usage of a pattern expression in the first and the usage of regular expressions in the second and third case statement. Utilization of pattern and regular expressions make switch a very flexible and powerful conditional statement.
+
+=== Attributes ===
+ * value<br />The (string) value that needs to be matched by a case statement. Note that the value given is normalized, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case. See {{JavaLangRef|1=Character}} for details on whitespace. [].
+ * stem<br />When applying regular expressions, details of the match are exposed as a set of properties. To avoid pollution, each property is prefixed with the given stem. A stem can also individually been set for each case statement if necessary. [switch]
+ * find<br />When set to true, it is sufficient for a case expression to match a substring. By default, the whole input string, i.e. the  switch value, must match. [false]
+ * ignorecase<br />Enables case-insensitive matching. By default, case-insensitive matching assumes that only characters in the US-ASCII charset are being matched. Unicode-aware case-insensitive matching can be enabled by specifying the UNICODE_CASE flag in conjunction with this flag. Case-insensitive matching can also be enabled via the embedded flag expression (?i).  [false]
+ * comments<br />Permits whitespace and comments in pattern. In this mode, whitespace is ignored, and embedded comments starting with # are ignored until the end of a line. Comments mode can also be enabled via the embedded flag expression (?x).  [false]
+ * dotall<br />Enables dotall mode. In dotall mode, the expression . matches any character, including a line terminator. By default this expression does not match line terminators. Dotall mode can also be enabled via the embedded flag expression (?s). (The s is a mnemonic for "single-line" mode, which is what this is called in Perl.)  [false]
+ * unixlines<br />Enables Unix lines mode. In this mode, only the '\n' line terminator is recognized in the behavior of ., ^, and $. Unix lines mode can also be enabled via the embedded flag expression (?d).  [false]
+ * multiline<br />Enables multiline mode. In multiline mode the expressions ^ and $ match just after or just before, respectively, a line terminator or the end of the input sequence. By default these expressions only match at the beginning and the end of the entire input sequence. Multiline mode can also be enabled via the embedded flag expression (?m).  [false]
+
+Note that each of this attributes (except value) can also be applied to a case statement. By default each case statement inherits the current value from the enclosing switch statement.
+
+=== Properties ===
+In case of a match, a set of properties - like the number of matching groups -  are set for further processing. As an example, assume that default stem switch is used. Then properties like switch.p, switch.n, switch.g0 are available after a match. The following table lists the properties being set.
+{| {{whtable}}
+ ! property !! description !! example
+ |-
+ ! <center>stem.p</center>
+ | the matching pattern 
+ |
+ |-
+ ! <center>stem.n</center>
+ | the number of capturing groups ||
+ |-
+ ! <center>stem.g0</center> 
+ | group 0, the matching string ||
+ |- 
+ ! <center>stem.gj</center> 
+ | group j, content of group j ||
+ |-
+ ! <center>stem.sj</center> 
+ | start index of group j ||
+ |- 
+ ! <center>stem.ej</center> 
+ | last index of group j ||
+ |-
+ |}
+
+Note that this properties are set regardless whether they exists or not.
+
+=== Element ===
+
+ * case <br />The case element is used for matching the given switch value. This element can be applied multiple times or can be absent. Each case element will be tried in order. Element case supports the same attributes as the enclosing switch element does. Additionally the following attributes are supported:
+ ** match<br />The expression to use for matching this case against the switch value. By default, the expression is interpreted as pattern  expression. If however the first and last character are '/', then these characters are stripped off and the remaining string is interpreted as regular expression. If it is not possible to interpret the remaining string as regular expression, the remaining string will be treated as pattern expression which is always possible. <br />If the first and last character are '%', then the remaining string is interpreted as pattern expression. The underlying regular expression engine is implementation dependent. It is Java for the current version of Flaka. Although Java, note that the backslash character doesn't need to be escaped. For example, string "\s" is indeed a whitespace character while this needs to be written as "\\s" in Java.
+ * default <br />The default statement will be executed if no case statement matched. This element is optional. This element can only be specified once. A build exception will be raised if used more than once.
+ * otherwise <br />This element is a synonym for element default.
+
+=== Example I===
+
+This example shows a couple of ways to handle a file based on it's extension:
+
+{{{
+ <c:switch value="${myvalue}">
+  <case match="*.jar">
+   -- handle jar file (no properties set)
+  </case>
+  <case match="/(.*)\.war/">
+   <echo>basename = ${match.g1}</echo>
+  </case>
+  <case match="/.*(zip|tgz)/">
+   <echo>extension = ${match.g1}</echo>
+  </case>
+ </c:switch>
+}}}
+
+=== Advanced Example ===
+This example requires at least version 2.1.5.
+
+Very often it is not only important to know whether a value matches or not. For further processing, it would be also good to break the matching string apart. To support this, properties are set for each match as the example below demonstrates. Contrary to standard Ant behaviour, those attributes are always set, even if such a property exists before. The standard stem for those properties, is net.haefelingerit.flaka.match.. 
+
+The task in example below is to parse an EPO version tag. Such a version tag follows usually the convention v-<version> but allows additionally also to be v-<env>_<version>. The string before the version is usually used to specify a particular environment. If such a tag would be given, how could the tag be divided into environment and version? The code example below shows how it could be done. In this example, stem g is being used instead of the standard stem net.haefelingerit.flaka.match.
+
+
+{{{
+ <c:switch value="v-uat_3_20_500" stem="g">
+   <case match = "/v-(?:([^\d][^_]*)_)?(\d.*)/" stem="g">
+     <echo>
+       g.p  = ${g.p}    // g.p  = v-(?:([^\d][^_]*)_)?(\d.*)
+       g.n  = ${g.n}    // g.n  = 2
+       g.g0 = ${g.g0}   // g.g0 = v-uat_3_20_500
+       g.g1 = ${g.g1}   // g.g1 = uat
+       g.g2 = ${g.g2}   // g.g2 = 3_20_500
+       g.g3 = ${g.g3}   // g.g3 = ${g.g3}
+       g.s1 = ${g.s1}   // g.s1 = 2
+       g.e1 = ${g.e1}   // g.e1 = 5
+     </echo>
+   </case>
+ </c:switch>
+}}}
+
+Property g.p holds the matching pattern and g.n holds the number of capturing groups in that pattern. Pattern above contains 3 groups, two of them are capturing. The first capturing group (g.g1) holds the environment, the second (g.g2) the version. Furthermore, g.g0 holds the complete matching value (which could be a substring of the value given to switch).
+
+Note that in this example property g.g3 is not set cause there are only two capturing groups. If however g.g3 would have been set before, then it's value would not have been changed.
+
+For further processing, properties like g.s1 and g.e1 are set. Property g.s1 contains the index start index of the substring captured by group one during the match. Property g.s2 contains the start index of group two and so on. Similar, g.e1 contains the index of the last matching character, incremented by one. This indexes can be used to extract arbitrary substrings.
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Switch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Switch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Switch.java (*Source*)]
+= throw = 
+
+A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard task {{AntRefCore|1=fail}}.
+
+Note that throw would re-throw the last thrown exception - regardless of the current context. The following would therefore work:
+
+{{{
+ <c:trycatch>
+  <try> 
+    <fail message="4711" />
+  </try>
+  <catch>
+    -- handle the exception ..
+  <catch>
+ </c:trycatch>
+ ..
+ .. -- very much later
+ .. 
+ <c:throw /> -- re-throws "4711" exception!!!
+}}}
+
+=== Attributes ===
+ * reference<br/>The name of the reference holding the previously thrown exception [trycatch.object]
+ * var<br/>Same as reference
+
+=== Example ===
+
+A typical usage example:
+
+{{{
+ <c:trycatch>
+  <try> ..<fail message="4711"/> </try>
+  <catch>
+    <echo>caught exception ..</echo>
+    <c:throw />
+  </c:catch>
+ </c:trycatch>
+}}}
+
+When being executed, Ant would receive a build exception (re-thrown within the catch clause) containing "4711" and terminate.
+
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
+ * Task [Tasks#trycatch trycatch]
+
+= trycatch = 
+
+A task mirroring try-catch-finally exception handling found in various languages.
+
+All tasks inside try are executed in order. If an exception is thrown by one of tehm, then several things may happen:
+
+ * If there is a matching catch clause, then all tasks in that clause are executed. If there isn't a catch clause, the exception will be passed to the enclosing environment (except if an exception is also thrown in the finally clause - see below).
+ * An optional finally clause is always executed, regardless of whether an exception gets thrown or or whether a try or catch clause exists.
+ * If a property is set, then that property will hold the message of the exception thrown in a try clause. If a reference is given, then that reference will hold the exception object thrown in the try clause. If an exception is also thrown in a catch or finally clause, then neither will the property or reference update nor set.
+ * If a exception is thrown in a matching catch clause and in a finally clause, then the latter will be passed to the enclosing environment and the former will be discarded.
+
+A catch clause can be given a type and a match argument. Both arguments expect a regular or pattern expression. A catch clauses matches if the type and match matches. The type argument is matched against the classname of the thrown exception. The match argument is matched against the exception message (if any). Both default values ensure that a build exception thrown by Ant is caught while an implementation dependent exception passes.
+
+When matching against the error message, be aware that the actual error message might be slightly different from the actual message given: usually the error message contains also information about where the exception got thrown. It is therefore wise to accepted any leading and trailing space. For example:
+
+{{{
+ <c:trycatch>
+  <try><fail message="4711" /></try>
+  <catch match="4711">
+    -- does (very likely) not match
+  </catch>
+  <catch match="4711*">
+    -- neither this one ..
+  </catch>
+  <catch match="*4711">
+    -- bon chance
+  </catch>
+  <catch match="*4711*">
+    -- this is it!
+  </catch>
+ </c:trycatch>
+}}}
+  
+
+=== Attributes ===
+ * property<br/>The name of the property that should hold the exception message
+ * reference<br />The name of the reference to hold the exception object [trycatch.object]
+ * catch.type<br />A pattern against the type (Java classname) of the exception object [*.BuildException]
+ * catch.match<br /> A pattern to be applied against the exception message [*]
+
+=== Elements ===
+
+ * try<br /> A task container to hold tasks and macros to be given a try. 
+ * catch<br /> A task container to be executed if an exception gets thrown
+ * finally<br/> A task container to be executed in any case
+
+Note that all elements are optional. However, if there's no try element, then there's no chance to execute catch at all, so this constellation does not make too much sense. The optional finally clause will be executed regardless of whether a try clause exists or not.
+
+It is allowed to have more multiple try, catch or finally clauses and further does the oder in which they appear not matter. Be aware though that eventually all try and finally clauses are merged into one try resp. finally clause.
+
+
+=== Example I ===
+
+The following snippet demonstrates the usage of trycatch:
+
+{{{
+ <c:trycatch property="reason">
+   <try>
+     <echo>1st try ..</echo>
+   </try>
+   <try>
+     <echo>2nd try ..</echo>
+     <fail message="fail within 2nd try" />
+   </try>
+   <try>
+     <fail message="fail within 3rd try" />
+   </try>
+   <catch type="*.BuildException" match="*">
+     <echo>..caught : ${reason}</echo>
+   </catch>
+   <finally>
+     <echo>..finally</echo>   
+   </finally>
+ </c:trycatch>
+}}}
+
+Giving:
+
+{{{
+    [echo] 1st try ..
+    [echo] 2nd try ..
+    [echo] ..caught : fail within 2nd try
+    [echo] ..finally
+}}}
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.TryCatch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/TryCatch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/TryCatch.java (*Source*)]
+
+= unless = 
+
+This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
+
+=== Example ===
+
+This example shows how to create a folder named libdir if such a folder does not already exist.
+
+{{{
+ <c:unless test="-d 'libdir'">
+  <mkdir dir="libdir" />
+ </c:unless>
+}}}
+
+
+
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
+
+= unset =
+
+The unset statement allows for the removal of a resource within a project. As of version 2.1.5, unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
+
+{{{
+ <c:unset var="v1 v2 v3" />
+}}}
+
+This example demonstrates how to remove properties v1, v2 and v3 regardless whether they exist before or not. Be aware that unset also removes properties given via the command line (aka user properties).
+
+=== Attributes ===
+ * var <br>The name of the property or properties to be removed. Use whitespace characters, preferably the blank character as shown in the examples, for separation. Instead of attribute var, attribute name and property can be used although this name are deprecated. The behavior of unset is undefined if a combination of this attributes, like in <c:unset var="x" property="y" />, is used.
+
+=== Example I ===
+
+This example demonstrates the usage. Notice that property v2 is set via the command line, i.e. a so called user property in Ant terminology.
+
+{{{
+ <property name="v1" value="v1" />
+ <echo>v1 = ${v1} | v2 = ${v2}</echo>
+ <c:unset var=" v1 v2 " />
+ <echo>v1 = ${v1} | v2 = ${v2}</echo>
+}}}
+
+This will give:
+
+{{{
+ $ ant -Dv2=v2
+ v1 = v1    | v2 = v2
+ v1 = ${v1} | v2 = ${v2}
+}}}
+
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
+
+= when = 
+
+Task when represents a else-less if statement. 
+
+=== Attributes ===
+ * test<br/>A test condition that must evaluate to true in order to execute the body of this if statement.
+=== Elements ===
+ * Any task or macro instance
+
+=== Example I ===
+
+The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
+
+{{{
+ <c:when test=" -f '${file}'">
+  <echo>
+    <loadfile property="__z__" />
+    <echo message="${__z__}" />
+  </echo>
+ </c:when>
+}}}
+
+Note that the example is bit artificial cause Ant's loadfile task is sufficient. Further note that the argument ${file} has been quoted in the test condition in order to force a proper parsing of the condition. The parsing algorithm is based on whitespace. A blank or tab in ${file} would therefore cause a syntax error. The enclosing quotes enforce that ${file} will not be broken into pieces.
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
+
+
+= Special Purpose Tasks =
+
+== component-handler == 
 
 A simple task to install or uninstall a special component handler supposed to get rid of some annoying Ant warning messages.
 
@@ -1010,127 +1350,6 @@ This example changes the default target to be called from this to foobar.
 === References ===
  * Classname: net.haefelingerit.flaka.SetDefault [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/SetDefault.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/SetDefault.java (*Source*)]
 
-= switch =
-
-A switch statement as found in typical programming languages. A sequence of case statement is tried to match a given value. The case body of the first matching case value is evaluated. A typical example:  
-
-{{{
- <c:switch value="${myvalue}">
-  <case match="*.jar">            -- #1
-   -- string ending in .jar
-  </case>
-  <case match="/(1|2|3)/">        -- #2
-    -- one or two or three
-  </case>
-  <case match="/-\d+/">           -- #3
-    -- negative number
-  </case>
-  <default>
-   -- neither of the above 
-  </default>
- <c:case>
-}}}
-
-Notice the usage of a pattern expression in the first and the usage of regular expressions in the second and third case statement. Utilization of pattern and regular expressions make switch a very flexible and powerful conditional statement.
-
-=== Attributes ===
- * value<br />The (string) value that needs to be matched by a case statement. Note that the value given is normalized, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case. See {{JavaLangRef|1=Character}} for details on whitespace. [].
- * stem<br />When applying regular expressions, details of the match are exposed as a set of properties. To avoid pollution, each property is prefixed with the given stem. A stem can also individually been set for each case statement if necessary. [switch]
- * find<br />When set to true, it is sufficient for a case expression to match a substring. By default, the whole input string, i.e. the  switch value, must match. [false]
- * ignorecase<br />Enables case-insensitive matching. By default, case-insensitive matching assumes that only characters in the US-ASCII charset are being matched. Unicode-aware case-insensitive matching can be enabled by specifying the UNICODE_CASE flag in conjunction with this flag. Case-insensitive matching can also be enabled via the embedded flag expression (?i).  [false]
- * comments<br />Permits whitespace and comments in pattern. In this mode, whitespace is ignored, and embedded comments starting with # are ignored until the end of a line. Comments mode can also be enabled via the embedded flag expression (?x).  [false]
- * dotall<br />Enables dotall mode. In dotall mode, the expression . matches any character, including a line terminator. By default this expression does not match line terminators. Dotall mode can also be enabled via the embedded flag expression (?s). (The s is a mnemonic for "single-line" mode, which is what this is called in Perl.)  [false]
- * unixlines<br />Enables Unix lines mode. In this mode, only the '\n' line terminator is recognized in the behavior of ., ^, and $. Unix lines mode can also be enabled via the embedded flag expression (?d).  [false]
- * multiline<br />Enables multiline mode. In multiline mode the expressions ^ and $ match just after or just before, respectively, a line terminator or the end of the input sequence. By default these expressions only match at the beginning and the end of the entire input sequence. Multiline mode can also be enabled via the embedded flag expression (?m).  [false]
-
-Note that each of this attributes (except value) can also be applied to a case statement. By default each case statement inherits the current value from the enclosing switch statement.
-
-=== Properties ===
-In case of a match, a set of properties - like the number of matching groups -  are set for further processing. As an example, assume that default stem switch is used. Then properties like switch.p, switch.n, switch.g0 are available after a match. The following table lists the properties being set.
-{| {{whtable}}
- ! property !! description !! example
- |-
- ! <center>stem.p</center>
- | the matching pattern 
- |
- |-
- ! <center>stem.n</center>
- | the number of capturing groups ||
- |-
- ! <center>stem.g0</center> 
- | group 0, the matching string ||
- |- 
- ! <center>stem.gj</center> 
- | group j, content of group j ||
- |-
- ! <center>stem.sj</center> 
- | start index of group j ||
- |- 
- ! <center>stem.ej</center> 
- | last index of group j ||
- |-
- |}
-
-Note that this properties are set regardless whether they exists or not.
-
-=== Element ===
-
- * case <br />The case element is used for matching the given switch value. This element can be applied multiple times or can be absent. Each case element will be tried in order. Element case supports the same attributes as the enclosing switch element does. Additionally the following attributes are supported:
- ** match<br />The expression to use for matching this case against the switch value. By default, the expression is interpreted as pattern  expression. If however the first and last character are '/', then these characters are stripped off and the remaining string is interpreted as regular expression. If it is not possible to interpret the remaining string as regular expression, the remaining string will be treated as pattern expression which is always possible. <br />If the first and last character are '%', then the remaining string is interpreted as pattern expression. The underlying regular expression engine is implementation dependent. It is Java for the current version of Flaka. Although Java, note that the backslash character doesn't need to be escaped. For example, string "\s" is indeed a whitespace character while this needs to be written as "\\s" in Java.
- * default <br />The default statement will be executed if no case statement matched. This element is optional. This element can only be specified once. A build exception will be raised if used more than once.
- * otherwise <br />This element is a synonym for element default.
-
-=== Example I===
-
-This example shows a couple of ways to handle a file based on it's extension:
-
-{{{
- <c:switch value="${myvalue}">
-  <case match="*.jar">
-   -- handle jar file (no properties set)
-  </case>
-  <case match="/(.*)\.war/">
-   <echo>basename = ${match.g1}</echo>
-  </case>
-  <case match="/.*(zip|tgz)/">
-   <echo>extension = ${match.g1}</echo>
-  </case>
- </c:switch>
-}}}
-
-=== Advanced Example ===
-This example requires at least version 2.1.5.
-
-Very often it is not only important to know whether a value matches or not. For further processing, it would be also good to break the matching string apart. To support this, properties are set for each match as the example below demonstrates. Contrary to standard Ant behaviour, those attributes are always set, even if such a property exists before. The standard stem for those properties, is net.haefelingerit.flaka.match.. 
-
-The task in example below is to parse an EPO version tag. Such a version tag follows usually the convention v-<version> but allows additionally also to be v-<env>_<version>. The string before the version is usually used to specify a particular environment. If such a tag would be given, how could the tag be divided into environment and version? The code example below shows how it could be done. In this example, stem g is being used instead of the standard stem net.haefelingerit.flaka.match.
-
-
-{{{
- <c:switch value="v-uat_3_20_500" stem="g">
-   <case match = "/v-(?:([^\d][^_]*)_)?(\d.*)/" stem="g">
-     <echo>
-       g.p  = ${g.p}    // g.p  = v-(?:([^\d][^_]*)_)?(\d.*)
-       g.n  = ${g.n}    // g.n  = 2
-       g.g0 = ${g.g0}   // g.g0 = v-uat_3_20_500
-       g.g1 = ${g.g1}   // g.g1 = uat
-       g.g2 = ${g.g2}   // g.g2 = 3_20_500
-       g.g3 = ${g.g3}   // g.g3 = ${g.g3}
-       g.s1 = ${g.s1}   // g.s1 = 2
-       g.e1 = ${g.e1}   // g.e1 = 5
-     </echo>
-   </case>
- </c:switch>
-}}}
-
-Property g.p holds the matching pattern and g.n holds the number of capturing groups in that pattern. Pattern above contains 3 groups, two of them are capturing. The first capturing group (g.g1) holds the environment, the second (g.g2) the version. Furthermore, g.g0 holds the complete matching value (which could be a substring of the value given to switch).
-
-Note that in this example property g.g3 is not set cause there are only two capturing groups. If however g.g3 would have been set before, then it's value would not have been changed.
-
-For further processing, properties like g.s1 and g.e1 are set. Property g.s1 contains the index start index of the substring captured by group one during the match. Property g.s2 contains the start index of group two and so on. Similar, g.e1 contains the index of the last matching character, incremented by one. This indexes can be used to extract arbitrary substrings.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Switch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Switch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Switch.java (*Source*)]
 
 = taskdotclasspath =
 
@@ -1284,196 +1503,6 @@ When using more than one entry, then each entry must match. This condition can b
 === References ===
  * Classname: net.haefelingerit.flaka.DotClassPath [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/DotClassPath.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/DotClassPath.java (*Source*)]
 
-= throw = 
-
-A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard task {{AntRefCore|1=fail}}.
-
-Note that throw would re-throw the last thrown exception - regardless of the current context. The following would therefore work:
-
-{{{
- <c:trycatch>
-  <try> 
-    <fail message="4711" />
-  </try>
-  <catch>
-    -- handle the exception ..
-  <catch>
- </c:trycatch>
- ..
- .. -- very much later
- .. 
- <c:throw /> -- re-throws "4711" exception!!!
-}}}
-
-=== Attributes ===
- * reference<br/>The name of the reference holding the previously thrown exception [trycatch.object]
- * var<br/>Same as reference
-
-=== Example ===
-
-A typical usage example:
-
-{{{
- <c:trycatch>
-  <try> ..<fail message="4711"/> </try>
-  <catch>
-    <echo>caught exception ..</echo>
-    <c:throw />
-  </c:catch>
- </c:trycatch>
-}}}
-
-When being executed, Ant would receive a build exception (re-thrown within the catch clause) containing "4711" and terminate.
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
- * Task [Tasks#trycatch trycatch]
-
-= trycatch = 
-
-A task mirroring try-catch-finally exception handling found in various languages.
-
-All tasks inside try are executed in order. If an exception is thrown by one of tehm, then several things may happen:
-
- * If there is a matching catch clause, then all tasks in that clause are executed. If there isn't a catch clause, the exception will be passed to the enclosing environment (except if an exception is also thrown in the finally clause - see below).
- * An optional finally clause is always executed, regardless of whether an exception gets thrown or or whether a try or catch clause exists.
- * If a property is set, then that property will hold the message of the exception thrown in a try clause. If a reference is given, then that reference will hold the exception object thrown in the try clause. If an exception is also thrown in a catch or finally clause, then neither will the property or reference update nor set.
- * If a exception is thrown in a matching catch clause and in a finally clause, then the latter will be passed to the enclosing environment and the former will be discarded.
-
-A catch clause can be given a type and a match argument. Both arguments expect a regular or pattern expression. A catch clauses matches if the type and match matches. The type argument is matched against the classname of the thrown exception. The match argument is matched against the exception message (if any). Both default values ensure that a build exception thrown by Ant is caught while an implementation dependent exception passes.
-
-When matching against the error message, be aware that the actual error message might be slightly different from the actual message given: usually the error message contains also information about where the exception got thrown. It is therefore wise to accepted any leading and trailing space. For example:
-
-{{{
- <c:trycatch>
-  <try><fail message="4711" /></try>
-  <catch match="4711">
-    -- does (very likely) not match
-  </catch>
-  <catch match="4711*">
-    -- neither this one ..
-  </catch>
-  <catch match="*4711">
-    -- bon chance
-  </catch>
-  <catch match="*4711*">
-    -- this is it!
-  </catch>
- </c:trycatch>
-}}}
-  
-
-=== Attributes ===
- * property<br/>The name of the property that should hold the exception message
- * reference<br />The name of the reference to hold the exception object [trycatch.object]
- * catch.type<br />A pattern against the type (Java classname) of the exception object [*.BuildException]
- * catch.match<br /> A pattern to be applied against the exception message [*]
-
-=== Elements ===
-
- * try<br /> A task container to hold tasks and macros to be given a try. 
- * catch<br /> A task container to be executed if an exception gets thrown
- * finally<br/> A task container to be executed in any case
-
-Note that all elements are optional. However, if there's no try element, then there's no chance to execute catch at all, so this constellation does not make too much sense. The optional finally clause will be executed regardless of whether a try clause exists or not.
-
-It is allowed to have more multiple try, catch or finally clauses and further does the oder in which they appear not matter. Be aware though that eventually all try and finally clauses are merged into one try resp. finally clause.
-
-
-=== Example I ===
-
-The following snippet demonstrates the usage of trycatch:
-
-{{{
- <c:trycatch property="reason">
-   <try>
-     <echo>1st try ..</echo>
-   </try>
-   <try>
-     <echo>2nd try ..</echo>
-     <fail message="fail within 2nd try" />
-   </try>
-   <try>
-     <fail message="fail within 3rd try" />
-   </try>
-   <catch type="*.BuildException" match="*">
-     <echo>..caught : ${reason}</echo>
-   </catch>
-   <finally>
-     <echo>..finally</echo>   
-   </finally>
- </c:trycatch>
-}}}
-
-Giving:
-
-{{{
-    [echo] 1st try ..
-    [echo] 2nd try ..
-    [echo] ..caught : fail within 2nd try
-    [echo] ..finally
-}}}
-
-=== References ===
- * Classname: net.haefelingerit.flaka.TryCatch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/TryCatch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/TryCatch.java (*Source*)]
-
-= unless = 
-
-This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
-
-=== Example ===
-
-This example shows how to create a folder named libdir if such a folder does not already exist.
-
-{{{
- <c:unless test="-d 'libdir'">
-  <mkdir dir="libdir" />
- </c:unless>
-}}}
-
-
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
-
-= unset =
-
-The unset statement allows for the removal of a resource within a project. As of version 2.1.5, unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
-
-{{{
- <c:unset var="v1 v2 v3" />
-}}}
-
-This example demonstrates how to remove properties v1, v2 and v3 regardless whether they exist before or not. Be aware that unset also removes properties given via the command line (aka user properties).
-
-=== Attributes ===
- * var <br>The name of the property or properties to be removed. Use whitespace characters, preferably the blank character as shown in the examples, for separation. Instead of attribute var, attribute name and property can be used although this name are deprecated. The behavior of unset is undefined if a combination of this attributes, like in <c:unset var="x" property="y" />, is used.
-
-=== Example I ===
-
-This example demonstrates the usage. Notice that property v2 is set via the command line, i.e. a so called user property in Ant terminology.
-
-{{{
- <property name="v1" value="v1" />
- <echo>v1 = ${v1} | v2 = ${v2}</echo>
- <c:unset var=" v1 v2 " />
- <echo>v1 = ${v1} | v2 = ${v2}</echo>
-}}}
-
-This will give:
-
-{{{
- $ ant -Dv2=v2
- v1 = v1    | v2 = v2
- v1 = ${v1} | v2 = ${v2}
-}}}
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
-
 = uploadtask = 
 
 A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.org Jdepot].
@@ -1559,33 +1588,6 @@ this behavior. In both examples we assume that wc would count a total of 10 file
 === References ===
  * Manual page of type {{AntRefCoreType|1=fileset}} 
  * Classname: net.haefelingerit.flaka.WC [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/WC.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/WC.java (*Source*)]
-
-= when = 
-
-Task when represents a else-less if statement. 
-
-=== Attributes ===
- * test<br/>A test condition that must evaluate to true in order to execute the body of this if statement.
-=== Elements ===
- * Any task or macro instance
-
-=== Example I ===
-
-The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
-
-{{{
- <c:when test=" -f '${file}'">
-  <echo>
-    <loadfile property="__z__" />
-    <echo message="${__z__}" />
-  </echo>
- </c:when>
-}}}
-
-Note that the example is bit artificial cause Ant's loadfile task is sufficient. Further note that the argument ${file} has been quoted in the test condition in order to force a proper parsing of the condition. The parsing algorithm is based on whitespace. A blank or tab in ${file} would therefore cause a syntax error. The enclosing quotes enforce that ${file} will not be broken into pieces.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
 
 = writedeps = 
 
