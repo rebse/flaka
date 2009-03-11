@@ -186,13 +186,13 @@ The following implicit objects are defined by Flaka:
 || Implicit Object || Type || Description ||
 || project         || ||  Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead. ||
 || property || || Use this object to query project properties. ||
-|| var |||| A object containing all project references.  ||
-|| reference |||| Same as `var` ||
-|| target|||| Use this object to query a target ||
-|| taskdef|||| Query taskdefs ||
-|| macrodefs|||| Macros ||
-|| tasks||||  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace. ||
-|| filter||||  A object containing all filters defined in this project. ||
+|| var || || A object containing all project references.  ||
+|| reference || || Same as `var` ||
+|| target|| || Use this object to query a target ||
+|| taskdef|| || Query taskdefs ||
+|| macrodefs|| || Macros ||
+|| tasks|| ||  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace. ||
+|| filter|| ||  A object containing all filters defined in this project. ||
 || e || double || The mathematical [http://en.wikipedia.org/wiki/E_(mathematical_constant) constant e], also known as [http://en.wikipedia.org/wiki/Euler Euler]'s number. || 
 || pi || double || The  mathematical [http://en.wikipedia.org/wiki/P constant pi] || 
 
