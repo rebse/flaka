@@ -2,7 +2,8 @@
 #labels Featured
 <wiki:toc />
 
-= echo =
+= Elementary Tasks =
+== echo ==
 This task is an extension of Ant's standard `echo` task. 
 
 == Attributes ==
@@ -17,11 +18,11 @@ This tasks supports all inherited attributes. In addition, further supported att
 
  * *ic* allows to set the indentation character (see explanation below). (char,>)
 
-== Elements ==
+=== Elements ===
 
 This task accepts implicit text. Text may contain Ant property references `${..}` or [EL Flaka EL] references `#{..}`.
 
-== Example ==
+=== Example ===
 
 The following is a typical example to print the famous `Hello, World` message.
 {{{
@@ -40,7 +41,7 @@ This would output
 [c:echo] World
 }}}
 
-== Behaviour ==
+=== Behaviour ===
 
 *Continuation Lines* are physical lines ending with the character sequence `\$` where `$` shall denote here the end-of-line character sequence (Unix: `LF`, Windows: `CR LF`). Such a line is continued, i.e. the line will be accumulated with the next line (which could also be a continuation line). 
 
@@ -128,29 +129,176 @@ Notice that attribute `ic` is not used here cause `>` is the default ic characte
 [c:echo] ....world
 }}}
 
-= break = 
+= set =
+
+Task `set` is used to set a single variable or property. If you want to set more than one variable or property, consider to use task [#mset mset] or [#properties properties] (properties only).
+
+=== Attributes ===
+
+|| Attribute || Type || Default || [EL] || Meaning ||
+|| var       || string ||       ||  r   || The name of the variabled to be assigned.  ||
+|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
+|| value     || string ||       ||  =   || The value to be assigned.                  ||
+|| debug     || bool   || false ||      || Turn on extra debug information.           ||
+
+All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
+
+*EL:* A `r` indicates that [EL_References EL references] can be used. A `=` means that the whole value given is evaluated as [EL] expression. If the cell is empty, then [EL] is not enabled. 
+
+=== Behaviour ===
+
+The content of attribute `value` will be evaluated as [EL] expression. If [EL] is disabled, then `value` will be taken literally. If no value is given or consists only of whitespace characters, then `value` evaluates to the internal `nil` value. 
+
+If attribute `property` is `false`, then the evaluated content of `value` will be assigned to be the content of variable `var`. If such a variable exists, the variable will be overridden and otherwise created. If `value` evaluates to `nil`, then `var` will be removed.
+
+{{{
+<!-- assign a string value -->
+<c:set var="x" value="  'some string value' />
+<c:echo>
+  x defined ? #{ has.var.x }  -- true
+</c:echo>
+
+<!-- assign a nil value -->
+<c:set var="x" />
+
+<c:echo>
+  x defined ? #{ has.var.x } -- false !!
+</c:echo>
+}}}
+
+If `property` is `true`, then the evaluated `value` is additionally streamed into a string value. Streaming object `nil` ends up in the empty string. This streamed string value will then be taken to create a property if that property does not already exist. Otherwise, the assignment is ignored and silently discarded. This behaviour is in line with traditional Ant behaviour on properties. Notice that a property _is_ set in case `value` evaluated into `nil`. This behaviour differs slightly from Ant where a property is only set of if attribute `value` is present.
+
+If `value` is given but not `var` nothing will happen (except from dumping a debug message if requested). 
+
+=== Examples ===
+
+In this example, a property and a variable named `foo` are set to string value `"bar"`.
+{{{
+<c:set var="foo" value=" 'bar' " />
+<c:set var="foo" value=" 'bar' " property="true"/>
+
+<c:echo>
+ The value of 
+  * property 'foo' is ${foo}  -- bar
+  * variable 'foo' is #{foo}  -- bar
+ foo's ..
+  * length is   #{size(foo)}  -- 3
+ </c:echo>
+}}}
+Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variable value. Ant's standard echo task wont work until [EL] has been enabled on a project basis. 
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
+
+== mset ==
+
+This task is similar to task [Tasks#set set]. It allows to set a couple of variables or properties in one go. In addition, comments are allowed for additional readability and comfort.
+
+=== Attributes ===
+
+|| Attribute || Type || Default || [EL] || Meaning ||
+|| comment   || string ||       ||      || The comment character sequence.            ||
+|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
+|| debug     || bool   || false ||      || Turn on extra debug information.           ||
+
+All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
+
+=== Elements ===
+
+This task accepts implicit text. Text may contain any amount of [EL] references. Continuation and comment lines are supported. 
+
+=== Examples ===
+
+XML not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `mset` helps to reduce the clutter. For example:
+{{{
+  <c:mset>
+    f = 'folder'
+    ; turn f into a file object
+    f = f.tofile
+    b = f.isdir ? true : false
+  </c:mset>
+}}}
+
+In this example, `f` is first assigned to be string `"folder"`. The comment line - the one starting with character `;` - tells what the next line is going to do: turn `f` into a file object which can then be used further (for example, to check whether `f` is a directory or not.
+
+In the very same way a couple of properties can be set:
+{{{
+<c:mset property="true" comment="#">
+  # A comment \
+    comment continues here
+  x = ${ant.file}
+  y = \
+     ${x}
+  z = x
+</c:mset>
+}}}
+
+This example defines properties `x`, `y` and `z`. To make things more interesting, continuation lines are shown in the comment and the assignment of `y` as well. After this assignment has been carried out, property `x` contains the full path of the current build file as string, and so does `y`. Property `z` however will be the string `x`.
+
+=== Behaviour ===
+
+The comment character sequence is `";"` by default. It can be changed to an arbitrary sequence using attribute `comment`. Once set, it can't be changed during the execution of this task. A comment characters are used to identify lines to be ignored from execution. Such a line is given if the first non whitespace characters of that line are identical with the sequence of comment characters. In other words, a line is being ingnored if matches the regular expression `^\s*<comment>`. The comment characters itself are not interpreted as regular expression characters. Therefore a given comment sequence like `"(#|;)"` does not mean that either `";"` or `"#"` start a comment. Instead it means that a comment line starts with the characters `"(#|;)"` which would be rather awkward (while perfectly _legal_). 
+
+To support readability continuation lines are supported. Such a line is indicated by having `\` as last character. Be careful not to put any whitespace characters after `\`, otherwise the line will not be recognized as such. Continuation lines are also working on comments as the example above shows. If a line is a continuation line, the last character `\` is removed, the line is accumulated and the next line is read. If finally a non contination line is read (and only then), a evaluation of the so accumulated line takes place: If the accumlated line is a comment it will be ignored and otherwise either treated as property or variable assignment.
+
+Apart from continuation lines are leading and trailing whitespace characters ignored. For example, the property assignment ` x = 'foo bar' ` will assign the string `foo bar` to property `x`. Notice that whitespace before and after `x` and before and _after_ `'foo bar'` is ignored. This is slightly different from reading Java properties where whitespace after `'foo bar'` would _not_ have been ignored!
+ 
+When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating means that the right side of the assignment is evaluated as [EL] expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is evaluted into an object and additionally streamed into a sequence of characters (string).
+
+=== Further Examples ===
+Notice that it is perfectly legal to use property or variable references as the following example shows:
+{{{
+<c:mset>
+ f = '${ant.file}'
+ F = '#{f}'
+</c:mset>
+}}}
+
+Be aware that property references are evaluated _before_ [EL] expressions. Consider:
+{{{
+<c:mset>
+  ;; let s hold string ant.file
+  s = 'ant.file'
+  ;; bad, f will become nil.
+  f = ${#{s}}
+</c:mset>
+}}}
+The second example will not work because in a first step all `${..}` are resolved. Unresolved references like are _discarded_. Therefere task `mset` does not even see reference `#{s}` in this example and thus can't resolve it.
+
+Undefined property references are discarded. Consider:
+{{{
+<c:mset>
+  ;; assume that z is not a property
+  z = '${z}' 
+</c:mset>
+}}}
+Here, `z` will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
+
+
+== break == 
 
 A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
 
-== Example ==
+=== Example ===
 {{{
-  <c:for var="i" in=" 1  2  3  4  5  6 ">
-    <sequential>
-      <echo>i = @{i}</echo>
-      <c:when test="@{i} = '3'">
-        <c:break />
-      </c:when>
-    </sequential>
+  <c:for var="i" in=" list(1,2,3,4,5,6) ">
+    <c:echo>i = #{i}</echo>
+     <c:when test=" i == 3 ">
+       <c:break />
+     </c:when>
   </c:for>
 }}}
 Being executed, the following will be dumped on stdout:
 {{{
-     [echo] i = 1
-     [echo] i = 2
-     [echo] i = 3
+[c:echo] i = 1
+[c:echo] i = 2
+[c:echo] i = 3
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Break Break.html (*Javadoc*)] [Break.java (*Source*)]
  * Task [Tasks#for for] 
  * Task [Tasks#continue continue]
@@ -848,154 +996,6 @@ A task to invoke a target dynamically.
 
 == References ==
  * Classname: net.haefelingerit.flaka.RunTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunTarget.java (*Source*)]
-
-= set =
-
-Task `set` is used to set a single variable or property. If you want to set more than one variable or property, consider to use task [#mset mset] or [#properties properties] (properties only).
-
-== Attributes ==
-
-|| Attribute || Type || Default || [EL] || Meaning ||
-|| var       || string ||       ||  r   || The name of the variabled to be assigned.  ||
-|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
-|| value     || string ||       ||  =   || The value to be assigned.                  ||
-|| debug     || bool   || false ||      || Turn on extra debug information.           ||
-
-All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
-
-*EL:* A `r` indicates that [EL_References EL references] can be used. A `=` means that the whole value given is evaluated as [EL] expression. If the cell is empty, then [EL] is not enabled. 
-
-== Behaviour ==
-
-The content of attribute `value` will be evaluated as [EL] expression. If [EL] is disabled, then `value` will be taken literally. If no value is given or consists only of whitespace characters, then `value` evaluates to the internal `nil` value. 
-
-If attribute `property` is `false`, then the evaluated content of `value` will be assigned to be the content of variable `var`. If such a variable exists, the variable will be overridden and otherwise created. If `value` evaluates to `nil`, then `var` will be removed.
-
-{{{
-<!-- assign a string value -->
-<c:set var="x" value="  'some string value' />
-<c:echo>
-  x defined ? #{ has.var.x }  -- true
-</c:echo>
-
-<!-- assign a nil value -->
-<c:set var="x" />
-
-<c:echo>
-  x defined ? #{ has.var.x } -- false !!
-</c:echo>
-}}}
-
-If `property` is `true`, then the evaluated `value` is additionally streamed into a string value. Streaming object `nil` ends up in the empty string. This streamed string value will then be taken to create a property if that property does not already exist. Otherwise, the assignment is ignored and silently discarded. This behaviour is in line with traditional Ant behaviour on properties. Notice that a property _is_ set in case `value` evaluated into `nil`. This behaviour differs slightly from Ant where a property is only set of if attribute `value` is present.
-
-If `value` is given but not `var` nothing will happen (except from dumping a debug message if requested). 
-
-== Examples ==
-
-In this example, a property and a variable named `foo` are set to string value `"bar"`.
-{{{
-<c:set var="foo" value=" 'bar' " />
-<c:set var="foo" value=" 'bar' " property="true"/>
-
-<c:echo>
- The value of 
-  * property 'foo' is ${foo}  -- bar
-  * variable 'foo' is #{foo}  -- bar
- foo's ..
-  * length is   #{size(foo)}  -- 3
- </c:echo>
-}}}
-Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variable value. Ant's standard echo task wont work until [EL] has been enabled on a project basis. 
-
-== References ==
- * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
-
-= mset =
-
-This task is similar to task [Tasks#set set]. It allows to set a couple of variables or properties in one go. In addition, comments are allowed for additional readability and comfort.
-
-== Attributes ==
-
-|| Attribute || Type || Default || [EL] || Meaning ||
-|| comment   || string ||       ||      || The comment character sequence.            ||
-|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
-|| debug     || bool   || false ||      || Turn on extra debug information.           ||
-
-All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
-
-== Elements ==
-
-This task accepts implicit text. Text may contain any amount of [EL] references. Continuation and comment lines are supported. 
-
-== Examples ==
-
-XML not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `mset` helps to reduce the clutter. For example:
-{{{
-  <c:mset>
-    f = 'folder'
-    ; turn f into a file object
-    f = f.tofile
-    b = f.isdir ? true : false
-  </c:mset>
-}}}
-
-In this example, `f` is first assigned to be string `"folder"`. The comment line - the one starting with character `;` - tells what the next line is going to do: turn `f` into a file object which can then be used further (for example, to check whether `f` is a directory or not.
-
-In the very same way a couple of properties can be set:
-{{{
-<c:mset property="true" comment="#">
-  # A comment \
-    comment continues here
-  x = ${ant.file}
-  y = \
-     ${x}
-  z = x
-</c:mset>
-}}}
-
-This example defines properties `x`, `y` and `z`. To make things more interesting, continuation lines are shown in the comment and the assignment of `y` as well. After this assignment has been carried out, property `x` contains the full path of the current build file as string, and so does `y`. Property `z` however will be the string `x`.
-
-== Behaviour ==
-
-The comment character sequence is `";"` by default. It can be changed to an arbitrary sequence using attribute `comment`. Once set, it can't be changed during the execution of this task. A comment characters are used to identify lines to be ignored from execution. Such a line is given if the first non whitespace characters of that line are identical with the sequence of comment characters. In other words, a line is being ingnored if matches the regular expression `^\s*<comment>`. The comment characters itself are not interpreted as regular expression characters. Therefore a given comment sequence like `"(#|;)"` does not mean that either `";"` or `"#"` start a comment. Instead it means that a comment line starts with the characters `"(#|;)"` which would be rather awkward (while perfectly _legal_). 
-
-To support readability continuation lines are supported. Such a line is indicated by having `\` as last character. Be careful not to put any whitespace characters after `\`, otherwise the line will not be recognized as such. Continuation lines are also working on comments as the example above shows. If a line is a continuation line, the last character `\` is removed, the line is accumulated and the next line is read. If finally a non contination line is read (and only then), a evaluation of the so accumulated line takes place: If the accumlated line is a comment it will be ignored and otherwise either treated as property or variable assignment.
-
-Apart from continuation lines are leading and trailing whitespace characters ignored. For example, the property assignment ` x = 'foo bar' ` will assign the string `foo bar` to property `x`. Notice that whitespace before and after `x` and before and _after_ `'foo bar'` is ignored. This is slightly different from reading Java properties where whitespace after `'foo bar'` would _not_ have been ignored!
- 
-When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating means that the right side of the assignment is evaluated as [EL] expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is evaluted into an object and additionally streamed into a sequence of characters (string).
-
-== Further Examples ==
-Notice that it is perfectly legal to use property or variable references as the following example shows:
-{{{
-<c:mset>
- f = '${ant.file}'
- F = '#{f}'
-</c:mset>
-}}}
-
-Be aware that property references are evaluated _before_ [EL] expressions. Consider:
-{{{
-<c:mset>
-  ;; let s hold string ant.file
-  s = 'ant.file'
-  ;; bad, f will become nil.
-  f = ${#{s}}
-</c:mset>
-}}}
-The second example will not work because in a first step all `${..}` are resolved. Unresolved references like are _discarded_. Therefere task `mset` does not even see reference `#{s}` in this example and thus can't resolve it.
-
-Undefined property references are discarded. Consider:
-{{{
-<c:mset>
-  ;; assume that z is not a property
-  z = '${z}' 
-</c:mset>
-}}}
-Here, `z` will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
-
-== References ==
- * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
 
 = set-default-target = 
 
