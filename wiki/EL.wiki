@@ -134,7 +134,7 @@ The gory details of _EL_ are laid out in  the [http://flaka.googlecode.com/files
   a and not (b || false)  ;; 2
   empty x ? 'foo' : x[0]  ;; 3
 }}}
-The expression in line (1) is a algebraic while (2) contains a boolean expression. The result of (1) depends on the resolution of variable `x` and similar does (2) on `a` and `b`.
+The expression in line (1) is a algebraic while (2) contains a boolean expression. The result of (1) depends on the resolution of variable `x` and similar does (2) on `a` and `b`. Line (3) shows the usage of two buildin operators, [#Operators see below for details].
 
 = Data Types =
 _EL_'s data types are integral and floating point numbers, strings, boolean and type `null`. Example data values of each type, except type `null`, are given above (1-3). Type `null` has once instance value also named `null`. While `null` can't be used to formulate an expression, it is important to understand that the result of evaluating an expression can be `null`. For example, the evaluation of a variable named `x` is the data object associated with that name. If no data is associcated however (i.e. if `x` is undefined), then `x` evaluates to `null`.
@@ -180,25 +180,35 @@ The last example demonstrates that there might also be [http://en.wikipedia.org/
 
 = Implicit Objects =
 
-Properties are good to query the state or features of data objects. The question is however how do we a data object to query in the first place? To start with something, _EL_ allows the implementation to provide _implicit_ objects and [#Functions]. 
+Properties are good to query the state of data objects. The question is however, how do we get a data object to query in the first place? To start with _something_, [EL] allows the implementation to provide _implicit_ objects and [#Functions top level functions (see below)]. 
 
 The following implicit objects are defined by Flaka:
-  * *project* Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead.
-  * *property* Use this object to query project properties.
-  * *var* A object containing all project references. 
-  * *reference* Same as *var*
-  * *target* Use this object to query a target
-  * *taskdef* Query taskdefs
-  * *macrodefs* Macros
-  * *tasks*  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace.
-  * *filter*  A object containing all filters defined in this project.
+|| Implicit Object || Description ||
+|| project         ||  Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead. ||
+|| property|| Use this object to query project properties. ||
+|| var|| A object containing all project references.  ||
+|| reference|| Same as `var` ||
+|| target|| Use this object to query a target ||
+|| taskdef|| Query taskdefs ||
+|| macrodefs|| Macros ||
+|| tasks||  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace. ||
+|| filter||  A object containing all filters defined in this project. ||
 
-Assume for example that a property `foo` has been defined like 
+An example for an EL expression fetching property `foo` is:
 {{{
-<!-- standard Ant -->
-<property name="foo" value="bar" />
+property.foo
+property['foo']
+project.properties.foo
 }}}
-Then `property.foo` or `property['foo']` or even `project.properties.foo` would evaluate to string `bar`. 
+
+Similar, a variable named `foo` is fetched like
+{{{
+foo                     -- (1)
+var.foo                 -- (2)
+reference.foo           -- (3)
+project.references.foo  -- (4)
+}}}
+
 
 = Functions =
 
