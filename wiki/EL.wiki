@@ -223,7 +223,7 @@ _EL_ also allows the implementation to provide top level functions. The followin
 || concat(object..) || string || Creates a string by concatenating all stringized objects. If no object is provided, the empty string is returned. ||
 || list(object..) || list || Returns a list where the list's elements consists of the objects provided. If no objects are provided, the empty list is returned. ||
 || append(object..) || list || This function is similar to `list`. It takes the objects in order and creates a list elements out of them. If a object is a list, then elements of that list are inserted instead of the list object itself. For example `append('a,list('b'),'c')` evaluates to list `('a','b','c')` ||
-
+Some mathematical functions are defined as well:
 || sin(double) || double || The mathematical [http://en.wikipedia.org/wiki/Trigonometric_functions sine] function ||
 || cos(double) || double || The mathematical [http://en.wikipedia.org/wiki/Trigonometric_functions cosine] function ||
 || tan(double) || double || The mathematical [http://en.wikipedia.org/wiki/Trigonometric_functions tangent] function ||
@@ -235,6 +235,8 @@ _EL_ also allows the implementation to provide top level functions. The followin
 || min(double,double) || double || Returns the smaller of two double values. ||
 || max(double,double) || double || Returns the larget of two double values. ||
 || rand()      || double || Returns a double value with a positive sign, greater than or equal to 0.0 and less than 1.0. ||
+
+
 
 = String Properties =
 
