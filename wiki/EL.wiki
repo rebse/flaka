@@ -184,6 +184,7 @@ Properties are good to query the state of data objects. The question is however,
 
 The following implicit objects are defined by Flaka:
 || Implicit Object || Type || Description ||
+|| _name_          ||      || If _name_ is not a predefined name as listed in the rest of this table, then _name_ will be the same as `var[name]`, i.e. _name_ will resolve to the object associated with variable _name_. ||
 || project         || ||  Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead. ||
 || property || || Use this object to query project properties. ||
 || var || || A object containing all project references.  ||
