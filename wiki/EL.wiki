@@ -193,13 +193,9 @@ The following implicit objects are defined by Flaka:
 || macrodefs|||| Macros ||
 || tasks||||  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace. ||
 || filter||||  A object containing all filters defined in this project. ||
-|| e || double || The [http://en.wikipedia.org/wiki/E_(mathematical_constant) mathematical constant e] || 
-|| pi || double || The [http://en.wikipedia.org/wiki/P mathematical constant &#960;] || 
+|| e || double || The mathematical [http://en.wikipedia.org/wiki/E_(mathematical_constant) constant e], also known as [http://en.wikipedia.org/wiki/Euler Euler]'s number. || 
+|| pi || double || The  mathematical [http://en.wikipedia.org/wiki/P constant pi] || 
 
-<div>
-&lt;a href=&quot;#localserver&quot;&gt;&lt;h1 id=&quot;localserver&quot;&gt;Local 
-Server&lt;/h1&gt;&lt;/a&gt;
-</div>
 
 An example for an EL expression fetching property `foo` is:
 {{{
@@ -227,6 +223,18 @@ _EL_ also allows the implementation to provide top level functions. The followin
 || concat(object..) || string || Creates a string by concatenating all stringized objects. If no object is provided, the empty string is returned. ||
 || list(object..) || list || Returns a list where the list's elements consists of the objects provided. If no objects are provided, the empty list is returned. ||
 || append(object..) || list || This function is similar to `list`. It takes the objects in order and creates a list elements out of them. If a object is a list, then elements of that list are inserted instead of the list object itself. For example `append('a,list('b'),'c')` evaluates to list `('a','b','c')` ||
+
+|| sin(double) || double || The mathematical [http://en.wikipedia.org/wiki/Trigonometric_functions sine] function ||
+|| cos(double) || double || The mathematical [http://en.wikipedia.org/wiki/Trigonometric_functions cosine] function ||
+|| tan(double) || double || The mathematical [http://en.wikipedia.org/wiki/Trigonometric_functions tangent] function ||
+|| exp(double) || double || The mathematical exponential function, `e` raised to the power of the given argument ||
+|| log(double) || double || The mathematical logarithm function of base `e` ||
+|| pow(double) || double || Returns the value of the first argument raised to the power of the second argument. || 
+|| sqrt(double) || double || Returns the correctly rounded positive square root of a double value. ||
+|| abs(double) || double || Returns the absolute value of a double value.
+|| min(double,double) || double | Returns the smaller of two double values. ||
+|| max(double,double) || double | Returns the larget of two double values. ||
+|| rand()      || double || Returns a double value with a positive sign, greater than or equal to 0.0 and less than 1.0. ||
 
 = String Properties =
 
