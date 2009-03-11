@@ -6,7 +6,7 @@
 == echo ==
 This task is an extension of Ant's standard `echo` task. 
 
-== Attributes ==
+=== Attributes ===
 
 This tasks supports all inherited attributes. In addition, further supported attributes are:
 
@@ -129,7 +129,7 @@ Notice that attribute `ic` is not used here cause `>` is the default ic characte
 [c:echo] ....world
 }}}
 
-= set =
+== set ==
 
 Task `set` is used to set a single variable or property. If you want to set more than one variable or property, consider to use task [#mset mset] or [#properties properties] (properties only).
 
@@ -303,17 +303,17 @@ Being executed, the following will be dumped on stdout:
  * Task [Tasks#for for] 
  * Task [Tasks#continue continue]
 
-= choose = 
+== choose == 
 
 A task implementing a series of ifelse statements, i.e. a generalized if-then-else statement.
 
-== Attributes ==
+=== Attributes ===
  * *when.test*<br />A test condition. When evaluating to true, the corresponding when clause will be executed.
-== Elements ==
+=== Elements ===
  * when<br/> A optional series of elements acting as container for task and macros.
  * otherwise<br />An optional element that is executed if no when clause got executed
 
-== Example I==
+=== Example I===
 
 The shortest possible choose statement is
 
@@ -323,7 +323,7 @@ The shortest possible choose statement is
 
 It's useless and does nothing but completely harmless.
 
-== Example II==
+=== Example II===
 {{{
  <c:choose>
   <otherwise>
@@ -334,7 +334,7 @@ It's useless and does nothing but completely harmless.
 
 This would execute all macros and tasks listed in the otherwise clause since no when clause got executed.
 
-== Example III===
+=== Example III====
 
 {{{
  <c:choose>
@@ -353,26 +353,26 @@ This would execute all macros and tasks listed in the otherwise clause since no 
 
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Choose [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Choose.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Choose.java (*Source*)]
 
 = component-handler = 
 
 A simple task to install or uninstall a special component handler supposed to get rid of some annoying Ant warning messages.
 
-== Attributes ==
+=== Attributes ===
  * install<br />Install component handler [true]
  * uninstall<br />Uninstall component handler [false]
  * fail<br />Whether to fail if the installation or un-installation can't be carried out.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.InstCompH [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InstCompH.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InstCompH.java (*Source*)]
 
 = continue = 
 
 A task mirroring a continue statement. When used within a [Tasks#for for]-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
 
-== Example ==
+=== Example ===
 
 {{{
  <c:for var="i" in=" 1  2  3  4  5  6 ">
@@ -393,7 +393,7 @@ This would print:
     [echo] i = 3
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Continue [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Continue.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Continue.java (*Source*)]
  * Task [Tasks#for for] 
  * Task [Tasks#break break]
@@ -416,7 +416,7 @@ can also be written as
 
 Note: The current version allows only the specification of one task or macro within the body of the target to be created (like foo-task above).
 
-== Attributes ==
+=== Attributes ===
  * name The name of the target to create. If override is false, an already existing target with that name is not created.
  * task The task or macro to execute
  * description The informal description of this target
@@ -424,7 +424,7 @@ Note: The current version allows only the specification of one task or macro wit
  * override (boolean,false) Whether to override an existing target.
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.CreateTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/CreateTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/CreateTarget.java (*Source*)]
 
 = cvsstat = 
@@ -450,13 +450,13 @@ question is not listed in CVS/Entries.
 
 All mentioned stem properties are cleared (i.e. undefined) if this task is being invoked (the exception from this rule are user defined properties which are never undefined). This can be changed by setting property preserve to true. Note that property  stem.error is exempted from this rule and will always be cleared.
 
-== Attributes ==
+=== Attributes ===
  * file, path, arg<br />The name of the file to be investigated. That file must be checked out under CVS control [${ant.file}]
  * stem<br />The prefix to be used for saving properties [cvsstat]
  * fail<br />If true, throw a build exception if not possible to carry out cvs stat
  * preserve<br/>If true, then a property is not set if already defined (regardless whether the  property is empty or not)[false]
 
-== Examples ==
+=== Examples ===
 
 Assume that file build.xml is to be investigated. The file shall be under CVS control. This shall be the content of the CVS file (related to build.xml - other stuff skipped):
 
@@ -488,36 +488,36 @@ would set the following properties:
 
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.CvsStat [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/CvsStat.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/CvsStat.java (*Source*)]
 
 = export = 
 
 Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
 
-== Attributes ==
+=== Attributes ===
  * dst The destination to dump the file to. If dst is <tt>-</tt>, the file will be dumped to stdout.
  * dest Same as dst
  * out Same as dst
  * src The file within the package to export. By default, file antlib.xml is exported.
  * tee (boolean,false) If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does).
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Export [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Export.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Export.java (*Source*)]
 
 = find = 
 
 A file reporting task inspired by UNIX's find command. Ant lacks such a simple task to report all or certain files in a folder.
 
-== Attributes ==
+=== Attributes ===
  * dir<br />The root folder to use. If not given, the current working directory (i.e. '.') is used. 
  * type<br />The type of files to report where f means standard files and d stands for directories.
  * var<br />Optional: the name of a property to set that will hold the concatenated result of the search. Individual files and folders are separated by a blank character. No quoting is used, therefore this task should not be used with file names containing blank characters.
 
-== Elements ==
+=== Elements ===
 This task implements a standard Ant fileset task.
 
-== Example I ==
+=== Example I ===
 
 Report all files in the working directory. Note that also files in sub folders are reported.
 
@@ -526,7 +526,7 @@ Report all files in the working directory. Note that also files in sub folders a
 }}}
 
 
-== Example II ==
+=== Example II ===
 
 Check whether a sub folder ending in '.jar' exists which is not a file but a directory.
 
@@ -536,7 +536,7 @@ Check whether a sub folder ending in '.jar' exists which is not a file but a dir
  </c:find>
 }}}
  
-== Example III ==
+=== Example III ===
 
 Report all files in the folder containing this Ant build file.
 
@@ -552,29 +552,29 @@ Note that this function dirname needs to be enabled by installing Flaka's proper
 
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Find [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Find.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Find.java (*Source*)]
 
 = for = 
 
 Task that implements a loop statement.
 
-== Attributes ==
+=== Attributes ===
  * var<br/>The variable holding each loop item. This variable can be referenced within the body like @{var}} where var is the string used in this attribute. If not used, then x will be the default.
  * in<br/> The list of arguments to be iterated over. Defaults to the empty string. The argument is tokenized using whitespace as separator. Use <b>'</b> to protect a word containing whitespace characters from being tokenized.
 
-== Elements ==
+=== Elements ===
 
  * sequential<br/> The body of this task must either contain a single sequential element or must be empty. The sequential element acts as container for any task or macro instance.
 
-== Example I ==
+=== Example I ===
 
 This is the shortest possible for statement. It's legal albeit completely useless.
 {{{
  <c:for />
 }}}
 
-== Example II ==
+=== Example II ===
 
 Iterating over a list of words. 
 
@@ -596,7 +596,7 @@ Note that the third word, c d, contains a whitespace character and that attribut
 }}}
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
  * Task [Tasks#for for] 
  * Task [Tasks#continue continue]
@@ -634,14 +634,14 @@ A dependency element may also use a name attribute. Such a attribute is interpre
 is defined in terms of a logical dependency defined in a Baseline. However, the version to be taken should not be the one specified by the Baseline but rather version 1.2.9.
 
 
-== Attributes ==
+=== Attributes ===
  * baseline <br />The Baseline to use when resolving aliased dependencies. Optional, []
  * src <br /> The comma separated list of files to scan for dependencies [${ant.file}]
  * dst <br /> The folder to save retrieved dependencies [.]
  * depotlist <br />The (comma separated) list of depots to retrieve dependencies from. If not given, property jdepot.csv will be looked up. If still not given, an exception will be thrown. 
  * stem <br />A prefix to be used when setting various property or reference names
 
-== Example I ==
+=== Example I ===
 
 Assume that the following dependency is specified in the current build script (${ant.file})
 
@@ -662,7 +662,7 @@ and that file lib/log4j/jars/log4j-1.2.8.jar exists as well. Then
 
 retrieves the file lib/log4j/jars/log4j-1.2.8.jar locally into the current working directory. 
 
-== Example II ==
+=== Example II ===
 
 Retrieve dependencies from a list of depots into local folder build/lib (which must exists):
 
@@ -679,14 +679,14 @@ Retrieve dependencies from a list of depots into local folder build/lib (which m
 }}}
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.GetDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/GetDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/GetDeps.java (*Source*)]
 
 = ifdef = 
 
 A general task to check whether something is defined, where something can be a property,  reference, task, macro, target, type or Java class. If all conditions evaluate to true, then all elements listed in body of this task are executed.
 
-== Attributes ==
+=== Attributes ===
  * var<br/> Test whether var is defined as property or as reference
  * property<br />Test whether property is defined as property
  * target<br />Test whether target is defined as target
@@ -699,10 +699,10 @@ A general task to check whether something is defined, where something can be a p
  * not, negate, invert<br/>Execute body if one condition fails to evaluate to true
  * ifs<br />Use ifs (internal field separator) to tokenize string arguments [\s+]
 
-== Elements ==
+=== Elements ===
  * List of task or macro instances. 
 
-== Example I ==
+=== Example I ===
 
 Test whether a property is defined and do something if so:
 
@@ -712,7 +712,7 @@ Test whether a property is defined and do something if so:
  </c:ifdef>
 }}}
 
-== Example II ==
+=== Example II ===
 
 Test whether macros foo and bar are both defined. For the purpose of illustration the usage of ifs, it is assumed that both   macro names are given as string "foo:bar::":
 
@@ -724,7 +724,7 @@ Test whether macros foo and bar are both defined. For the purpose of illustratio
 
 Note that leading and trailing whitespace characters are always stripped before the remaining argument is tokenized via ifs. Therefore the first argument to be checked is foo and not [space]foo.
 
-== Example III ==
+=== Example III ===
 
 {{{
  <c:ifdef macro="foo" task="bar" invert="true">
@@ -735,7 +735,7 @@ Note that leading and trailing whitespace characters are always stripped before 
 
  
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.IfDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfDef.java (*Source*)]
 
 = ifndef = 
@@ -743,10 +743,10 @@ Note that leading and trailing whitespace characters are always stripped before 
 This task a shortcut for using task [Tasks#ifdef ifdef] and attribute invert:
 
 {{{
- <c:indef ... />  == <c:ifdef invert="true" ... /> 
+ <c:indef ... />  === <c:ifdef invert="true" ... /> 
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.IfNDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfNDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfNDef.java (*Source*)]
  * Task [Tasks#ifdef ifdef]
 
@@ -754,17 +754,17 @@ This task a shortcut for using task [Tasks#ifdef ifdef] and attribute invert:
 
 A task to initialize SSL. The current implementation ensures a SSL implementation is available. Furthermorem this task allows to install a trust store to verify certificates provided by a SSL server.
 
-== Attributes ==
+=== Attributes ===
 
  * truststore <br/>The trust store to be used. Usage of this attribute is optional. If not used a default trust store, geared for the EPO environment, will be used. Using this attribute will effectively set the system property javax.net.ssl.trustStore. If that property already exists, it is (almost silently) not overriden. Instead a debug message will be generated showing the trust store in use. This allows to override the trust store used via the command line.
 
-== Example I ==
+=== Example I ===
 
 {{{
  <c:initssl truststore = "${mystore}" />
 }}}
 
-== Last but not least .. ==
+=== Last but not least .. ===
 Whether specifying a trust store via initssl or via property javax.net.ssl.trustStore makes sense depends on the underlying SSL implementation and configuration. It works out-of-the-box with all Java 1.4 and onwards. Changing the trust store via Ant's command line, like shown in this example, will not work:
 
 {{{
@@ -778,17 +778,17 @@ Such a property will not make it into your JVM's system properties. They will on
  $ ant ..
 }}}
 
-== Further Readings ==
+=== Further Readings ===
 [1] http://www.onjava.com/pub/a/onjava/2001/05/03/java_security.html This article contains also some background information on keystores etc.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.InitSSL [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InitSSL.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InitSSL.java (*Source*)]
 
 = list-tasks = 
 
 A simple task listing all tasks known at execution time within the current project. The listing is dumped on standard output. This task does not support any attributes nor any elements. It's purpose is mainly for debugging.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.ListTasks [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/ListTasks.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/ListTasks.java (*Source*)]
 
 = make-dir = 
@@ -796,22 +796,22 @@ A simple task listing all tasks known at execution time within the current proje
 TODO: change this to mkdir
 A task to create a, possible nested, directory structure.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Mkdir [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Mkdir.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Mkdir.java (*Source*)]
 
 = properties = 
 
 A task to set multiple properties in one go. 
 
-== Attributes ==
+=== Attributes ===
 
  * *comment*  <br /> The comment character sequence (string:;)
 
-== Elements ==
+=== Elements ===
 
 This task accepts a implicit text element.
 
-== Example ==
+=== Example ===
 
 Here is a simple example demonstrating features of this task:
 {{{
@@ -828,7 +828,7 @@ Here is a simple example demonstrating features of this task:
 </c:properties>
 }}}
 
-== Behaviour ==
+=== Behaviour ===
 
 This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
 {{{
@@ -843,7 +843,7 @@ Notice the usage of the quote character `'` in the former example and the absenc
 
 Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved and the left and right side of a property statement.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
 
 = property-by-regex = 
@@ -852,11 +852,11 @@ A task to compose a property based on existing properties.
 
 The new property is composed by searching for property names matching a given regular expression. Then the new property is created by  concatenating the value of each matching property using a separator of choice.
 
-== Attributes ==
+=== Attributes ===
  * property<br />The name of the property to create
  * regex<br />The regular expression. 
  * sep<br />The separator to use when concatenating
-== Example ==
+=== Example ===
 
 Assume that the following properties are defined:
 
@@ -878,7 +878,7 @@ creates property
  depot.csv = http://depot/component,http://depot/3rdparty,http://depot/externals
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Select [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Select.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Select.java (*Source*)]
 
 = property-handler = 
@@ -940,14 +940,14 @@ A list of functions provided by installing property-handler:
 |}
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Init [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Init.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Init.java (*Source*)]
  * Classname: net.haefelingerit.flaka.Eval [http://flaka.code.google.com/browse/net/haefelingerit/Eval.java (*Source*)]
 
-== Attributes ==
+=== Attributes ===
  * atleast<br/>The minimum version required.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Require [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Require.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Require.java (*Source*)]
 
 = run-macro = 
@@ -956,11 +956,11 @@ A task to invoke a macro or task (or a list of them) dynamically.
 
 The current version does not support calling macros or tasks with arguments. 
 
-== Attributes ==
+=== Attributes ===
  *name <br/> The name of the macro to run. Use whitespace chars to specify a list of names. []
  *fail <br />Whether a exception shall be thrown if macro does not exist [false]
 
-== Example ==
+=== Example ===
 
 {{{
  <{{AntRefTask|1=macrodef.html|2=macrodef}} name="foobar" >
@@ -972,18 +972,18 @@ The current version does not support calling macros or tasks with arguments.
  <c:run-macro name="foobar" />  -- dynamic way
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.RunMacro [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunMacro.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunMacro.java (*Source*)]
 
 = run-target = 
 
 A task to invoke a target dynamically.
 
-== Attributes ==
+=== Attributes ===
  *name <br />The name of the target to invoke.
  *fail <br />Fail if target does not exist [false]
 
-== Example ==
+=== Example ===
 
 {{{
  <target name="foobar">
@@ -994,18 +994,18 @@ A task to invoke a target dynamically.
 }}}
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.RunTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunTarget.java (*Source*)]
 
 = set-default-target = 
 
 A task to define the project's default target. 
 
-== Attributes ==
+=== Attributes ===
  *name<br /> The name of the target
  *fail <br />Whether to throw an exception if target does not exist [false]
  *override<br/>Whether to override an already existing default target [false]
-== Example ==
+=== Example ===
 
 This example changes the default target to be called from this to foobar.
 
@@ -1019,7 +1019,7 @@ This example changes the default target to be called from this to foobar.
  </project>
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.SetDefault [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/SetDefault.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/SetDefault.java (*Source*)]
 
 = switch =
@@ -1045,7 +1045,7 @@ A switch statement as found in typical programming languages. A sequence of case
 
 Notice the usage of a pattern expression in the first and the usage of regular expressions in the second and third case statement. Utilization of pattern and regular expressions make switch a very flexible and powerful conditional statement.
 
-== Attributes ==
+=== Attributes ===
  * value<br />The (string) value that needs to be matched by a case statement. Note that the value given is normalized, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case. See {{JavaLangRef|1=Character}} for details on whitespace. [].
  * stem<br />When applying regular expressions, details of the match are exposed as a set of properties. To avoid pollution, each property is prefixed with the given stem. A stem can also individually been set for each case statement if necessary. [switch]
  * find<br />When set to true, it is sufficient for a case expression to match a substring. By default, the whole input string, i.e. the  switch value, must match. [false]
@@ -1057,7 +1057,7 @@ Notice the usage of a pattern expression in the first and the usage of regular e
 
 Note that each of this attributes (except value) can also be applied to a case statement. By default each case statement inherits the current value from the enclosing switch statement.
 
-== Properties ==
+=== Properties ===
 In case of a match, a set of properties - like the number of matching groups -  are set for further processing. As an example, assume that default stem switch is used. Then properties like switch.p, switch.n, switch.g0 are available after a match. The following table lists the properties being set.
 {| {{whtable}}
  ! property !! description !! example
@@ -1085,14 +1085,14 @@ In case of a match, a set of properties - like the number of matching groups -  
 
 Note that this properties are set regardless whether they exists or not.
 
-== Element ==
+=== Element ===
 
  * case <br />The case element is used for matching the given switch value. This element can be applied multiple times or can be absent. Each case element will be tried in order. Element case supports the same attributes as the enclosing switch element does. Additionally the following attributes are supported:
  ** match<br />The expression to use for matching this case against the switch value. By default, the expression is interpreted as pattern  expression. If however the first and last character are '/', then these characters are stripped off and the remaining string is interpreted as regular expression. If it is not possible to interpret the remaining string as regular expression, the remaining string will be treated as pattern expression which is always possible. <br />If the first and last character are '%', then the remaining string is interpreted as pattern expression. The underlying regular expression engine is implementation dependent. It is Java for the current version of Flaka. Although Java, note that the backslash character doesn't need to be escaped. For example, string "\s" is indeed a whitespace character while this needs to be written as "\\s" in Java.
  * default <br />The default statement will be executed if no case statement matched. This element is optional. This element can only be specified once. A build exception will be raised if used more than once.
  * otherwise <br />This element is a synonym for element default.
 
-== Example I==
+=== Example I===
 
 This example shows a couple of ways to handle a file based on it's extension:
 
@@ -1110,7 +1110,7 @@ This example shows a couple of ways to handle a file based on it's extension:
  </c:switch>
 }}}
 
-== Advanced Example ==
+=== Advanced Example ===
 This example requires at least version 2.1.5.
 
 Very often it is not only important to know whether a value matches or not. For further processing, it would be also good to break the matching string apart. To support this, properties are set for each match as the example below demonstrates. Contrary to standard Ant behaviour, those attributes are always set, even if such a property exists before. The standard stem for those properties, is net.haefelingerit.flaka.match.. 
@@ -1141,7 +1141,7 @@ Note that in this example property g.g3 is not set cause there are only two capt
 
 For further processing, properties like g.s1 and g.e1 are set. Property g.s1 contains the index start index of the substring captured by group one during the match. Property g.s2 contains the start index of group two and so on. Similar, g.e1 contains the index of the last matching character, incremented by one. This indexes can be used to extract arbitrary substrings.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Switch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Switch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Switch.java (*Source*)]
 
 = taskdotclasspath =
@@ -1150,7 +1150,7 @@ This task can be used to perform low level operations on a .classpath file. Supp
 
 taskdotclasspath has been implemented as core task. This is a reference to it's [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/DotClassPath.html  accompanying Java documentation].
 
-== Attributes ==
+=== Attributes ===
  * op<br/>The operation to be executed where 'a' means append, 'r' means remove and 'q' means query. The character 'u' means update and is a historical synonym for append. When specifying an operation, the input string is trimmed and the first character in the remaining string determines the operation. Further characters given are not taken into account. The default operation is 'a' for append.
  * echo<br/>Whether to dump to final content of .classpath on stdout or not. No dumping by default.
  * file<br/>The file to operate on. The default is .classpath.
@@ -1159,16 +1159,16 @@ taskdotclasspath has been implemented as core task. This is a reference to it's 
 
 All string arguments are normalized, i.e. leading and trailing whitespace is ignored. If a normalized string is empty, it will not be passed, i.e will not change the default value.
 
-== Elements ==
+=== Elements ===
 
  * classpathentry A standard .classpath entry as it may occurs in Eclipse
  * fileset A standard Ant fileset (see ..). Usually used to specify a list of dependencies.
 
-== Example: Add Source And Output Path ==
+=== Example: Add Source And Output Path ===
 
 This example assumes that a empty .classpath file exits, i.e. something like
 
- == .classpath ==
+ === .classpath ===
 {{{
  <classpath />
 }}}
@@ -1189,7 +1189,7 @@ The following operation tries to add Java source paths and one output path to th
 
 After this operation, the content of .classpath looks like
 
- == .classpath ==
+ === .classpath ===
 {{{
  <classpath>
   <classpathentry kind="output" path="build/obj"/>
@@ -1202,7 +1202,7 @@ Notice that entries 3 and 4 are not added again. Both entries are identical with
 
 Notice further that the file's content is sorted. When executing, the final content of .classpath after this operation is dumped to standard out due to attribute echo. Set echo to false or omit the echo task to be silent.
 
-== Example: Append dependencies ==
+=== Example: Append dependencies ===
 
 The previous example added source and output paths. This example appends jar files required to compile the Java project. All required libs shall for the sake of this example in folder build/lib. The content of this folder shall be:
 
@@ -1242,7 +1242,7 @@ Be aware that the following does not work:
 
 There is no technical reason for this - this feature is just not implemented.
 
-== Example: Append dependencies (II) ==
+=== Example: Append dependencies (II) ===
 
 A better way to include dependencies as the shown in the previous example is 
 
@@ -1256,7 +1256,7 @@ A better way to include dependencies as the shown in the previous example is
 
 Selector dependency-selector assures that only those files are taken out of folder build/lib which are really used as dependencies in the project and not just any jar file found therein. dependency-selector has further abilities to limit the search to dependencies in a particular scope etc.
 
-== Example: Remove Entries ==
+=== Example: Remove Entries ===
 
 Based on the content of the previous example, let's try to remove all crosslinked projects. Let's assume for the sake of this discussion, that a crosslinked project has a path that starts with character '/'. The current content contains just one such entry, namely /Foobar, which would be eliminated by
 
@@ -1278,7 +1278,7 @@ A regular expression is indicated by having first and last character equal (afte
 
 The full power of regular expressions is available as given by the underlying Java implementation. See http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html for details.
 
-== Example: Query Entries ==
+=== Example: Query Entries ===
 
 It is also possible to query a .classpath file for certain entries. For example,
 the following query tests whether a .classpath contains crosslinked projects (assuming that every crosslinked starts with character '/'):
@@ -1293,7 +1293,7 @@ The variable given, being are-projects-crosslinked, is only touched if the query
 
 When using more than one entry, then each entry must match. This condition can be changed using attribute logic. When being set to a logical or, it is enough that one entry matches.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.DotClassPath [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/DotClassPath.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/DotClassPath.java (*Source*)]
 
 = throw = 
@@ -1317,11 +1317,11 @@ Note that throw would re-throw the last thrown exception - regardless of the cur
  <c:throw /> -- re-throws "4711" exception!!!
 }}}
 
-== Attributes ==
+=== Attributes ===
  * reference<br/>The name of the reference holding the previously thrown exception [trycatch.object]
  * var<br/>Same as reference
 
-== Example ==
+=== Example ===
 
 A typical usage example:
 
@@ -1338,7 +1338,7 @@ A typical usage example:
 When being executed, Ant would receive a build exception (re-thrown within the catch clause) containing "4711" and terminate.
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
  * Task [Tasks#trycatch trycatch]
 
@@ -1376,13 +1376,13 @@ When matching against the error message, be aware that the actual error message 
 }}}
   
 
-== Attributes ==
+=== Attributes ===
  * property<br/>The name of the property that should hold the exception message
  * reference<br />The name of the reference to hold the exception object [trycatch.object]
  * catch.type<br />A pattern against the type (Java classname) of the exception object [*.BuildException]
  * catch.match<br /> A pattern to be applied against the exception message [*]
 
-== Elements ==
+=== Elements ===
 
  * try<br /> A task container to hold tasks and macros to be given a try. 
  * catch<br /> A task container to be executed if an exception gets thrown
@@ -1393,7 +1393,7 @@ Note that all elements are optional. However, if there's no try element, then th
 It is allowed to have more multiple try, catch or finally clauses and further does the oder in which they appear not matter. Be aware though that eventually all try and finally clauses are merged into one try resp. finally clause.
 
 
-== Example I ==
+=== Example I ===
 
 The following snippet demonstrates the usage of trycatch:
 
@@ -1427,14 +1427,14 @@ Giving:
     [echo] ..finally
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.TryCatch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/TryCatch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/TryCatch.java (*Source*)]
 
 = unless = 
 
 This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
 
-== Example ==
+=== Example ===
 
 This example shows how to create a folder named libdir if such a folder does not already exist.
 
@@ -1447,7 +1447,7 @@ This example shows how to create a folder named libdir if such a folder does not
 
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
 
 = unset =
@@ -1460,10 +1460,10 @@ The unset statement allows for the removal of a resource within a project. As of
 
 This example demonstrates how to remove properties v1, v2 and v3 regardless whether they exist before or not. Be aware that unset also removes properties given via the command line (aka user properties).
 
-== Attributes ==
+=== Attributes ===
  * var <br>The name of the property or properties to be removed. Use whitespace characters, preferably the blank character as shown in the examples, for separation. Instead of attribute var, attribute name and property can be used although this name are deprecated. The behavior of unset is undefined if a combination of this attributes, like in <c:unset var="x" property="y" />, is used.
 
-== Example I ==
+=== Example I ===
 
 This example demonstrates the usage. Notice that property v2 is set via the command line, i.e. a so called user property in Ant terminology.
 
@@ -1483,21 +1483,21 @@ This will give:
 }}}
 
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
 
 = uploadtask = 
 
 A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.org Jdepot].
 
-== Attributes ==
+=== Attributes ===
  * endpoint<br />The URL to be used for uploading [http://jdepot.internal.epo.org/depot]
  * test<br /> Whether upload should be done in dry mode or not [true]
  * category<br />The category used when uploading [components]
  * rcfile<br />The authentication file [${HOME}/.jdepot]. This file is supposed to contain a username and passoword in one line in a format like alibaba sesame.
  * debug<br />Whether to run in debug mode or not [false]
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.HttpUploadTask [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/HttpUploadTask.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/HttpUploadTask.java (*Source*)]
 
 = wc = 
@@ -1518,7 +1518,7 @@ Here all files in the current working directory are counted. The counted number 
 
 Implementation Note: This task is an implicit {{AntRefCoreType|1=fileset}} and supports therefore all attributes and elements supported by that type.
 
-== Attributes ==
+=== Attributes ===
 Task wc supports the following attributes:
  * dir  
  * type
@@ -1541,7 +1541,7 @@ counts directories and files. Note that each type descriptor is only once taken 
 
 The result of wc, i.e. the number of counted items can be saved in a project property. The name of the property is specified via attribute var. If a property is not given, then Flaka will use _ as value and the same happens if var is an empty string, i.e. only contains whitespace characters. The property denoted by var does not need to exist. If it exists, it will be overridden. That's why the attribute has been named var and not property. Property are not override able in standard Ant (they are when suing Flaka though). 
 
-== Elements ==
+=== Elements ===
 
 All standard {{AntRefCoreType|1=fileset}} elements are applicable and can be further used to restrict the selection on which counting takes place. For example, to count all files having extension .java one would use
 
@@ -1552,7 +1552,7 @@ All standard {{AntRefCoreType|1=fileset}} elements are applicable and can be fur
 }}}
 
 
-== Pitfalls ==
+=== Pitfalls ===
 
 wc behaves like an implicit fileset. As consequence not all files are taken into account. For example, directories named CVS are excluded from any fileset by default. Note that this is standard Ant behavior.
 
@@ -1568,7 +1568,7 @@ this behavior. In both examples we assume that wc would count a total of 10 file
  <echo>${y}</echo>          => total 10
 }}}
 
-== References ==
+=== References ===
  * Manual page of type {{AntRefCoreType|1=fileset}} 
  * Classname: net.haefelingerit.flaka.WC [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/WC.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/WC.java (*Source*)]
 
@@ -1576,12 +1576,12 @@ this behavior. In both examples we assume that wc would count a total of 10 file
 
 Task when represents a else-less if statement. 
 
-== Attributes ==
+=== Attributes ===
  * test<br/>A test condition that must evaluate to true in order to execute the body of this if statement.
-== Elements ==
+=== Elements ===
  * Any task or macro instance
 
-== Example I ==
+=== Example I ===
 
 The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
 
@@ -1596,14 +1596,14 @@ The following example dumps the content of a file to stdout via Ant's echo task 
 
 Note that the example is bit artificial cause Ant's loadfile task is sufficient. Further note that the argument ${file} has been quoted in the test condition in order to force a proper parsing of the condition. The parsing algorithm is based on whitespace. A blank or tab in ${file} would therefore cause a syntax error. The enclosing quotes enforce that ${file} will not be broken into pieces.
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
 
 = writedeps = 
 
 A task to format dependencies in various predefined styles. In order to use this task, dependencies need to be defined and retrieved. See examples for details.
 
-== Attributes ==
+=== Attributes ===
  * refid<br/> Use this attribute to reference another variable than the default [deps.object]
  * format<br/> Change the format style rather than the default `maven`. Well known styles are:
  ** maven<br/> Format a la Maven
@@ -1611,7 +1611,7 @@ A task to format dependencies in various predefined styles. In order to use this
  ** flat<br/> Dump the relative depot path 
  * out<br />The file to write to. Use `-` to write to standard out [-].
 
-== Example I==
+=== Example I===
 
 A small project defining, retrieving and formating dependencies:
 {{{
@@ -1654,20 +1654,20 @@ other supported formats are:
  flat: /log4j/jars/log4j-1.2.9.jar
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.WriteDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/WriteDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/WriteDeps.java (*Source*)]
 
 = xmlmerge = 
 
 A simple task to merge XML files. 
 
-== Attributes ==
+=== Attributes ===
  * dst<br />The file to write to. Any intermediate folders are created. writes to stdout if empty string or argument - is given.
  * src<br />A file or folder argument. If a folder is given, then any file therein matching a given pattern is merged, otherwise the file given. A relative argument is interpreted as being relative to the current working directory.
  * pattern<br />The pattern to apply when matching files to be merged. The pattern can be a regular expression or a file pattern. [/.*\\.xml/].
  * root<br />By default the root tag of the first element will be the root tag for the merged content. Use attribute root to specify a different root tag.
 
-== Example I ==
+=== Example I ===
 
 Assume that folder xmldir contains two files x.xml and y.xml where x.xml looks like
 
@@ -1692,7 +1692,7 @@ and where y.xml looks similar. Then the following invocation gets:
  </myroot>
 }}}
 
-== Example II ==
+=== Example II ===
 
 The same setup as before gives, when no root element is applied, the following:
 
@@ -1707,5 +1707,5 @@ The same setup as before gives, when no root element is applied, the following:
  </X>
 }}}
 
-== References ==
+=== References ===
  * Classname: net.haefelingerit.flaka.XmlMerger [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/XmlMerger.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/XmlMerger.java (*Source*)] 
