@@ -474,20 +474,17 @@ Task when represents a else-less if statement.
 The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
 
 {{{
- <c:when test=" -f '${file}'">
-  <echo>
-    <loadfile property="__z__" />
+ <c:when test=" 'path/to/file'.tofile.isfile" >
+   <c:mset var="fname" property="true" value=" f " />
+    <loadfile property="__z__" srcFile="${fname}"/>
     <echo message="${__z__}" />
-  </echo>
  </c:when>
 }}}
 
-Note that the example is bit artificial cause Ant's loadfile task is sufficient. Further note that the argument ${file} has been quoted in the test condition in order to force a proper parsing of the condition. The parsing algorithm is based on whitespace. A blank or tab in ${file} would therefore cause a syntax error. The enclosing quotes enforce that ${file} will not be broken into pieces.
+Note that the example is bit artificial cause Ant's loadfile task is sufficient. 
 
 === References ===
  * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
-
-
 
 == unless ==
 
@@ -498,13 +495,10 @@ This task is the logical opposite of task [Tasks#when when]. It's body is only e
 This example shows how to create a folder named libdir if such a folder does not already exist.
 
 {{{
- <c:unless test="-d 'libdir'">
+ <c:unless test=" 'libdir'.tofile.isdir ">
   <mkdir dir="libdir" />
  </c:unless>
 }}}
-
-
-
 
 === References ===
  * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
@@ -515,6 +509,7 @@ A task implementing a series of ifelse statements, i.e. a generalized if-then-el
 
 === Attributes ===
  * *when.test*<br />A test condition. When evaluating to true, the corresponding when clause will be executed.
+
 === Elements ===
  * when<br/> A optional series of elements acting as container for task and macros.
  * otherwise<br />An optional element that is executed if no when clause got executed
@@ -598,29 +593,14 @@ Note that each of this attributes (except value) can also be applied to a case s
 
 === Properties ===
 In case of a match, a set of properties - like the number of matching groups -  are set for further processing. As an example, assume that default stem switch is used. Then properties like switch.p, switch.n, switch.g0 are available after a match. The following table lists the properties being set.
-{| {{whtable}}
- ! property !! description !! example
- |-
- ! <center>stem.p</center>
- | the matching pattern 
- |
- |-
- ! <center>stem.n</center>
- | the number of capturing groups ||
- |-
- ! <center>stem.g0</center> 
- | group 0, the matching string ||
- |- 
- ! <center>stem.gj</center> 
- | group j, content of group j ||
- |-
- ! <center>stem.sj</center> 
- | start index of group j ||
- |- 
- ! <center>stem.ej</center> 
- | last index of group j ||
- |-
- |}
+
+ || property || description || example ||
+ || <center>stem.p</center> || the matching pattern || ||
+ || <center>stem.n</center> || the number of capturing groups || ||
+ || <center>stem.g0</center> || group 0, the matching string || ||
+ || <center>stem.gj</center> || group j, content of group j || ||
+ || <center>stem.sj</center> || start index of group j || ||
+ || <center>stem.ej</center>  || last index of group j || ||
 
 Note that this properties are set regardless whether they exists or not.
 
@@ -1048,7 +1028,7 @@ Assume that the following dependency is specified in the current build script ($
 and that file lib/log4j/jars/log4j-1.2.8.jar exists as well. Then
 
 {{{
- <c:set var="jdepot.csv" value="file://localhost/./lib" />
+ <c:set var="jdepot.csv" value=" 'lib'.tofile.tourl " />
  <c:getdeps />
 }}}
 
@@ -1213,7 +1193,7 @@ creates property
 === References ===
  * Classname: net.haefelingerit.flaka.Select [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Select.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Select.java (*Source*)]
 
-= property-handler = 
+== property-handler ==
 
 A task to install a property handler in addition to the standard one provided by Ant. 
 
@@ -1231,7 +1211,7 @@ This snippet would show:
  [echo] hello => HELLO
 }}}
 
-Note that this property handler gets automatically installed when booting the framework.
+Note that this property handle grets automatically installed when booting the framework.
 
 A list of functions provided by installing property-handler:
 
@@ -1507,7 +1487,7 @@ When using more than one entry, then each entry must match. This condition can b
 === References ===
  * Classname: net.haefelingerit.flaka.DotClassPath [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/DotClassPath.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/DotClassPath.java (*Source*)]
 
-= uploadtask = 
+== uploadtask ==
 
 A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.org Jdepot].
 
