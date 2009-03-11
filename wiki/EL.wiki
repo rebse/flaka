@@ -273,88 +273,20 @@ The following _properties_ are defined on File objects:
 || `delete` || bool || deletes the file or folder (true); false otherwise ||
 || `mkdir`  || bool || creates the folder (and intermediate) folders (true); false otherwise ||
 
-When evaluating a condition to a bool value, a File object is checked for existence. For example, the following condition evaluates always to `true`:
+= Evaluating in a boolean context ==
 
-{{{
- <c:set  var="f" value="'${ant.file}'.tofile " />
- <c:when test=" f " /> -- evaluates to 'true'; is same as
- <c:when test=" f.exists " />  
-}}}
+When evaluation a expr in a string context, a string representation of the final object is created. Similar, when a evaluation in a boolean context takes place, a conversion into a boolean value of the evaluated object takes place. The following table describes this boolean conversion:
 
+|| evaluated object type || `true` || `false` ||
+|| file                  || if the file exists || `false` otherwise ||
+|| string                || if string is empty || `false` otherwise ||
+|| null                  || never  || always || 
+|| boolean               || if true || otherwise
 
+<wiki:comment>
+List all conversions
+</wiki:comment>
 
-
-= Example =
-
-The following larger example shows EL usage examples. Before starting, we define a couple of entities:
-{{{
-  <property name="name" value="PROPERTY name" />
-  <c:set var="name" value=" REFERENCE name" />
-
-  <target name="name" description="TARGET name" />
-
-  <macrodef name="name1" description="NAME1 macro>
-   <sequential />
-  </macrodef>
-	
-  <c:set var="foo.bar" value="'some string (reference)'" />
-  <property name="foo.bar" value="some string (property)'" />
-	
-  <taskdef name="name" classname="net.haefelingerit.flaka.Echo" />
-}}}
-
-Then we evaluate EL expressions in using Flaka's echo (again, we could have used any other task able to evaluate EL expressions):
-
-{{{
-<c:echo>
-  #{name}             => same a reference.name
-	  
-  #{project.name}     => calling the getName() method on 
-                         implicit object 'project'
-
-  #{project['name']}  => same as project.name. Useful 
-                         alternative for 'dotted' names.
-		
-	  # property
-	  property.name          => #{property.name} 
-      property['name']       => #{property['name']} 
-	  # reference
-	  reference.name         => #{reference.name}
-	  var.name               => #{var.name}
-	  # target
-	  target.name            => #{target.name}
-	  # taskdef
-	  taskdef.name           => #{taskdef.name} 
-	  # macrodef
-	  macrodef.name          => #{macrodef.name1} 
-	  # either taskdef or macrodef
-	  task.name              => #{task.name}   
-	  
-	  # expenensive ..
-	  project.properties.ant => #{project.properties.ant}
-	  # better this way ..
-      property.ant            => #{property.ant}
-	  
-	  # some math ..
-	  value of 1+(37277 * 4777) = #{1+(37277 * 4777)}
-		
-	  # Handling of 'dotted' names 
-	  # 
-	  # queries getBar() on foo - not what we want
-	  reference.foo.bar       => #{reference.foo.bar}
-	  # NO: there is no 'foo' reference ..
-	  reference[foo.bar]      => #{reference[foo.bar]}
-	  # GOOD
-	  reference['foo.bar']    => #{reference['foo.bar']}
-	  # NO
-	  foo.bar                 => #{foo.bar}
-	  # NO (just evaluates to enclosed string)
-	  'foo.bar'               => #{'foo.bar'}
-		
-      name    => #{empty project.name ? '(null)' : project.name}
-	  basedir => #{project.baseDir.parent}
-	  descr   => #{project.description}
-</c:echo>
 }}}
 
 
