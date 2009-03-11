@@ -30,17 +30,7 @@ Being executed, this snippet produces something like
 }}}
 as output. Notice the usage of task [Tasks#echo echo]. When being tried with [http://ant.apache.org/manual/CoreTasks/echo.html Ant's standard echo task], a totally different output needs to be expected. Most important, [#EL_References EL references] `#{..}` are not resolved but rather print as given.
 
-
-= Disabling EL =
-
-By default, _EL_ is enabled. _EL_ can be disabled by setting property `ant.el` to `false` (exactly as written). For example:
-{{{
-<!-- globally disable EL --->
-<property name="ant.el" value="false" />
-}}} 
-If the property is not set, or set to a different value, then _EL_ is enabled.
-
-= EL in Action =
+= Using EL =
 
 The code snippet following shows _EL_ in action. The idea is to list all unreadable files in a certain directory (here the root folder). The snippet shows how EL is used in [#EL_Ready_Tasks Flaka various EL enabled tasks].
 {{{
@@ -70,7 +60,17 @@ Executed on MacOS 10.5.6 (aka "Leopard"), this gives:
 [c:echo] And here they are [/.Trashes, /.Spotlight-V100].
 }}}
 
-= EL Ready Tasks =
+
+== Disabling EL ==
+
+By default, _EL_ is enabled. _EL_ can be disabled by setting property `ant.el` to `false` (exactly as written). For example:
+{{{
+<!-- globally disable EL --->
+<property name="ant.el" value="false" />
+}}} 
+If the property is not set, or set to a different value, then _EL_ is enabled.
+
+== EL Ready Tasks ==
 
 _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
 
@@ -82,7 +82,7 @@ _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
 
 Further tasks to follow. It is further worked on to provide a task which enables _EL_ on a core level. This would allow to use _EL_ expressions similar to Ant property references `${..}`.
 
-= EL References =
+== EL References ==
 
 Those not familiar with  [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf EL's specification], [http://en.wikipedia.org/wiki/JavaServer_Pages JSP] or [http://en.wikipedia.org/wiki/JavaServer_Faces JSF] may safely skip this section. 
 
