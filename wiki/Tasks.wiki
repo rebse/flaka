@@ -929,9 +929,9 @@ Use this task to dump a file within the Flaka package to stdout or a file.  This
  * Classname: net.haefelingerit.flaka.Export [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Export.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Export.java (*Source*)]
 
 == find == 
-<wiki:comment>done</wiki:comment>
+<wiki:comment>todo:references</wiki:comment>
 
-Ant lacks a simple task to report all or certain files in a folder. This task lets you evaluate an arbitrary [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] into a list of `file`s. Used in conjuction with [Tasks#for task for] enables you to print easily all files and properties of them. Of course, that generated list can also be used for other purposes.
+Ant lacks a simple task to report all or certain files in a folder. This task lets you evaluate an arbitrary [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] into a list of `file`s. Used in conjunction with [Tasks#for task for] enables you to print easily all files and properties of them. Of course, that generated list can also be used for other purposes.
 
 {{{
 <c:find var="filelist" type="f" />
@@ -947,11 +947,11 @@ Ant lacks a simple task to report all or certain files in a folder. This task le
 || Attribute || Type   || EL || Meaning || Default ||
 || dir       || string ||  = || The directories to scan. || Basedir of build script (''.tofile) ||
 || type      || string ||    || `f` to select files and `d` to select folders || all files and folders ||
-|| var       || string ||  r || The name of the variable to hold a list of scanned files or folders || null
+|| var       || string ||  r || The name of the variable to hold a list of scanned files or folders || null ||
 
 === Elements ===
 
-This task implements a [[http://ant.apache.org/manual/CoreTypes/fileset.html standard Ant fileset]. All elements of `fileset` are therefore legal elements of `find` as well.
+This task implements a [http://ant.apache.org/manual/CoreTypes/fileset.html standard Ant fileset]. All elements of `fileset` are therefore legal elements of `find` as well.
 
 == Behaviour ==
 
