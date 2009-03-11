@@ -276,7 +276,7 @@ Besides _natural_ properties (see discussion above) are the following properties
 || tolower  || string || return this string in lowercase characters only ||
 || toupper  || string || return this string in uppercase characters only ||
 || trim     || string || remove leading and trailing whitespace characters ||
-|| tofile   || file  || create a file based on this string; the so created will be relative to the current build file's base foder if the string's value does not denote a absolute path. Furthermore, the empty string will create a file object denoting the project's base folder (i.e. the folder containing the build script currently executed). 
+|| tofile   || file  || create a file based on this string; the so created will be relative to the current build file's base foder if the string's value does not denote a absolute path. Furthermore, the empty string will create a file object denoting the project's base folder (i.e. the folder containing the build script currently executed). || 
 
 == File Properties ==
 
