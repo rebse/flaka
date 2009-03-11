@@ -404,6 +404,14 @@ This prints:
 }}}
 
 
+
+=== References ===
+ * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
+ * Task [Tasks#for for] 
+ * Task [Tasks#continue continue]
+ * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
+
+
 == break == 
 
 A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
@@ -921,58 +929,60 @@ Use this task to dump a file within the Flaka package to stdout or a file.  This
  * Classname: net.haefelingerit.flaka.Export [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Export.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Export.java (*Source*)]
 
 == find == 
+<wiki:comment>done</wiki:comment>
 
-A file reporting task inspired by UNIX's find command. Ant lacks such a simple task to report all or certain files in a folder.
+Ant lacks a simple task to report all or certain files in a folder. This task lets you evaluate an arbitrary [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] into a list of `file`s. Used in conjuction with [Tasks#for task for] enables you to print easily all files and properties of them. Of course, that generated list can also be used for other purposes.
+
+{{{
+<c:find var="filelist" type="f" />
+<c:for var="file" in="filelist">
+ <c:echo>
+  #{file} has been last accessed at #{file.mtime}
+ </c:echo>
+</c:for>
+}}}
 
 === Attributes ===
- * dir<br />The root folder to use. If not given, the current working directory (i.e. '.') is used. 
- * type<br />The type of files to report where f means standard files and d stands for directories.
- * var<br />Optional: the name of a property to set that will hold the concatenated result of the search. Individual files and folders are separated by a blank character. No quoting is used, therefore this task should not be used with file names containing blank characters.
+
+|| Attribute || Type   || EL || Meaning || Default ||
+|| dir       || string ||  = || The directories to scan. || Basedir of build script (''.tofile) ||
+|| type      || string ||    || `f` to select files and `d` to select folders || all files and folders ||
+|| var       || string ||  r || The name of the variable to hold a list of scanned files or folders || null
 
 === Elements ===
-This task implements a standard Ant fileset task.
 
-=== Example I ===
+This task implements a [[http://ant.apache.org/manual/CoreTypes/fileset.html standard Ant fileset]. All elements of `fileset` are therefore legal elements of `find` as well.
+
+== Behaviour ==
+
+This task scans all files and folders given by attribute `dir` into a variable given by `var`. If `var` is empty, then no scanning takes place. Attribute `var` may contain [EL#EL_References EL references] which are resolved. If a scanning takes place, then `var` will be created and contains, in any case, a list value.
+
+Attribute `dir` may contain [EL#EL_References EL references] which are resolved. The so resolved string value must be a syntatically legal EL expression. This expression will then be evaluated. If the evaluated object is a list, then each list item will be scanned for files and folder, otherwise only the evaluated object. If such a object to be scanned is not already a file object, then stringized object is used to create the folder to be scanned. The following examples illustrate this behaviour:
+|| Argument           || Same as ||
+|| 'src'              || list('src'.tofile) ||
+|| list('src','lib')  || list('src'.tofile,'lib'.tofile) ||
+
+Attribute `type` is used to filter out unwanted files or folder from being scanned. If `type` is `f`, then only files are taken into account and when `d`, only folders matter. By default files and folders are accumulated.
+
+=== Examples ===
 
 Report all files in the working directory. Note that also files in sub folders are reported.
 
 {{{
- <c:find type="f" />
+ <c:find var="filelist" type="f" />
 }}}
-
-
-=== Example II ===
 
 Check whether a sub folder ending in '.jar' exists which is not a file but a directory.
 
 {{{
- <c:find type="d">
+ <c:find var="filelist" type="d">
    <include name="**/*.jar" />
  </c:find>
 }}}
  
-=== Example III ===
-
-Report all files in the folder containing this Ant build file.
-
-{{{
- <c:find dir="${dirname ${ant.file}}">
-  <include name="*.xml"
- </c:find>
-}}}
-
-Note that this function dirname needs to be enabled by installing Flaka's property handler [Tasks#property-handler property-handler] once.
 
 === References ===
  * Classname: net.haefelingerit.flaka.Find [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Find.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Find.java (*Source*)]
-
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
- * Task [Tasks#for for] 
- * Task [Tasks#continue continue]
- * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
 
 == getdeps ==
 
