@@ -9,24 +9,24 @@ One such context is Ant scripting. Ant makes it difficult to access data objects
 {{{
 <c:echo>
   ;; basedir is a standard Ant property 
-  folder = ${basedir}
+  basedir is ${basedir}
 
   ;; report last modification time (as Date object)
-  last modified = #{ '${basedir}'.tofile.mtime }
+  was last modified at #{ '${basedir}'.tofile.mtime }
 
   ;; dump the full name of this build file 
   ;; where 'ant.file' is a standard property
-  this build file is #{property['ant.file'] }
+  this is #{property['ant.file'] } reporting!
 </c:echo>
 }}}
 
 Being executed, this snippet produces something like 
 {{{
-[c:echo] folder = /projects/flaka/test
+[c:echo] basedir is /projects/flaka/test
 [c:echo] 
-[c:echo] last modified = Mon Mar 09 13:52:29 CET 2009
+[c:echo] was last modified at Mon Mar 09 13:52:29 CET 2009
 [c:echo] 
-[c:echo] this build file is /projects/flaka/test/tryme.xml
+[c:echo] this is /projects/flaka/test/tryme.xml reporting!
 }}}
 as output. Notice the usage of task [Tasks#echo echo]. When being tried with [http://ant.apache.org/manual/CoreTasks/echo.html Ant's standard echo task], a totally different output needs to be expected. Most important, [#EL_References EL references] `#{..}` are not resolved but rather print as given.
 
@@ -42,21 +42,21 @@ If the property is not set, or set to a different value, then _EL_ is enabled.
 
 = EL in Action =
 
-The code snippet following shows _EL_ in action. The idea is to list all unreadable files in a certain directory (here the root folder). The snippet shows how EL is used in [EL_Ready_Tasks Flaka tasks].
+The code snippet following shows _EL_ in action. The idea is to list all unreadable files in a certain directory (here the root folder). The snippet shows how EL is used in [#EL_Ready_Tasks Flaka various EL enabled tasks].
 {{{
 <c:mset>
-  ;; The right side is evaluated as EL expression!
   root = '/'.tofile
   list = list()
 </c:mset>
+
 <c:for var="file" in=" root.list ">
   <c:when test=" file.isdir and not file.isread ">
     <c:mset>
-      ;; append() is EL function.
       list = append(file,list)
     </c:mset>
   </c:when>
 </c:for>
+
 <c:echo>
   ;; how many unreadable directories ??
   There are #{size(list)} unreadable directories in #{root}.

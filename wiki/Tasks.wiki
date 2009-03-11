@@ -42,9 +42,9 @@ This would output
 
 == Behaviour ==
 
-*Continuation Lines* are physical lines ending with the character sequence `\$` where `$` shall denote here the end-of-line character sequence (Unix: \n, Windows: \r\n). Such a line is continued, i.e. the line will be accumulated with the next line (which could also be a continuation line). 
+*Continuation Lines* are physical lines ending with the character sequence `\$` where `$` shall denote here the end-of-line character sequence (Unix: `LF`, Windows: `CR LF`). Such a line is continued, i.e. the line will be accumulated with the next line (which could also be a continuation line). 
 
-A (accumulated) line starting with the characters given in attribute `comment` (perhabs lead by whitespace characters) is a *comment line*. Such lines are removed from output. Notice that continuation lines are supported on comment lines as well.
+A (accumulated) line starting with the characters given in attribute `comment` (perhaps lead by whitespace characters) is a *comment line*. Such lines are removed from output. Notice that continuation lines are supported on comment lines as well.
 
 A rather anoying feature of Ant's standard task is to print the echo's text including _all_ whitespace and line ending characters. This makes pretty formatting rather cruel and worse, subject to the formatting of your favorite XML editor. To allow a *decent formatting*, a couple of features have been implemented which are presented now. Let's start with simple message:
 
