@@ -196,6 +196,9 @@ The following implicit objects are defined by Flaka:
 || e || double || The [http://en.wikipedia.org/wiki/E_(mathematical_constant) mathematical constant e] || 
 || pi || double || The [http://en.wikipedia.org/wiki/P mathematical constant &#960;] || 
 
+&lt;a href=&quot;#localserver&quot;&gt;&lt;h1 id=&quot;localserver&quot;&gt;Local 
+Server&lt;/h1&gt;&lt;/a&gt;
+
 An example for an EL expression fetching property `foo` is:
 {{{
 property.foo
