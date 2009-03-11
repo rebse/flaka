@@ -183,16 +183,18 @@ The last example demonstrates that there might also be [http://en.wikipedia.org/
 Properties are good to query the state of data objects. The question is however, how do we get a data object to query in the first place? To start with _something_, [EL] allows the implementation to provide _implicit_ objects and [#Functions top level functions (see below)]. 
 
 The following implicit objects are defined by Flaka:
-|| Implicit Object || Description ||
-|| project         ||  Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead. ||
-|| property|| Use this object to query project properties. ||
-|| var|| A object containing all project references.  ||
-|| reference|| Same as `var` ||
-|| target|| Use this object to query a target ||
-|| taskdef|| Query taskdefs ||
-|| macrodefs|| Macros ||
-|| tasks||  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace. ||
-|| filter||  A object containing all filters defined in this project. ||
+|| Implicit Object || Type || Description ||
+|| project         || ||  Ant's underlying project object. It can be used to query the default target, base folder and other things. If you want to query properties, references, targets, tasks, taskdefs, macrodefs, filters etc., use appropriate implicit object instead. ||
+|| property || || Use this object to query project properties. ||
+|| var |||| A object containing all project references.  ||
+|| reference |||| Same as `var` ||
+|| target|||| Use this object to query a target ||
+|| taskdef|||| Query taskdefs ||
+|| macrodefs|||| Macros ||
+|| tasks||||  Either taskdef or macrodef. Macros are specialized task and thus same the same namespace. ||
+|| filter||||  A object containing all filters defined in this project. ||
+|| e || double || The [http://en.wikipedia.org/wiki/E_(mathematical_constant) mathematical constant e] || 
+|| pi || double || The [http://en.wikipedia.org/wiki/P mathematical constant &#960;] || 
 
 An example for an EL expression fetching property `foo` is:
 {{{
@@ -219,7 +221,7 @@ _EL_ also allows the implementation to provide top level functions. The followin
 || `file(object)`   || File || Creates and returns a file object out of `object`. If `object` is already a file, the object is simply returned. Otherwise, the object is streamed into a string and that string is taken as the file's path name. ||
 || concat(object..) || string || Creates a string by concatenating all stringized objects. If no object is provided, the empty string is returned. ||
 || list(object..) || list || Returns a list where the list's elements consists of the objects provided. If no objects are provided, the empty list is returned. ||
-|| append(object..) || list || This function is similar to `list`. It takes the objects in order and creates a list elements out of them. If a object is a list, then elements of that list are inserted instead of the list object itself. For example: `append('a,list('b'),'c') -- ('a','b','c')`||
+|| append(object..) || list || This function is similar to `list`. It takes the objects in order and creates a list elements out of them. If a object is a list, then elements of that list are inserted instead of the list object itself. For example `append('a,list('b'),'c')` evaluates to list `('a','b','c')` ||
 
 = String Properties =
 
