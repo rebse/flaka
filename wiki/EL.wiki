@@ -116,7 +116,7 @@ Notice however, that in all contexts where a expression is expected, a expressio
 <c:when test=" has.property['#{propertyname}'] " />   -- sic!
 }}}
 
-# Handling of `${..}`
+== Handling of `${..}` ==
 
 _EL_ defines two types of references:
  * *deferred*, indicated by `#{..}` ; and
@@ -124,7 +124,7 @@ _EL_ defines two types of references:
 
 Dynamic references `${..}` are handled by Ant to resolve properties. There are two execptions to this however. Ant will leave a dynamic reference as is if the reference value does not denote a (existing) property. Secondly, Ant allows to escape a reference by by doubling character `$` as in `$${a}`. In any case, `${..}` does not denote a legal EL reference and will be left as is (notice that you can install a property handler to get rif of unresolved `${..}` property references. 
 
-# Handling of `#{..}`
+== Handling of `#{..}` ==
 Deferred references `#{..}` are evaluated according to regular EL rules. Each reference is evaluated independently. Thus 
 {{{
  The #{ 'Good' } and the #{ 'Ug' 'ly' }, a well known #{ 'movie' }.
@@ -135,14 +135,14 @@ Would print
 }}}
 cause the second reference is illegal. Notice however that all valid references are evaluated.
 
-# Nested References
+== Nested References ==
 
 Nested references are not supported. The following reference is therefore illegal
 {{{
  #{ item[ #{index} ] }
 }}}
 
-# The Great Escape
+== The Great Escape ==
 
 There are two ways of producing character sequence `#{`:
  # Use character backslash to abandon interpretation like in `\#{abc}` ; or use
