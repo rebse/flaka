@@ -88,7 +88,7 @@ Those not familiar with  [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.p
 
 For those familiar, the _term EL expression_ is used in a slightly different way in this documentation than in the specification. According to the specification, `#{..}` is an EL expression. 
 
-Not so in this documentation. Here only the inner part, denoted by `..` while `#{ ..}` is considered a _reference to an EL expression_. A reference to an expression is used in contexts which are not evaluated by default. Take task [Tasks#echo echo] as example. Clearly, when writing 
+Not so in this documentation. Here only the inner part, denoted by `..` is a _EL expression_ while `#{ ..}` is considered a _reference to an EL expression_. A reference to an expression is used in contexts which are partially evaluated. Take task [Tasks#echo echo] as example. Clearly, when writing 
 {{{
 <c:echo>
  I said 'Hello world'!
@@ -103,29 +103,52 @@ we expect an output exactly as written. It would be nice to indicate however, th
 
 In other contexts, like in `<c:when test=" condition " />`, a EL expression is expected anyway and it does not make the slightest sense to require the expression to be referenced. As an example, assume that we want to check whether a property named 'foobar' exists. Instead of writing
 {{{
-<c:when test=" #{has.property.foobar} " />   -- don't!
+<c:when test=" #{has.property['foobar']} " />   -- don't!
 }}}
 as seen in popular JSP tag libraries, just write
 {{{
-<c:when test=" has.property.foobar " />   -- yes!
+<c:when test=" has.property['foobar'] " />   -- yes!!!
 }}}
-and forget about that unnecessary clutter.
+And forget about that unnecessary clutter.
 
 Notice however, that in all contexts where a expression is expected, a expression reference can be used. This allows for advanced meta programming like shown in the following example:
 {{{
-<c:mset>
-  metavar = 'i'
-  i = 0
-</c:mset>
-<c:for var=" #{metavar} " in=" list('a','b') " >
-  <c:set var=" #{metavar} " value=" #{metavar} + 1 " />
-<c:/for>
-<c:echo>
-  The value of 'i' is #{ i }
-  ;; the value of 'i' will be 2
-<c:/echo>
+<c:when test=" has.property['#{propertyname}'] " />   -- sic!
 }}}
- 
+
+# Handling of `${..}`
+
+_EL_ defines two types of references:
+ * *deferred*, indicated by `#{..}` ; and
+ * *dynamic*, indicated by `${..}`
+
+Dynamic references `${..}` are handled by Ant to resolve properties. There are two execptions to this however. Ant will leave a dynamic reference as is if the reference value does not denote a (existing) property. Secondly, Ant allows to escape a reference by by doubling character `$` as in `$${a}`. In any case, `${..}` does not denote a legal EL reference and will be left as is (notice that you can install a property handler to get rif of unresolved `${..}` property references. 
+
+# Handling of `#{..}`
+Deferred references `#{..}` are evaluated according to regular EL rules. Each reference is evaluated independently. Thus 
+{{{
+ The #{ 'Good' } and the #{ 'Ug' 'ly' }, a well known #{ 'movie' }.
+}}}
+Would print
+{{{
+ The Good and the , a well known movie.
+}}}
+cause the second reference is illegal. Notice however that all valid references are evaluated.
+
+# Nested References
+
+Nested references are not supported. The following reference is therefore illegal
+{{{
+ #{ item[ #{index} ] }
+}}}
+
+# The Great Escape
+
+There are two ways of producing character sequence `#{`:
+ # Use character backslash to abandon interpretation like in `\#{abc}` ; or use
+ # `#{'#{'}abc}`.
+Both evaluations end up in `#{abc}`. 
+
 = Basics =
 
 The gory details of _EL_ are laid out in  the [http://flaka.googlecode.com/files/jsp-2_1-fr-spec-el.pdf the official JSR 245 specification] and are not repeated here. In short however, _EL_ let's you formulate [http://en.wikipedia.org/wiki/Expression_(programming) programming expressions] like 
