@@ -208,7 +208,7 @@ This task accepts implicit text. Text may contain any amount of [EL] references.
 
 === Examples ===
 
-XML not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `mset` helps to reduce the clutter. For example:
+XML is not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `mset` helps to reduce the clutter. For example:
 {{{
   <c:mset>
     f = 'folder'
