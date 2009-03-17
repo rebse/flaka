@@ -192,13 +192,12 @@ Notice the usage of Flaka's [Tasks#echo echo] task for retrieving `foo`'s variab
 
 == mset ==
 
-This task is similar to task [Tasks#set set]. It allows to set a couple of variables or properties in one go. In addition, comments are allowed for additional readability and comfort.
+This task is similar to task [Tasks#set set]. It allows to set multiple variables and properties in one go. In addition, comments and continuation lines are allowed for additional readability and comfort.
 
 === Attributes ===
 
 || Attribute || Type || Default || [EL] || Meaning ||
 || comment   || string ||       ||      || The comment character sequence.            ||
-|| property  || bool   || false ||      || Set a variable (false) or  property (true) ||
 || debug     || bool   || false ||      || Turn on extra debug information.           ||
 
 All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
@@ -216,24 +215,19 @@ XML not particular easy to read for humans. When assigning a couple of varables 
     ; turn f into a file object
     f = f.tofile
     b = f.isdir ? true : false
+    ; assign a property (notice that the right side is always an EL expression)
+    p := 'hello world'
+    ; override a property if you dare
+    p ::= "HELLO \
+    WORLD"
   </c:mset>
 }}}
 
 In this example, `f` is first assigned to be string `"folder"`. The comment line - the one starting with character `;` - tells what the next line is going to do: turn `f` into a file object which can then be used further (for example, to check whether `f` is a directory or not.
 
-In the very same way a couple of properties can be set:
-{{{
-<c:mset property="true" comment="#">
-  # A comment \
-    comment continues here
-  x = ${ant.file}
-  y = \
-     ${x}
-  z = x
-</c:mset>
-}}}
+While character `=` is used to assign a variable, use character sequence `:=` to assign a property instead. If you dare, use `::=` to override an existing property. 
 
-This example defines properties `x`, `y` and `z`. To make things more interesting, continuation lines are shown in the comment and the assignment of `y` as well. After this assignment has been carried out, property `x` contains the full path of the current build file as string, and so does `y`. Property `z` however will be the string `x`.
+Notice that the right side of `=`, `:=` and `::=` are in any cases a EL expression. Thus when creating a property, care must be taken to quote any string properly.
 
 === Behaviour ===
 
@@ -245,7 +239,6 @@ Apart from continuation lines are leading and trailing whitespace characters ign
  
 When evaluating, each line is independent of other lines evaluated. Each line is evaluated in the order written. Evaluating means that the right side of the assignment is evaluated as [EL] expression and the resulting object is assigned to the variable stated on the left side. When evaluating properties, then the right side is evaluted into an object and additionally streamed into a sequence of characters (string).
 
-=== Further Examples ===
 Notice that it is perfectly legal to use property or variable references as the following example shows:
 {{{
 <c:mset>
@@ -259,20 +252,31 @@ Be aware that property references are evaluated _before_ [EL] expressions. Consi
 <c:mset>
   ;; let s hold string ant.file
   s = 'ant.file'
-  ;; bad, f will become nil.
+  ;; bad, f will not assigned
   f = ${#{s}}
 </c:mset>
 }}}
-The second example will not work because in a first step all `${..}` are resolved. Unresolved references like are _discarded_. Therefere task `mset` does not even see reference `#{s}` in this example and thus can't resolve it.
+The second assignment will not work as expected because, in a first step, all occurrences of `${..}` are resolved by Ant itself. In a second step, the expression `${#{s}}` will be evaluated. Since this expression is invalid, `f` will not be assigned.
 
-Undefined property references are discarded. Consider:
+Each line is evaluated in order. Therefore the following works as expected:
 {{{
 <c:mset>
-  ;; assume that z is not a property
-  z = '${z}' 
+  s := '3 * 5'
+  ;; defines r as 15
+  r = ${s}
 </c:mset>
 }}}
-Here, `z` will be evaluated to the empty string and not to `"${z}"`. This behaviour is slightly different from standard Ant behaviour which leaves undefined property references untouched.
+
+The following kind of meta programming will not work for `mset`:
+{{{
+<c:mset>
+  property_or_var := condition ? '=' : ':='
+
+  name ${property_or_var} expr
+</c:mset>
+}}}
+Reason: In a first step all continuation lines are accumulated. Then each line is taken as is an broken up in left and right part, plus assignment type. Then properties are resolved on both sides. In an additonal step, EL references are evaluated as well on both sides. Then, the right side is evaluated as EL expression and it's result is assigned to the stringized left side (whitespace chopped off).
+
 
 === References ===
  * Classname: net.haefelingerit.flaka.MSet [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/MSet.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/MSet.java (*Source*)]
@@ -310,8 +314,8 @@ Here is a simple example demonstrating features of this task:
 
 This task is similar to [Tasks#mset mset]. The difference is that this task only allows to define properties while  [Tasks#mset mset] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#mset mset] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#mset mset] and once with this _properties_ task:
 {{{
-<c:mset type="property">
-  foobar = 'foobar'
+<c:mset>
+  foobar := 'foobar'
 </c:mset>
 <c:properties>
   foobar = foobar
@@ -319,14 +323,14 @@ This task is similar to [Tasks#mset mset]. The difference is that this task only
 }}}
 Notice the usage of the quote character `'` in the former example and the absence of it in the latter.
 
-Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved and the left and right side of a property statement.
+Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved on both sides of `=`.
 
 === References ===
  * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
 
 == unset ==
 
-The unset statement allows for the removal of a resource within a project. As of version 2.1.5, unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
+The unset statement allows for the removal of a resource within a project. Unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
 
 {{{
  <c:unset var="v1 v2 v3" />
