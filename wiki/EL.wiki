@@ -127,11 +127,11 @@ Dynamic references `${..}` are handled by Ant to resolve properties. There are t
 == Handling of `#{..}` ==
 Deferred references `#{..}` are evaluated according to regular EL rules. Each reference is evaluated independently. Thus 
 {{{
- The #{ 'Good' } and the #{ 'Ug' 'ly' }, a well known #{ 'movie' }.
+ The #{ 'Good' }, the Bad and the #{ 'Ug' 'ly' }, a well known #{ 'movie' }.
 }}}
 Would print
 {{{
- The Good and the , a well known movie.
+ The Good, the Bad and the , a well known movie.
 }}}
 cause the second reference is illegal. Notice however that all valid references are evaluated.
 
@@ -144,10 +144,11 @@ Nested references are not supported. The following reference is therefore illega
 
 == The Great Escape ==
 
-There are two ways of producing character sequence `#{`:
- # Use character backslash to abandon interpretation like in `\#{abc}` ; or use
- # `#{'#{'}abc}`.
-Both evaluations end up in `#{abc}`. 
+This section is about how to stop a EL reference from being evaluated and treated as text instead:
+ # Use character backslash like in `\#{abc}` ; or use this rather awkward
+ # `#{'#{'}abc}` construct.
+Both variants have the same result, the string `#{abc}`.
+
 
 = Basics =
 
@@ -161,6 +162,48 @@ The expression in line (1) is a algebraic while (2) contains a boolean expressio
 
 = Data Types =
 _EL_'s data types are integral and floating point numbers, strings, boolean and type `null`. Example data values of each type, except type `null`, are given above (1-3). Type `null` has once instance value also named `null`. While `null` can't be used to formulate an expression, it is important to understand that the result of evaluating an expression can be `null`. For example, the evaluation of a variable named `x` is the data object associated with that name. If no data is associcated however (i.e. if `x` is undefined), then `x` evaluates to `null`.
+
+== Strings ==
+A EL string starts and ends with the same quotation character. Possible quotation characters are single the quote `'` and double quote `"` character. If string uses `'` as quotation character, then there is no need to _escape_ quoation character `"` within that string. Thus the following strings are valid:
+{{{
+ "a'b"   --> a'b
+ 'a"b'   --> a"b
+}}}
+If however the string's quotation character is to be used within the string, then the quoation character needs to be escaped from it's usual meaning. This is done by prepending character backslash:
+{{{
+ "a\"b"  --> a"b
+ 'a\'b'  --> a'b
+}}}
+To escape the backslash character from it's usual meaning (escaping that is), escape the backslash character with a backslash:
+{{{
+ "a\\"   --> a\
+ 'a\\'   --> a\
+}}}
+Other characters than the quotation and backslash character can't be escaped. Thus 
+{{{
+ "a\bc"  --> a\bc, NOT abc
+}}}
+However, a escaped backslash evaluates always into a single backslash character:
+{{{
+ "a\\b"  --> a\b,  NOT a\\b
+}}}
+This rules allow for an easy handling of strings. Just take an quoation character. Then, escape any occurences of the quoation and escape character within the string to preserve the original input string.
+
+Here are same further examples strings:
+{{{
+"abc"        -- abc
+'abc'        -- abc
+"a'c'        -- illegal
+"a'c"        -- a'c
+'a\'c'       -- a'c
+'a\bc'       -- a\bc
+'a\\bc'      -- a\\bc
+'a\"bc'      -- a\"bc
+'a\\"bc'     -- a\\"bc
+'ab\'        -- illegal
+'ab\\'       -- ab\
+}}}
+
 
 = Operators =
 Four _operators_ are defined in _EL_:
