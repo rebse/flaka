@@ -129,6 +129,43 @@ Notice that attribute `ic` is not used here cause `>` is the default ic characte
 [c:echo] ....world
 }}}
 
+== list ==
+
+A elementary task to create a variable containing a list of objects.
+{{{
+<c:list var="mylist">
+  ;; each line is a EL expression
+  3 * 5
+  ;; each line defines a list element
+  list('a',1,''.tofile)
+</c:list>
+
+=== Attributes ===
+
+|| Attribute || Type   || Default || [EL] || Meaning ||
+|| var       || string ||         ||  r   || The name of the variabled to be assigned.  ||
+|| comment   || string || `,`     ||      || The comment character                      ||
+|| debug     || bool   || false   ||      || Turn on extra debug information.           ||
+
+== Elements ==
+
+This task may contain a implicit text element.
+
+== Behaviour ==
+
+This task creates and assigns in any case a (possible) empty list, especially if no text element is present. The variable's name is given by attribute `var`. This attribute may contain references to EL expressions.
+
+If given text element is parsed on a line by line basis, honouring comments and continuation lines. Each line will be evaluated as EL expression after having resolved `${..}` and `#{..}` references. A illegal EL expression will be discarded while the evaluation of lines continues. Turn on extra debug information in case of problems. 
+
+The evaluation of a valid EL expression results in an object. Each such object will be added to a list in the order imposed by the lines.
+
+A single line can't have more than one EL expressions. Thus the following example is invalid:
+{{{
+<c:list var="mylist">
+ 3 * 5  'hello, world'
+</c:list>
+}}}
+
 == set ==
 
 Task `set` is used to set a single variable or property. If you want to set more than one variable or property, consider to use task [#mset mset] or [#properties properties] (properties only).
@@ -676,6 +713,19 @@ For further processing, properties like g.s1 and g.e1 are set. Property g.s1 con
  * Classname: net.haefelingerit.flaka.Switch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Switch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Switch.java (*Source*)]
 
 = Exception Handing =
+== fail ==
+
+This task has been derived from [http://ant.apache.org/manual/CoreTasks/fail.html Ant's standard fail task]. All attributes and elements are supported. When defining a message however, EL references can be used:
+{{{
+<c:fail message="illegal state #{whichstate} seen" />
+}}}
+Furthermore, attribute `test` has been added. The value of `test` will be evaluated as EL expression in a boolean context. Being `true`, fail will throw a build exception. When used in this way, `<c:fail test='expr' />` behaves exactly the same as
+{{{
+<c:when test="expr">
+ <fail />
+</c:when>
+}}}
+
 == trycatch == 
 
 A task mirroring try-catch-finally exception handling found in various languages.
