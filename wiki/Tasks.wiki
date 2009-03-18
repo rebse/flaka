@@ -398,6 +398,7 @@ Comment lines and empty lines are ignored. Continuation lines, i.e. lines ending
 References to properties `${..}` and expressions `#{..}` are resolved.
 
 The content of a line defines the property name, for example:
+{{{
 <c:unset>
  ;; property 'foo bar', not 'foo' and 'bar'
  foo bar
@@ -408,6 +409,7 @@ The content of a line defines the property name, for example:
  ;; use #{..} references for dynamic content (this will be 'p15')
  p#{3*5}
 </c:unset>
+}}}
 === References ===
  * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
 
