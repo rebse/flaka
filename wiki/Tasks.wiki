@@ -139,6 +139,7 @@ A elementary task to create a variable containing a list of objects.
   ;; each line defines a list element
   list('a',1,''.tofile)
 </c:list>
+}}}
 
 === Attributes ===
 
