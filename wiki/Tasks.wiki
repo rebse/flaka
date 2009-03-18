@@ -152,7 +152,7 @@ A elementary task to create a variable containing a list of objects.
 
 This task may contain a implicit text element.
 
-== Behaviour ==
+=== Behaviour ===
 
 This task creates and assigns in any case a (possible) empty list, especially if no text element is present. The variable's name is given by attribute `var`. This attribute may contain references to EL expressions.
 
@@ -1011,7 +1011,7 @@ Ant lacks a simple task to report all or certain files in a folder. This task le
 
 This task implements a [http://ant.apache.org/manual/CoreTypes/fileset.html standard Ant fileset]. All elements of `fileset` are therefore legal elements of `find` as well.
 
-== Behaviour ==
+=== Behaviour ===
 
 This task scans all files and folders given by attribute `dir` into a variable given by `var`. If `var` is empty, then no scanning takes place. Attribute `var` may contain [EL#EL_References EL references] which are resolved. If a scanning takes place, then `var` will be created and contains, in any case, a list value.
 
@@ -1121,74 +1121,6 @@ Retrieve dependencies from a list of depots into local folder build/lib (which m
 
 === References ===
  * Classname: net.haefelingerit.flaka.GetDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/GetDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/GetDeps.java (*Source*)]
-
-== ifdef == 
-
-A general task to check whether something is defined, where something can be a property,  reference, task, macro, target, type or Java class. If all conditions evaluate to true, then all elements listed in body of this task are executed.
-
-=== Attributes ===
- * var<br/> Test whether var is defined as property or as reference
- * property<br />Test whether property is defined as property
- * target<br />Test whether target is defined as target
- * macro<br />Test whether macro is defined as macro via macrodef
- * reference<br />Test whether reference is defined as reference
- * task<br />Test whether task is defined as task via taskdef
- * taskormacro<br />Test whether taskormacro is either a task or a macro
- * type<br />Test whether type is defined as type via typedef
- * class<br />Test whether class is defined as Java class
- * not, negate, invert<br/>Execute body if one condition fails to evaluate to true
- * ifs<br />Use ifs (internal field separator) to tokenize string arguments [\s+]
-
-=== Elements ===
- * List of task or macro instances. 
-
-=== Example I ===
-
-Test whether a property is defined and do something if so:
-
-{{{
- <c:ifdef property=" foobar " >
-   -- do something cause foobar exists ..
- </c:ifdef>
-}}}
-
-=== Example II ===
-
-Test whether macros foo and bar are both defined. For the purpose of illustration the usage of ifs, it is assumed that both   macro names are given as string "foo:bar::":
-
-{{{
- <c:ifdef macro=" foo:bar:: " ifs=":">
-    -- do something if foo and bar are both macros 
- </c:ifdef>
-}}}
-
-Note that leading and trailing whitespace characters are always stripped before the remaining argument is tokenized via ifs. Therefore the first argument to be checked is foo and not [space]foo.
-
-=== Example III ===
-
-{{{
- <c:ifdef macro="foo" task="bar" invert="true">
-   -- do something neither foo nor bar is defined as macro resp. task
- </c:ifdef>
-}}}
-
-
- 
-
-=== References ===
- * Classname: net.haefelingerit.flaka.IfDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfDef.java (*Source*)]
-
-== ifndef == 
-
-This task a shortcut for using task [Tasks#ifdef ifdef] and attribute invert:
-
-{{{
- <c:indef ... />  === <c:ifdef invert="true" ... /> 
-}}}
-
-=== References ===
- * Classname: net.haefelingerit.flaka.IfNDef [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/IfNDef.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/IfNDef.java (*Source*)]
- * Task [Tasks#ifdef ifdef]
 
 == initssl ==
 
