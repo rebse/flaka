@@ -181,7 +181,7 @@ Task `set` is used to set a single variable or property. If you want to set more
 
 All attributes follow the rule that leading and trailing whitespace is ignored. Any attribute combination is allowed and will not result necessarily in a build error. If in doubt, turn on extra debug information.
 
-*EL:* A `r` indicates that [EL_References EL references] can be used. A `=` means that the whole value given is evaluated as [EL] expression. If the cell is empty, then [EL] is not enabled. 
+*EL:* A `r` indicates that [EL#EL_References EL references] can be used. A `=` means that the whole value given is evaluated as [EL] expression. If the cell is empty, then [EL] is not enabled. 
 
 === Behaviour ===
 
