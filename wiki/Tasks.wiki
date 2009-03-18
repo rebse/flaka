@@ -148,7 +148,7 @@ A elementary task to create a variable containing a list of objects.
 || comment   || string || `,`     ||      || The comment character                      ||
 || debug     || bool   || false   ||      || Turn on extra debug information.           ||
 
-== Elements ==
+=== Elements ===
 
 This task may contain a implicit text element.
 
