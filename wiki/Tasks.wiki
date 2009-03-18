@@ -368,37 +368,46 @@ Task _properties_ supports, like task [Tasks#mset mset] does, continuation lines
 
 == unset ==
 
-The unset statement allows for the removal of a resource within a project. Unset allows only the removal of properties. In upcoming versions, removal of other resources like tasks, macros, filesets etc. will be supported as well.
+The unset statement allows the removal of properties. Use this task with care as properties are not meant to be changed during execution of a project. 
 
 {{{
- <c:unset var="v1 v2 v3" />
+ <c:unset>
+   p1
+   ;; use embedded EL references for dynamic names
+   p#{ index }
+ </c:unset>
 }}}
 
-This example demonstrates how to remove properties v1, v2 and v3 regardless whether they exist before or not. Be aware that unset also removes properties given via the command line (aka user properties).
+This example demonstrates how to remove properties `p1` and a property whose name dependes on the curent value of `index`. 
 
 === Attributes ===
- * var <br>The name of the property or properties to be removed. Use whitespace characters, preferably the blank character as shown in the examples, for separation. Instead of attribute var, attribute name and property can be used although this name are deprecated. The behavior of unset is undefined if a combination of this attributes, like in <c:unset var="x" property="y" />, is used.
+|| Attribute || Type    || Default || EL || Description ||
+|| debug     || boolean || `false` || no || Turn extra debug information on || 
+|| comment   || String  || `;`     || no || The character that starts a comment line || 
 
-=== Example I ===
+=== Elements ===
 
-This example demonstrates the usage. Notice that property v2 is set via the command line, i.e. a so called user property in Ant terminology.
+This element accepts implicit text.
 
-{{{
- <property name="v1" value="v1" />
- <echo>v1 = ${v1} | v2 = ${v2}</echo>
- <c:unset var=" v1 v2 " />
- <echo>v1 = ${v1} | v2 = ${v2}</echo>
-}}}
+=== Behaviour ===
 
-This will give:
+Each non comment line defines a property name to be removed. The property does not need to exist to be removed. User properties (i.e. given by command line) and system properties (i.e. `ant.file`) are also removed.
 
-{{{
- $ ant -Dv2=v2
- v1 = v1    | v2 = v2
- v1 = ${v1} | v2 = ${v2}
-}}}
+Comment lines and empty lines are ignored. Continuation lines, i.e. lines ending in `\` but not in `\\`, are accumulated before being processed.
 
+References to properties `${..}` and expressions `#{..}` are resolved.
 
+The content of a line defines the property name, for example:
+<c:unset>
+ ;; property 'foo bar', not 'foo' and 'bar'
+ foo bar
+
+ ;; a line is *not* a EL expression (this will be property '3 * 5')
+ 3 * 5
+
+ ;; use #{..} references for dynamic content (this will be 'p15')
+ p#{3*5}
+</c:unset>
 === References ===
  * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
 
