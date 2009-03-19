@@ -147,7 +147,7 @@ A elementary task to create a variable containing a list of objects.
 || var       || string ||         ||  r   || The name of the variabled to be assigned.  ||
 || comment   || string || `,`     ||      || The comment character                      ||
 || debug     || bool   || false   ||      || Turn on extra debug information.           ||
-
+|| el        || bool   || true    ||   no || Enable evaluation as EL expression         ||
 === Elements ===
 
 This task may contain a implicit text element.
@@ -166,6 +166,13 @@ A single line can't have more than one EL expressions. Thus the following exampl
  3 * 5  'hello, world'
 </c:list>
 }}}
+
+Use attribute `el` to disable the interpretation of a line as [EL] expression:
+<c:list var="mystrings" el="false">
+ 3 * 5
+ hello, #{ 'world' }
+</c:list>
+This creates a list variable `mystrings` containing two elements. The first element will be string `3 * 5` and the second element will be string `hello, world`. Notice that `el="false"` does not prohibit you from using [EL#EL_References].
 
 == set ==
 
