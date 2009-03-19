@@ -168,10 +168,12 @@ A single line can't have more than one EL expressions. Thus the following exampl
 }}}
 
 Use attribute `el` to disable the interpretation of a line as [EL] expression:
+{{{
 <c:list var="mystrings" el="false">
  3 * 5
  hello, #{ 'world' }
 </c:list>
+}}}
 This creates a list variable `mystrings` containing two elements. The first element will be string `3 * 5` and the second element will be string `hello, world`. Notice that `el="false"` does not prohibit you from using [EL#EL_References].
 
 == set ==
