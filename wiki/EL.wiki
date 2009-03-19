@@ -286,7 +286,9 @@ project.references.foo  -- (4)
 _EL_ also allows the implementation to provide top level functions. The following sections describe functions provided by Flaka. Some functions take an arbitrary number of arguments (inclusive no argument at all). This is denoted by two dots (`..`). An example of such a function is `list(object..)` which takes an arbitrary number of object to create a list.
 
 || Function || Type || Meaning ||
+|| `typeof(object)` || string || The type of `object`, `int`, `string`, `file` etc ||
 || `size(object)`   || int  || Returns the object's size. The size of the object is given by the number of entities it contains. This is 0 (zero) for all primitive types. Otherwise the size is determined by an underlying `size()` method or `size` or `length` attribute of the object in question. || 
+|| `sizeof(object)` || int  || same as `size(object)`, see above ||
 || `null(object)`    || bool || Evaluates to `true` if object is the `nil` entity; otherwise `false`. This function can be used to check whether a reference (var) or property exists. Operator `empty` can't be used for this task, cause `empty` returns `true` if either not existing or if literatly _empty_ (for example the empty string). ||
 || `file(object)`   || File || Creates and returns a file object out of `object`. If `object` is already a file, the object is simply returned. Otherwise, the object is streamed into a string and that string is taken as the file's path name. ||
 || concat(object..) || string || Creates a string by concatenating all stringized objects. If no object is provided, the empty string is returned. ||
