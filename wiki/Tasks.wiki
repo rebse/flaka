@@ -174,7 +174,7 @@ Use attribute `el` to disable the interpretation of a line as [EL] expression:
  hello, #{ 'world' }
 </c:list>
 }}}
-This creates a list variable `mystrings` containing two elements. The first element will be string `3 * 5` and the second element will be string `hello, world`. Notice that `el="false"` does not prohibit you from using [EL#EL_References].
+This creates a list variable `mystrings` containing two elements. The first element will be string `3 * 5` and the second element will be string `hello, world`. Notice that `el="false"` does not prohibit you from using [EL#EL_References EL references].
 
 == set ==
 
@@ -400,6 +400,35 @@ The content of a line defines the property name, for example:
 === References ===
  * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
 
+
+== rescue ==
+
+Task `rescue` is essentially a container for an arbitrary number of tasks. In addition, it allows to rescue variables and properties.
+
+{{{
+<c:rescue>
+ <vars>
+   foo
+ </vars>
+ <properties>
+   bar
+ </properties>
+ <sequential>
+   ..
+ <sequential>
+<c:rescue>
+}}}
+
+No matter what will happen with property `var` and variable `foo` within `sequential`, this will be unoticable outside of `rescue` cause the values (or better: state) will be restored after having executed all embedded tasks. This will of course also work in case an exception is thrown by one of the tasks.
+
+=== Attributes ===
+
+This task does not define attributes.
+
+=== Elements ===
+
+|| Name    || Cardinality || Description ||
+|| `vars`  || 0..1        || Defines a [#list list] of variable names. Attributes and behaviour is that of task [#list list] except that interpretation of lines as [EL] expressions are disabled.
 
 = Looping =
 == for == 
