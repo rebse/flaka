@@ -254,29 +254,49 @@ The following kind of meta programming will not work for `set`:
 }}}
 Reason: In a first step all continuation lines are accumulated. Then each line is taken as is an broken up in left and right part, plus assignment type. Then properties are resolved on both sides. In an additonal step, EL references are evaluated as well on both sides. Then, the right side is evaluated as EL expression and it's result is assigned to the stringized left side (whitespace chopped off).
 
+==== Then meaning of `null` and _void_ ====
+
+|| Assignment || Right Side || Result ||
+|| `=`        || `null`     || If the right side evaluates to `null`, then the variable will be removed if existing. ||
+|| `=`        || _void_     || The evaluation of an empty expression is `null`. See above how `null` is handled` ||
+|| `:=`       || `null`     || Cause a _read only_ property can't be removed, nothing will happen with this assignment. The property will also not be created. ||
+|| `:=`       || _void_     || Same as `:= null` ||
+|| `::=`      || `null`     || Removes the property denoted by the left side ||
+|| `::=`      || _void_     || Same as `::= null` ||
+
+To illustrate, here are example behaviours:
+{{{
+<c:set>
+ x = 3 * 5 
+ ;; remove x
+ x =  
+ ;; remove x 
+ x = null
+ 
+ ;; set property p to '3*5' (a string)
+ p := 3 * 5
+ ;; ignored 
+ p := null
+ ;; remove property 'p'
+ p ::= null
+ ;; .. same as
+ p ::= 
+</c:set>
+}}}
 
 === References ===
  * Classname: net.haefelingerit.flaka.Set [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Set.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Set.java (*Source*)]
 
+<wiki:comment>
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                               PROPERTIES
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+</wiki:comment>
+
 == properties == 
 
-A task to set multiple properties in one go. 
 
-=== Attributes ===
-
-=== Attributes ===
-|| Attribute || Type    || Default || EL || Description ||
-|| debug     || boolean || `false` || no || Turn extra debug information on || 
-|| comment   || String  || `;`     || no || The character that starts a comment line || 
-
-
-=== Elements ===
-
-This task accepts a implicit text element.
-
-=== Example ===
-
-Here is a simple example demonstrating features of this task:
+A task to set multiple properties in one go. It is typically used to _inline_ properties otherwise written in an additional properties file. Thus using this task reduces the clutter on your top level directory:
 {{{
 <c:properties>
   ; this is \
@@ -290,6 +310,19 @@ Here is a simple example demonstrating features of this task:
   foobar  = ${name}bar
 </c:properties>
 }}}
+
+
+=== Attributes ===
+
+=== Attributes ===
+|| Attribute || Type    || Default || EL || Description ||
+|| debug     || boolean || `false` || no || Turn extra debug information on || 
+|| comment   || String  || `;`     || no || The character that starts a comment line || 
+
+
+=== Elements ===
+
+This task accepts a implicit text element.
 
 === Behaviour ===
 
