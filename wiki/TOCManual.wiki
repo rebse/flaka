@@ -1,16 +1,15 @@
 #summary One-sentence summary of this page.
 
 * Basics
-  * [Flaka Getting Started ..]
+  * [Flaka About]
   * [Installation]
-  * [BasicScriptingConstructs Scripting] 
+  * [BasicScriptingConstructs Basic Task Usage] 
   * [EL Expression Language]
 
 * API Reference
  * [Tasks Tasks]
  * [Types Types]
  * [Macros Macros]
- * [TestEL Test Expr Lang]
 
 * HOWTOs
  * [Howto Howto]
