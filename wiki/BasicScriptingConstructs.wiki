@@ -24,29 +24,32 @@ Symbols are names carrying associated data. The name of a symbol is a sequence o
 To reference a property, enclose it's symbol name with curly braces and prefix with the dollar character like:
 
 {{{
- <property name="x" value="09" />
- -- ${x} => 09
+<property name="x" value="99" />
+<echo>
+  value of property x is ${x}    -- .. is 99
+</echo>
 }}}
 
 When referencing a non existing property, i.e. a symbol name not associated with a string value, the reference expression evaluates to itself, i.e. `${not-a-property}` evaluates to _${not-a-property}_. Standard Ant does not allow to change the association between a symbol name and it's string value once established:
 
 {{{
-  <property name="x" value="09" />
-  <property name="x" value="The quick brown fox .."/>
-  -- ${x} => 09
+<property name="x" value="99" />
+<property name="x" value="The quick brown fox .."/>
+<echo>
+  value of property x is ${x}    -- .. is 99
+</echo>
 }}}
 
-It can be done using Flaka: Use task
-* {{FlakaRefTask|1=set}} to enforce ; and task
-* {{FlakaRefTask|1=unset}} to break 
-an association between a symbol and a string value as the following snippet demonstrates.
+It can be done using Flaka's task [Tasks#set] or [Task#unset] as the following snippet demonstrates.
 
 {{{
-  <property name="x" value="09" />
-  <c:set name="x" value="The quick brown fox .."/>
-  -- ${x} => The quick brown fox ..
-  <c:unset name="x" />
-  ${x} => ${x}
+<property name="x" value="99" />
+<c:set>
+   x ::= "The quick brown fox .."
+</c:set>
+<echo>
+  value of property x is ${x}    -- .. is The quick brown ..
+</echo>
 }}}
 
 Properties have their own symbol table (as targets, tasks, macros and types have). This means for example that it is possible to have a property and a task _sharing_ the same symbol name:
@@ -74,27 +77,27 @@ With standard Ant, task [http://ant.apache.org/manual/CoreTasks/condition.html c
 
 == when and unless ==
 
-Task {{FlakaRefTask|1=when}} evaluates _expr_. If the evaluation gives _true_, the sequence of tasks are executed. Nothing else happens in case of _false_. 
+Task [Tasks#when when] evaluates an [EL EL expr]. If the evaluation gives `true`, the sequence of tasks are executed. Nothing else happens in case of `false`. 
 
 {{{
- <c:when test="expr">
+<c:when test=" expr ">
    -- executed if expr evaluates to true
- </c:when>
+</c:when>
 }}}
 
-The logical negation of `when` is task {{FlakaRefTask|1=unless}} which executes the sequence of tasks only in case the evaluation of _expr_ returns _false_.
+The logical negation of `when` is task [Tasks#unless unless] which executes the sequence of tasks only in case the evaluation of _expr_ returns `false`.
 
 {{{
- <c:unless test="expr">
+ <c:unless test=" expr ">
    -- executed if expr evaluates to false
  </c:unless>
 }}}
 
-The body of _when_ and _unset_ may contain any sequence of tasks or macros (or a combination of both).
+The body of `when` and `unset` may contain any sequence of tasks or macros (or a combination of both).
 
 == choose ==
 
-Task {{FlakaRefTask|1=choose}} tests each _when condition_ in turn until an _expr_ evalutes to _true_. It executes then the body of that when condition. Subsequent _whens_ are then not further tested (nor executed). If all expressions evaluate to _false_, the optional _catch-all_ clause gets executed.
+Task [Tasks#choose choose] tests each `when` condition in turn until an _expr_ evalutes to `true`. It executes then the body of that when condition. Subsequent `whens` are then not further tested (nor executed). If all expressions evaluate to `false`, an optional _catch-all_ clause gets executed.
 
 {{{
  <c:choose>
@@ -110,7 +113,7 @@ Task {{FlakaRefTask|1=choose}} tests each _when condition_ in turn until an _exp
 
 == switch ==
 
-A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of _when_ statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the {{FlakaRefTask|1=switch}} task:
+A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of _when_ statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the [Tasks#switch switch] task:
 
 {{{
  <c:switch value="some string">
@@ -128,37 +131,26 @@ Each case is tried in turn _to match_ the given (and normalized) string value. I
 
 = Looping =
 
-Flaka has a looping statement. Use task {{FlakaRefTask|1=for}} to iterate over a whitespace separated listed of words. Use {{FlakaRefTask|1=break}} and {{FlakaRefTask|1=continue}} to terminate the loop or to continue the loop with the next item.
+Flaka has a looping statement. Use task [Tasks#for for] to iterate over a _list_ of items. Use [Tasks#break break] and [Tasks#continue continue] to terminate the loop or to continue the loop with the next item.
 
 {{{
- <c:for var="name" in="string">
-  <sequential>
+ <c:for var=" name " in=" ''.tofile.list ">
     -- sequence of task or macros
     -- used <c:continue /> to continue ; and
     -- <c:break /> to stop looping
-  </sequential> 
+    -- use #{name} to refer to current item (as shown below)
+    <c:echo>#{name}</c:echo>
  </c:for>
 }}}
 
-Variable _name_ can be referenced within the body by using expression _@{name}_. For example:
+Attribute `in` will be evaluated as [EL] expression. In the example above, that [EL] expression is `''.tofile.list` which, when evaluated, creates a list of all files in the folder containing the current build script. To understand the expression, have a look at [EL#String_Properties properties of a string] and [EL#File_Properties properties of a file].
 
-{{{
- <c:for var="dir" in "'src/java' 'test/java'">
-  <sequential>
-    <mkdir dir="_@{dir}_" /> 
-  </sequential>
- </c:for>
-}}}
-
-This would create the two folders src/java and test/java in the current working directory (or the directory in which the executed script resides - this is a feature of standard Ant).
-
-Use quote character <b>'</b> to prevent a word containing whitespace characters from being tokenized.
 
 = Exception Handling =
 
 == trycatch ==
 
-Flaka contains a task to handle exceptions thrown by tasks, {{FlakaRefTask|1=trycatch}}. This task implements the usual _try/catch/finally_ trinity found in various programming languages (like Java for example):
+Flaka contains a task to handle exceptions thrown by tasks, [Tasks#trycatch trycatch]. This task implements the usual _try/catch/finally_ trinity found in various programming languages (like in Java for example):
 
 {{{
  <c:trycatch>
@@ -199,7 +191,7 @@ Property _ant.file_ is a standard Ant property that should always be set. If not
 
 == throw ==
 
-Task {{FlakaRefTask|1=throw}} throws a (build) exception.
+Task [Tasks#throw throw] throws a (build) exception.
 
 {{{
  <c:throw [var="sym"] />
@@ -207,17 +199,9 @@ Task {{FlakaRefTask|1=throw}} throws a (build) exception.
 
 This task can also be used to rethrow an existing exception.
 
-= Macro Functions  =
+= Macros  =
 
-The (almost) equivalent of a function is a macro in Ant and Flaka. Invoking a macro _M_ is done like
-
-{{{
- <M k1="v1" k2="v2" ..>
-   -- optional body or text
- </M>
-}}}
-
-For example:
+The (almost) equivalent of a function is a macro in Ant and Flaka. For example:
 {{{
  <macrodef name="hello">
   <attribute name="msg" />
@@ -226,16 +210,20 @@ For example:
    <body />
   </sequential>
  </macrodef>
-
- -- simply call the macro
- <hello msg="Hello, world!">
-   <echo>@{msg}</echo>
- </MyMacro>
-
- -- which evaluates to
- <echo>Hello, world!</echo>
 }}}
 
-Macros are a standard Ant feature.
+Once defined, simply use it:
+{{{
+<hello msg="Hello, world!">
+ <echo>@{msg}</echo>
+</hello>
+}}}
 
-</div>
+This macro evaluates into 
+{{{
+ <echo>Hello, world!</echo>
+}}}
+which eventually prints the desired greeting.
+
+Macros are a standard feature of Ant.
+
