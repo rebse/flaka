@@ -138,6 +138,7 @@ This gives:
 [c:echo] %%%
 }}}
 
+<hr />
 == list ==
 
 A elementary task to create a variable containing a list of objects.
