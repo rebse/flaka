@@ -462,57 +462,50 @@ This task does not define attributes.
 
 Executes all embedded tasks. Variables and properties listed in `vars` and `properties` are restored to their previous state, i.e. if not existing before the execution, they will not exist afterwards. If existed, their value will be restored.
 
-= Looping =
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Rescue.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Rescue.java Source]
 
 <hr/>
+= Looping =
 == for == 
 
-A task that implements a loop statement.
-
-=== Attributes ===
-
- * var<br/>The variable holding each loop item. This variable can be referenced within the body like @{var}} where var is the string used in this attribute. If not used, then x will be the default.
- * in<br/> The list of arguments to be iterated over. Defaults to the empty string. The argument is tokenized using whitespace as separator. Use <b>'</b> to protect a word containing whitespace characters from being tokenized.
-
-=== Elements ===
-
- The body of this task may contain an arbitrary number of elements.
-
-=== Example I ===
-
-This is the shortest possible for statement. It's legal albeit completely useless.
-{{{
- <c:for />
-}}}
-
-=== Example II ===
-
-Iterating over a list of words. 
+A task that implements a loop statement. Iterating over a list of _objects_:
 
 {{{
- <c:for var="x" in=" list('a', 'b', 'c d','e') ">
+ <c:for var="x" in=" list('a', 2, 'src'.tofile, typeof(list())) ">
    <c:echo>
       #{x}
    </c:echo>
  </c:for>
 }}}
 
-This prints:
+=== Attributes ===
 
+|| Attribute || Type   || Default || EL    || Description ||
+|| `var`     || string ||         || #{}   || The variable holding each loop item. This variable can be referenced within the body like `#{var}` where `var` is the string used in this attribute. If not used, then no iteration takes place and no warning is issued. Notice that you can use `#{..}` only in [EL] enabled tasks. ||
+|| `in`      || string ||         || expr  || The items to be iterated over as [EL] expression. A iteration takes place except if `null` is the evaluation result. Otherwise, if the evaluation result is _not iterable object_, a temporary list containg that object is created on the fly. Iteration takes then place over that list and otherwise over the iterable collection. ||
+
+=== Elements ===
+
+ The body of this task may contain an arbitrary number of tasks or macros.
+
+=== Behaviour ===
+
+This is the shortest possible for statement. It's legal albeit completely useless.
 {{{
- [c:echo] a
- [c:echo] b
- [c:echo] c d
- [c:echo] e
+ <c:for />
 }}}
+
+<wiki:comment>
+TODO: document behaviour
+</wiki:comment>
 
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/For.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/For.java Source]
  * Task [Tasks#for for] 
+ * Task [Tasks#break break]
  * Task [Tasks#continue continue]
  * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
 
@@ -521,7 +514,6 @@ This prints:
 
 A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
 
-=== Example ===
 {{{
   <c:for var="i" in=" list(1,2,3,4,5,6) ">
     <c:echo>i = #{i}</echo>
@@ -546,8 +538,6 @@ Being executed, the following will be dumped on stdout:
 
 A task mirroring a continue statement. When used within a [Tasks#for for]-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
 
-=== Example ===
-
 {{{
  <c:for var="i" in=" list(1,2,3,4,5,6) ">
    <c:when test=" i > 3 ">
@@ -571,9 +561,10 @@ This would print:
  * Task [Tasks#for for] 
  * Task [Tasks#break break]
 
+<hr/>
+
 = Conditional Tasks =
 
-<hr/>
 == when == 
 
 Task when represents a else-less if statement. 
