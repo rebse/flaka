@@ -3,7 +3,7 @@
 <wiki:toc max_depth="2"/>
 
 = Elementary Tasks =
-<hr \>
+<hr/>
 == echo ==
 This task is an extension of Ant's standard `echo` task. The following is a typical example to print the famous `Hello, World` message.
 {{{
@@ -144,12 +144,6 @@ This gives:
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Echo.java Source]
 
 <hr />
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Echo.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Echo.java Source]
-
-<hr \>
 == list ==
 
 A elementary task to create a variable containing a list of objects.
@@ -201,7 +195,7 @@ This creates a list variable `mystrings` containing two elements. The first elem
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/List.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/List.java Source]
 
-<hr \>
+<hr/>
 == set ==
 
 This elementary task allows to set multiple variables and properties in one go. In addition, comments and continuation lines are allowed for additional readability and comfort.
@@ -319,9 +313,6 @@ To illustrate, here are example behaviours:
 </c:set>
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Set [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Set.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Set.java (*Source*)]
-
 <wiki:comment>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                                PROPERTIES
@@ -332,7 +323,7 @@ To illustrate, here are example behaviours:
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Set.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Set.java Source]
 
-<hr \>
+<hr/>
 == properties == 
 
 
@@ -381,14 +372,11 @@ If the right side is empty, then no property will be created and an existing pro
 
 Leading and trailing (!) whitespace characters are ignored. This is different from standard Ant where trailing whitespace is significant (and responsible for unexpected and hard to track script behaviour).
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Property [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Property.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Property.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Properties.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Properties.java Source]
 
-<hr \>
+<hr/>
 == unset ==
 
 The unset statement allows the removal of properties. Use this task with care as properties are not meant to be changed during execution of a project. 
@@ -433,15 +421,12 @@ The content of a line defines the property name, for example:
  p#{3*5}
 </c:unset>
 }}}
-=== References ===
- * Classname: net.haefelingerit.flaka.Unset [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unset.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unset.java (*Source*)]
-
 
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Unset.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Unset.java Source]
 
-<hr \>
+<hr/>
 == rescue ==
 
 Task `rescue` is essentially a container for an arbitrary number of tasks. In addition, it allows to rescue variables and properties.
@@ -482,7 +467,7 @@ Executes all embedded tasks. Variables and properties listed in `vars` and `prop
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Rescue.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Rescue.java Source]
 
-<hr \>
+<hr/>
 == for == 
 
 A task that implements a loop statement.
@@ -524,20 +509,14 @@ This prints:
  [c:echo] e
 }}}
 
-
-
-=== References ===
- * Classname: net.haefelingerit.flaka.For [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/For.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/For.java (*Source*)]
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/For.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/For.java Source]
  * Task [Tasks#for for] 
  * Task [Tasks#continue continue]
  * Quickref [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
 
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/For.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/For.java Source]
-
-<hr \>
+<hr/>
 == break == 
 
 A task mirroring a break statement. When used within a [Tasks#for for]-loop, the loop will be terminated. If this task is used outside of a [Tasks#for for]-loop, a build exception will be thrown.
@@ -562,12 +541,7 @@ Being executed, the following will be dumped on stdout:
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Break.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Break.java Source]
 
-<hr />
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Break.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Break.java Source]
-
-<hr \>
+<hr/>
 == continue == 
 
 A task mirroring a continue statement. When used within a [Tasks#for for]-loop, the loop will be continued with the next loop item (i.e. any statements after task continue are ignored). If this task is used outside of a for-loop, a build exception will be thrown.
@@ -591,19 +565,15 @@ This would print:
 [c:echo] i = 3
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Continue [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Continue.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Continue.java (*Source*)]
- * Task [Tasks#for for] 
- * Task [Tasks#break break]
-
-
-= Conditional Tasks =
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Continue.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Continue.java Source]
+ * Task [Tasks#for for] 
+ * Task [Tasks#break break]
 
-<hr \>
+= Conditional Tasks =
+
+<hr/>
 == when == 
 
 Task when represents a else-less if statement. 
@@ -627,14 +597,11 @@ The following example dumps the content of a file to stdout via Ant's echo task 
 
 Note that the example is bit artificial cause Ant's loadfile task is sufficient. 
 
-=== References ===
- * Classname: net.haefelingerit.flaka.When [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/When.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/When.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/When.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/When.java Source]
 
-<hr \>
+<hr/>
 == unless ==
 
 This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
@@ -649,14 +616,11 @@ This example shows how to create a folder named libdir if such a folder does not
  </c:unless>
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Unless [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Unless.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Unless.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Unless.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Unless.java Source]
 
-<hr \>
+<hr/>
 == choose == 
 
 A task implementing a series of _ifelse_ statements, i.e. a generalized _if-then-else_ statement.
@@ -711,13 +675,11 @@ This would execute all macros and tasks listed in the otherwise clause since no 
 }}}
 
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Choose [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Choose.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Choose.java (*Source*)]
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Choose.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Choose.java Source]
 
-<hr \>
+<hr/>
 == switch ==
 
 A switch statement as found in typical programming languages. A sequence of case statement is tried to match a given value. The case body of the first matching case value is evaluated. A typical example:  
@@ -822,15 +784,13 @@ Note that in this example property g.g3 is not set cause there are only two capt
 
 For further processing, properties like g.s1 and g.e1 are set. Property g.s1 contains the index start index of the substring captured by group one during the match. Property g.s2 contains the start index of group two and so on. Similar, g.e1 contains the index of the last matching character, incremented by one. This indexes can be used to extract arbitrary substrings.
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Switch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Switch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Switch.java (*Source*)]
-
-= Exception Handing =
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Switch.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Switch.java Source]
 
-<hr \>
+= Exception Handing =
+
+<hr/>
 == fail ==
 
 This task has been derived from [http://ant.apache.org/manual/CoreTasks/fail.html Ant's standard fail task]. All attributes and elements are supported. When defining a message however, EL references can be used:
@@ -848,7 +808,7 @@ Furthermore, attribute `test` has been added. The value of `test` will be evalua
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Fail.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Fail.java Source]
 
-<hr \>
+<hr/>
 == trycatch == 
 
 A task mirroring try-catch-finally exception handling found in various languages.
@@ -934,14 +894,12 @@ Giving:
     [echo] ..finally
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.TryCatch [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/TryCatch.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/TryCatch.java (*Source*)]
 
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Trycatch.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Trycatch.java Source]
 
-<hr \>
+<hr/>
 == throw ==
 
 A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard task {{AntRefCore|1=fail}}.
@@ -983,18 +941,14 @@ A typical usage example:
 
 When being executed, Ant would receive a build exception (re-thrown within the catch clause) containing "4711" and terminate.
 
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Throw [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Throw.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Throw.java (*Source*)]
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Throw.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Throw.java Source]
  * Task [Tasks#trycatch trycatch]
 
 = Special Purpose Tasks =
 
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Throw.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Throw.java Source]
-
-<hr \>
+<hr/>
 == component-handler == 
 
 A simple task to install or uninstall a special component handler supposed to get rid of some annoying Ant warning messages.
@@ -1004,15 +958,11 @@ A simple task to install or uninstall a special component handler supposed to ge
  * uninstall<br />Uninstall component handler [false]
  * fail<br />Whether to fail if the installation or un-installation can't be carried out.
 
-=== References ===
- * Classname: net.haefelingerit.flaka.InstCompH [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InstCompH.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InstCompH.java (*Source*)]
-
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Component-handler.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Component-handler.java Source]
 
-<hr \>
+<hr/>
 == create-target ==
 
 Use this task to create a dynamic target within the current project. Usually targets are declaratively written within a build file. The following target
@@ -1039,14 +989,11 @@ Note: The current version allows only the specification of one task or macro wit
  * override (boolean,false) Whether to override an existing target.
 
 
-=== References ===
- * Classname: net.haefelingerit.flaka.CreateTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/CreateTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/CreateTarget.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Create-target.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Create-target.java Source]
 
-<hr \>
+<hr/>
 == cvsstat == 
 
 This task is similar to using `cvs stat -v file`.
@@ -1108,14 +1055,11 @@ would set the following properties:
 
 
 
-=== References ===
- * Classname: net.haefelingerit.flaka.CvsStat [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/CvsStat.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/CvsStat.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Cvsstat.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Cvsstat.java Source]
 
-<hr \>
+<hr/>
 == export == 
 
 Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
@@ -1127,14 +1071,11 @@ Use this task to dump a file within the Flaka package to stdout or a file.  This
  * src The file within the package to export. By default, file antlib.xml is exported.
  * tee (boolean,false) If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does).
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Export [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Export.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Export.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Export.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Export.java Source]
 
-<hr \>
+<hr/>
 == find == 
 <wiki:comment>todo:references</wiki:comment>
 
@@ -1188,14 +1129,11 @@ Check whether a sub folder ending in '.jar' exists which is not a file but a dir
 }}}
  
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Find [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Find.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Find.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Find.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Find.java Source]
 
-<hr \>
+<hr/>
 == getdeps ==
 
 A task to retrieve dependencies.
@@ -1273,14 +1211,11 @@ Retrieve dependencies from a list of depots into local folder build/lib (which m
 }}}
 
 
-=== References ===
- * Classname: net.haefelingerit.flaka.GetDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/GetDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/GetDeps.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Getdeps.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Getdeps.java Source]
 
-<hr \>
+<hr/>
 == initssl ==
 
 A task to initialize SSL. The current implementation ensures a SSL implementation is available. Furthermorem this task allows to install a trust store to verify certificates provided by a SSL server.
@@ -1312,16 +1247,11 @@ Such a property will not make it into your JVM's system properties. They will on
 === Further Readings ===
 [1] http://www.onjava.com/pub/a/onjava/2001/05/03/java_security.html This article contains also some background information on keystores etc.
 
-=== References ===
- * Classname: net.haefelingerit.flaka.InitSSL [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/InitSSL.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/InitSSL.java (*Source*)]
-
-
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Initssl.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Initssl.java Source]
 
-<hr \>
+<hr/>
 == property-by-regex == 
 
 A task to compose a property based on existing properties.
@@ -1354,14 +1284,11 @@ creates property
  depot.csv = http://depot/component,http://depot/3rdparty,http://depot/externals
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.Select [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Select.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Select.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-by-regex.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-by-regex.java Source]
 
-<hr \>
+<hr/>
 == property-handler ==
 
 A task to install a property handler in addition to the standard one provided by Ant. 
@@ -1420,22 +1347,14 @@ A list of functions provided by installing property-handler:
 | replace every match of first argument with content of second argument in the third and last argument. For example, ${subst /,_,a/b/c} => a_b_c
 |}
 
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Init [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Init.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Init.java (*Source*)]
- * Classname: net.haefelingerit.flaka.Eval [http://flaka.code.google.com/browse/net/haefelingerit/Eval.java (*Source*)]
-
 === Attributes ===
  * atleast<br/>The minimum version required.
-
-=== References ===
- * Classname: net.haefelingerit.flaka.Require [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/Require.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/Require.java (*Source*)]
 
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-handler.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-handler.java Source]
 
-<hr \>
+<hr/>
 == run-macro == 
 
 A task to invoke a macro or task (or a list of them) dynamically. 
@@ -1458,14 +1377,11 @@ The current version does not support calling macros or tasks with arguments.
  <c:run-macro name="foobar" />  -- dynamic way
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.RunMacro [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunMacro.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunMacro.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Run-macro.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Run-macro.java Source]
 
-<hr \>
+<hr/>
 == run-target == 
 
 A task to invoke a target dynamically.
@@ -1485,14 +1401,11 @@ A task to invoke a target dynamically.
 }}}
 
 
-=== References ===
- * Classname: net.haefelingerit.flaka.RunTarget [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/RunTarget.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/RunTarget.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Run-target.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Run-target.java Source]
 
-<hr \>
+<hr/>
 == set-default-target == 
 
 A task to define the project's default target. 
@@ -1515,15 +1428,11 @@ This example changes the default target to be called from this to foobar.
  </project>
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.SetDefault [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/SetDefault.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/SetDefault.java (*Source*)]
-
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Set-default-target.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Set-default-target.java Source]
 
-<hr \>
+<hr/>
 == taskdotclasspath ==
 
 This task can be used to perform low level operations on a .classpath file. Supported operations are appending or removing classpath entries or to query the existence of certain entries. Operating on a non existing file does not throw a build exception nor will anything happen, i.e. appending to a non existing file will not create the file. It is expected that other tasks, for example the standard Ant task echoxml are being used to create an initial .classpath file.
@@ -1673,14 +1582,11 @@ The variable given, being are-projects-crosslinked, is only touched if the query
 
 When using more than one entry, then each entry must match. This condition can be changed using attribute logic. When being set to a logical or, it is enough that one entry matches.
 
-=== References ===
- * Classname: net.haefelingerit.flaka.DotClassPath [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/DotClassPath.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/DotClassPath.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Taskdotclasspath.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Taskdotclasspath.java Source]
 
-<hr \>
+<hr/>
 == uploadtask ==
 
 A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.org Jdepot].
@@ -1692,14 +1598,11 @@ A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.
  * rcfile<br />The authentication file [${HOME}/.jdepot]. This file is supposed to contain a username and passoword in one line in a format like alibaba sesame.
  * debug<br />Whether to run in debug mode or not [false]
 
-=== References ===
- * Classname: net.haefelingerit.flaka.HttpUploadTask [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/HttpUploadTask.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/HttpUploadTask.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Uploadtask.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Uploadtask.java Source]
 
-<hr \>
+<hr/>
 == writedeps ==
 
 A task to format dependencies in various predefined styles. In order to use this task, dependencies need to be defined and retrieved. See examples for details.
@@ -1755,14 +1658,11 @@ other supported formats are:
  flat: /log4j/jars/log4j-1.2.9.jar
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.WriteDeps [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/WriteDeps.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/WriteDeps.java (*Source*)]
-
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Writedeps.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Writedeps.java Source]
 
-<hr \>
+<hr/>
 == xmlmerge == 
 
 A simple task to merge XML files. 
@@ -1813,5 +1713,6 @@ The same setup as before gives, when no root element is applied, the following:
  </X>
 }}}
 
-=== References ===
- * Classname: net.haefelingerit.flaka.XmlMerger [http://flaka.code.google.com/javadoc/net.haefelingerit.flaka/XmlMerger.html (*Javadoc*)] [http://flaka.code.google.com/browse/net/haefelingerit/XmlMerger.java (*Source*)] 
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/XmlMerger.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/XmlMerer.java Source]
