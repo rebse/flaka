@@ -13,7 +13,7 @@ The following *requirements* must be satisfied before you start:
  # [http://ant.apache.org Ant] version 1.7.0 or newer. 
 
 
-= How to drop `ant-flaka-x.y.z.jar`? =
+= How to _drop_ the `ant-flaka` jar? =
 The most primitive technique is to save `ant-flaka-x.y.z.jar` in Ant's library folder `lib`. If you have no clue where Ant is installed, try 
 {{{
  $ ant -diagnostics | grep ant.home
