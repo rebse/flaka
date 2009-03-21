@@ -2,12 +2,14 @@
 #summary How to install Flaka
 
 = Installation For The Impatient =
-*Download latest version of Flaka and drop `ant-flaka.x.y.z.jar` into your local Ant installation. There are various techniques how to _drop_. Please read-on for refreshment.
+
+Download latest version of Flaka and *drop* `ant-flaka.x.y.z.jar` into your local Ant installation. There are various techniques how to _drop_. Please read-on for refreshment.
 
 = Before You Start! =
-The following requirements must be fulfilled before you can start to use *Flaka*:
 
- # *Flaka* requires Java 1.4 or newer. You can change the version by setting environment variable `JAVA_HOME`. Have also a look at [http://ant.apache.org/manual/index.html Ant's Manual] for other environment variables to be used.
+The following *requirements* must be satisfied before you start:
+
+ # Flaka requires *[http://java.sun.com/javase/downloads/index.jsp Java 1.5]* or newer. You can change the version by setting environment variable `JAVA_HOME`. Have also a look at [http://ant.apache.org/manual/index.html Ant's Manual] for other environment variables to be used.
  # [http://ant.apache.org Ant] version 1.7.0 or newer. 
 
 

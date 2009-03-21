@@ -4,42 +4,40 @@
 
 = Elementary Tasks =
 == echo ==
-This task is an extension of Ant's standard `echo` task. 
+This task is an extension of Ant's standard `echo` task. The following is a typical example to print the famous `Hello, World` message.
+{{{
+<c:echo shift=" 3*." >
+  ; ignore \
+  me (still a comment here) 
+  Hello\
+      >,
+>>World.
+</c:echo>
+}}}
+
+This would output
+
+{{{
+[c:echo] Hello...,
+[c:echo] ......World.
+}}}
+
+Notice the support of comment and continuation lines. Furthermore, not more than two lines are printed - the _empty_ line after the opening `<c:echo>` tag is ignored. Leading whitespace is ignored. Finally, each character `>` is replaced by `...` which is `3` _times_ `.` (3*.).
 
 === Attributes ===
 
-This tasks supports all inherited attributes. In addition, further supported attributes are:
+This tasks supports all attributes inherited from Ant's echo task. In addition, further supported attributes are:
 
- * *debug* enables additional debug output for this particular task. As usual, such additional output will be written to stderr regardless of whether debug has been globally enabled on Ant or not. The standard Ant loggers and listeneres are ignored. The default value is `false`, i.e. no additional output is created. (boolean:false)
-
- * *comment* allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{<escaped(comment)>}`. Every line matching this regular expression will not show up in the output. Notice the usage of `escaped(comment)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` (and possible leading whitespace) is ignored from output. By default, line starting with character `;` (like in Lisp) are ignored. (string:;)
-
- * *shift* allows to prefix each line with `shift` whitespace characters. See also Behaviour below. The number given must be a positive integral number or zero. (integer:0)
-
- * *ic* allows to set the indentation character (see explanation below). (char,>)
+|| Attribute || Type    || Default || Description ||
+|| `debug`   || boolean || false   || Enables additional debug output for this particular task. As usual, such additional output will be written to stderr regardless of whether debug has been globally enabled on Ant or not. The standard Ant loggers and listeneres are ignored. The default value is `false`, i.e. no additional output is created. ||
+|| `comment` || string  || `;`      || Allows for comments. The attribute's (trimmed) value is used to construct a regular expression like `^\s*{<escaped(comment)>}`. Every line matching this regular expression will not show up in the output. Notice the usage of `escaped(comment)`. This means that `comment` is interpreted as is and not a regular expression. Thus something like `[;#]` does _not_ mean either `;` or `#`. Instead it means that a line starting with `[;#]` (and possible leading whitespace) is ignored from output. By default, line starting with character `;` (like in Lisp) are ignored.||
+|| `shift`   || string  || ``       || Allows to prefix each line with `shift` characters. See also Behaviour below. ||
+|| `ic`      || string  || `>`       || Allows to set the indentation character (see explanation below). ||
 
 === Elements ===
 
 This task accepts implicit text. Text may contain Ant property references `${..}` or [EL Flaka EL] references `#{..}`.
 
-=== Example ===
-
-The following is a typical example to print the famous `Hello, World` message.
-{{{
-<c:echo>
-; ignore \
-me (still a comment here)
-Hello\
-,
-World.
-</c:echo>
-}}}
-
-This would output
-{{{
-[c:echo] Hello,
-[c:echo] World
-}}}
 
 === Behaviour ===
 
@@ -126,7 +124,18 @@ As a last wish, how about shifting the whole output by `N` whitespace characters
 Notice that attribute `ic` is not used here cause `>` is the default ic character. This gives
 {{{
 [c:echo] ..hello
-[c:echo] ....world
+[c:echo] ....World
+}}}
+
+If you want to use a different prefix character, use `amount*character` as argument for attribute `shift` as shown below:
+{{{
+<c:echo shift="3*%">
+        >
+</c:echo>
+}}}
+This gives:
+{{{
+[c:echo] %%%
 }}}
 
 == list ==
