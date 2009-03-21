@@ -567,16 +567,7 @@ This would print:
 
 == when == 
 
-Task when represents a else-less if statement. 
-
-=== Attributes ===
- * test<br/>A test condition that must evaluate to true in order to execute the body of this if statement.
-=== Elements ===
- * Any task or macro instance
-
-=== Example I ===
-
-The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
+Task when represents a else-less if statement. The following example dumps the content of a file to stdout via Ant's echo task if the file exists.
 
 {{{
  <c:when test=" 'path/to/file'.tofile.isfile" >
@@ -588,6 +579,15 @@ The following example dumps the content of a file to stdout via Ant's echo task 
 
 Note that the example is bit artificial cause Ant's loadfile task is sufficient. 
 
+
+=== Attributes ===
+|| Attribute || Type   || Default || EL    || Description ||
+|| `test`    || string || `false` || expr  || A [EL] expression that must evaluate to `true` in order to execute the body of this if statement. ||
+
+=== Elements ===
+
+ * Any tasks or macro instances.
+
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/When.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/When.java Source]
@@ -595,11 +595,7 @@ Note that the example is bit artificial cause Ant's loadfile task is sufficient.
 <hr/>
 == unless ==
 
-This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details.
-
-=== Example ===
-
-This example shows how to create a folder named libdir if such a folder does not already exist.
+This task is the logical opposite of task [Tasks#when when]. It's body is only executed if the condition evaluates to false. See [Tasks#when when] for details. This example shows how to create a folder named libdir if such a folder does not already exist.
 
 {{{
  <c:unless test=" 'libdir'.tofile.isdir ">
