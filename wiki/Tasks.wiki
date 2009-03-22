@@ -468,6 +468,38 @@ Executes all embedded tasks. Variables and properties listed in `vars` and `prop
 
 <hr/>
 = Looping =
+== while ==
+A task implemening a `while` loop:
+{{{
+<c:set>
+  i = 3
+</c:set>
+<c:while test=" countdown >= 0 ">
+  <c:echo>#{countdown > 0 ? countdown : 'bang!' }</c:echo>
+<c:while>
+}}}
+
+=== Attributes ===
+
+|| Attribute || Type   || Default || EL    || Description ||
+|| `test`    || string || `false` || expr  || The condition for looping as [EL] expression ||
+
+=== Elements ===
+
+ The body of this task may contain an arbitrary number of tasks or macros.
+
+=== Behaviour ===
+
+All tasks listed as elements are executed as long as the [EL] expression evaluates to `true`. 
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/While.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/While.java Source]
+ * [Tasks#break break] to stop the iteration
+ * [Tasks#continue continue] to hide tasks from being executed during a iteration step.
+ * See also [BasicScriptingConstructs#Looping Looping] for an introduction to looping in Flaka
+
+<hr/>
 == for == 
 
 A task that implements a loop statement. Iterating over a list of _objects_:
@@ -1572,22 +1604,6 @@ When using more than one entry, then each entry must match. This condition can b
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Taskdotclasspath.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Taskdotclasspath.java Source]
-
-<hr/>
-== uploadtask ==
-
-A specialized task to upload a set of artifacts on [ http://jdepot.internal.epo.org Jdepot].
-
-=== Attributes ===
- * endpoint<br />The URL to be used for uploading [http://jdepot.internal.epo.org/depot]
- * test<br /> Whether upload should be done in dry mode or not [true]
- * category<br />The category used when uploading [components]
- * rcfile<br />The authentication file [${HOME}/.jdepot]. This file is supposed to contain a username and passoword in one line in a format like alibaba sesame.
- * debug<br />Whether to run in debug mode or not [false]
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Uploadtask.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Uploadtask.java Source]
 
 <hr/>
 == writedeps ==
