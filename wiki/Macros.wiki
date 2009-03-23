@@ -1,5 +1,5 @@
 #labels Featured
-#summary A summary of all Macros implemented by Flaka
+
 <wiki:toc max_depth="1" />
 
 = all =

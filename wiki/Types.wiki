@@ -1,6 +1,4 @@
 #summary A summary of all Types implemented by Flaka
-#labels Featured
-
 
 <wiki:toc max_depth="1" />
 
