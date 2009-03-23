@@ -898,10 +898,12 @@ When matching against the error message, be aware that the actual error message 
   
 
 === Attributes ===
- * property<br/>The name of the property that should hold the exception message
- * reference<br />The name of the reference to hold the exception object [trycatch.object]
- * catch.type<br />A pattern against the type (Java classname) of the exception object [*.BuildException]
- * catch.match<br /> A pattern to be applied against the exception message [*]
+
+|| Attribute || Type || Default || [EL] || Description ||
+|| `property` || string || || no || The name of the property that should hold the exception message ||
+|| `reference` || string || `trycatch.object` || no || >The name of the reference to hold the exception object ||
+|| `catch.type` || glob || *.BuildException || no || A pattern against the type (Java classname) of the exception object ||
+|| `catch.match` || glob || *  || no || A pattern to be applied against the exception message ||
 
 === Elements ===
 
@@ -914,7 +916,7 @@ Note that all elements are optional. However, if there's no try element, then th
 It is allowed to have more multiple try, catch or finally clauses and further does the oder in which they appear not matter. Be aware though that eventually all try and finally clauses are merged into one try resp. finally clause.
 
 
-=== Example I ===
+=== Behaviour ===
 
 The following snippet demonstrates the usage of trycatch:
 
@@ -956,7 +958,7 @@ Giving:
 <hr/>
 == throw ==
 
-A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard task {{AntRefCore|1=fail}}.
+A task to re-throw a previously thrown exception. If no exception has been thrown before, a new exception is thrown. In that case, throw acts like standard fail task .
 
 Note that throw would re-throw the last thrown exception - regardless of the current context. The following would therefore work:
 
@@ -976,10 +978,11 @@ Note that throw would re-throw the last thrown exception - regardless of the cur
 }}}
 
 === Attributes ===
- * reference<br/>The name of the reference holding the previously thrown exception [trycatch.object]
- * var<br/>Same as reference
+|| Attribute || Type || Default || [EL] || Description ||
+|| `reference` || string || `trycatch.object` || no || The name of the reference holding the previously thrown exception ||
+|| `var` || || || no || Same as reference ||
 
-=== Example ===
+=== Behaviour ===
 
 A typical usage example:
 
@@ -1008,11 +1011,10 @@ When being executed, Ant would receive a build exception (re-thrown within the c
 Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
 
 === Attributes ===
- * dst The destination to dump the file to. If dst is <tt>-</tt>, the file will be dumped to stdout.
- * dest Same as dst
- * out Same as dst
- * src The file within the package to export. By default, file antlib.xml is exported.
- * tee (boolean,false) If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does).
+|| Attribute || Type || Default || [EL] || Description ||
+|| `dst`     || string || (stdout) || no || The destination to dump the file to. If dst is `-` the file will be dumped to stdout. ||
+|| `src`     || string || antlib.xml || no || The file within the package to export. By default, file antlib.xml is exported. ||
+|| `tee`     || bool   || false     || no || If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does). ||
 
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Export.html Javadoc] 
@@ -1110,8 +1112,9 @@ The current version does not support calling macros or tasks with arguments.
 A task to invoke a target dynamically.
 
 === Attributes ===
- *name <br />The name of the target to invoke.
- *fail <br />Fail if target does not exist [false]
+|| Attribute || Type || Default || [EL] || Description ||
+|| `name ` || string || || no || The name of the target to invoke. ||
+|| `fail ` || bool || `false` || no || Fail if target does not exist ||
 
 === Example ===
 
@@ -1149,11 +1152,12 @@ can also be written as
 Note: The current version allows only the specification of one task or macro within the body of the target to be created (like foo-task above).
 
 === Attributes ===
- * name The name of the target to create. If override is false, an already existing target with that name is not created.
- * task The task or macro to execute
- * description The informal description of this target
- * depends Targets to execute before this target
- * override (boolean,false) Whether to override an existing target.
+|| Attribute || Type || Default || [EL] || Description ||
+|| `name` || string || || no || The name of the target to create. If override is false, an already existing target with that name is not created.||
+|| `task` || string || || no || The task or macro to execute||
+|| `description` || string || || no || The informal description of this target||
+|| `depends` || string || || no || Targets to execute before this target||
+|| `override` || bool || `false` || no || Whether to override an existing target.||
 
 
 === Further Links ===
@@ -1195,12 +1199,13 @@ This example changes the default target to be called from this to foobar.
 A simple task to merge XML files. 
 
 === Attributes ===
- * dst<br />The file to write to. Any intermediate folders are created. writes to stdout if empty string or argument - is given.
- * src<br />A file or folder argument. If a folder is given, then any file therein matching a given pattern is merged, otherwise the file given. A relative argument is interpreted as being relative to the current working directory.
- * pattern<br />The pattern to apply when matching files to be merged. The pattern can be a regular expression or a file pattern. [/.*\\.xml/].
- * root<br />By default the root tag of the first element will be the root tag for the merged content. Use attribute root to specify a different root tag.
+|| Attribute || Type || Default || [EL] || Description ||
+|| `dst` || string || - || no || The file to write to. Any intermediate folders are created. writes to stdout if empty string or argument - is given.||
+|| `src` || string || || no || A file or folder argument. If a folder is given, then any file therein matching a given pattern is merged, otherwise the file given. A relative argument is interpreted as being relative to the current working directory.||
+|| `pattern` || regex || `.*\\.xml`|| no || The pattern to apply when matching files to be merged. The pattern can be a regular expression ||
+|| `root` || || string || no || By default the root tag of the first element will be the root tag for the merged content. Use attribute root to specify a different root tag.||
 
-=== Example I ===
+=== Behaviour ===
 
 Assume that folder xmldir contains two files x.xml and y.xml where x.xml looks like
 
@@ -1224,8 +1229,6 @@ and where y.xml looks similar. Then the following invocation gets:
  </Y>
  </myroot>
 }}}
-
-=== Example II ===
 
 The same setup as before gives, when no root element is applied, the following:
 
