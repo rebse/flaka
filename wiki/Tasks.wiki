@@ -1,5 +1,5 @@
 #summary A summary of all Tasks implemented by Flaka
-#labels Featured
+
 <wiki:toc max_depth="2"/>
 
 = Elementary Tasks =
