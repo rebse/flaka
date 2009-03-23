@@ -1159,6 +1159,34 @@ Note: The current version allows only the specification of one task or macro wit
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Create-target.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Create-target.java Source]
+<hr/>
+
+
+== set-default-target == 
+
+A task to define the project's default target. 
+{{{
+ <project xmlns:c="antlib:ant.epoline" default="this">
+    <c:set-default-target name="foobar" override="true"/>
+    ..
+    <target name="foobar">
+       ..
+    </target>
+ </project>
+}}}
+This example changes the default target to be called from this to foobar.
+
+
+=== Attributes ===
+|| Attribute || Type || Default || EL  || Description ||
+|| `name`    || string ||       ||  no || The name of the target ||
+|| `fail`    || bool   || false ||  no || Whether to throw an exception if target does not exist||
+|| `override`|| bool   || false ||  no || Whether to override an already existing default target ||
+
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Set-default-target.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Set-default-target.java Source]
 
 <hr />
 = XML Support =
@@ -1527,33 +1555,6 @@ A list of functions provided by installing property-handler:
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-handler.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-handler.java Source]
-
-<hr/>
-== set-default-target == 
-
-A task to define the project's default target. 
-
-=== Attributes ===
- *name<br /> The name of the target
- *fail <br />Whether to throw an exception if target does not exist [false]
- *override<br/>Whether to override an already existing default target [false]
-=== Example ===
-
-This example changes the default target to be called from this to foobar.
-
-{{{
- <project xmlns:c="antlib:ant.epoline" default="this">
-    <c:set-default-target name="foobar" override="true"/>
-    ..
-    <target name="foobar">
-       ..
-    </target>
- </project>
-}}}
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Set-default-target.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Set-default-target.java Source]
 
 <hr/>
 == taskdotclasspath ==
