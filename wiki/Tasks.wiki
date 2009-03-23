@@ -1160,6 +1160,87 @@ Note: The current version allows only the specification of one task or macro wit
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Create-target.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Create-target.java Source]
 
+<hr />
+= XML Support =
+== xmlmerge == 
+
+A simple task to merge XML files. 
+
+=== Attributes ===
+ * dst<br />The file to write to. Any intermediate folders are created. writes to stdout if empty string or argument - is given.
+ * src<br />A file or folder argument. If a folder is given, then any file therein matching a given pattern is merged, otherwise the file given. A relative argument is interpreted as being relative to the current working directory.
+ * pattern<br />The pattern to apply when matching files to be merged. The pattern can be a regular expression or a file pattern. [/.*\\.xml/].
+ * root<br />By default the root tag of the first element will be the root tag for the merged content. Use attribute root to specify a different root tag.
+
+=== Example I ===
+
+Assume that folder xmldir contains two files x.xml and y.xml where x.xml looks like
+
+{{{
+ <x>
+  <x>This is X/x</x>
+ </x>
+}}}
+
+and where y.xml looks similar. Then the following invocation gets:
+
+{{{
+ <c:xmlmerge dst = "-" src = "xmldir" pattern = "*.xml" root = "myroot" />
+ <?xml version="1.0" encoding="UTF-8"?>
+ <myroot>
+ <X>
+   <x>This is X/x</x>
+ </X>
+ <Y>
+   <y>This is Y/y</y>
+ </Y>
+ </myroot>
+}}}
+
+=== Example II ===
+
+The same setup as before gives, when no root element is applied, the following:
+
+{{{
+ <c:xmlmerge dst = "-" src = "xmldir" pattern = "*.xml" />
+ <?xml version="1.0" encoding="UTF-8"?>
+ <X>
+   <x>This is X/x</x>
+   <Y>
+     <y>This is Y/y</y>
+   </Y>
+ </X>
+}}}
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/XmlMerger.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/XmlMerer.java Source]
+
+
+<hr/>
+<wiki:comment>
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                                         UNDER DEVELOPMENT
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+</wiki:comment>
+
+= Under Development - not yet ready =
+== component-handler == 
+
+A simple task to install or uninstall a special component handler supposed to get rid of some annoying Ant warning messages.
+
+=== Attributes ===
+ * install<br />Install component handler [true]
+ * uninstall<br />Uninstall component handler [false]
+ * fail<br />Whether to fail if the installation or un-installation can't be carried out.
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Component-handler.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Component-handler.java Source]
+
+
+
+
 <hr/>
 == cvsstat == 
 
@@ -1688,57 +1769,3 @@ other supported formats are:
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Writedeps.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Writedeps.java Source]
 
-<hr/>
-== xmlmerge == 
-
-A simple task to merge XML files. 
-
-=== Attributes ===
- * dst<br />The file to write to. Any intermediate folders are created. writes to stdout if empty string or argument - is given.
- * src<br />A file or folder argument. If a folder is given, then any file therein matching a given pattern is merged, otherwise the file given. A relative argument is interpreted as being relative to the current working directory.
- * pattern<br />The pattern to apply when matching files to be merged. The pattern can be a regular expression or a file pattern. [/.*\\.xml/].
- * root<br />By default the root tag of the first element will be the root tag for the merged content. Use attribute root to specify a different root tag.
-
-=== Example I ===
-
-Assume that folder xmldir contains two files x.xml and y.xml where x.xml looks like
-
-{{{
- <x>
-  <x>This is X/x</x>
- </x>
-}}}
-
-and where y.xml looks similar. Then the following invocation gets:
-
-{{{
- <c:xmlmerge dst = "-" src = "xmldir" pattern = "*.xml" root = "myroot" />
- <?xml version="1.0" encoding="UTF-8"?>
- <myroot>
- <X>
-   <x>This is X/x</x>
- </X>
- <Y>
-   <y>This is Y/y</y>
- </Y>
- </myroot>
-}}}
-
-=== Example II ===
-
-The same setup as before gives, when no root element is applied, the following:
-
-{{{
- <c:xmlmerge dst = "-" src = "xmldir" pattern = "*.xml" />
- <?xml version="1.0" encoding="UTF-8"?>
- <X>
-   <x>This is X/x</x>
-   <Y>
-     <y>This is Y/y</y>
-   </Y>
- </X>
-}}}
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/XmlMerger.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/XmlMerer.java Source]
