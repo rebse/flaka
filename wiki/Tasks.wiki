@@ -776,13 +776,13 @@ Note that each `switch` attribute (but `value`) can be applied to a `matches` el
 === Elements ===
 
 || Element   || Cardinality || Description ||
-|| `matches` || 0..infinity || An element to specify a single regular or a glob expression. This element supports all the attributes of the enclosing `switch` (but `value). It may contain any number of tasks or macros as sub elements. They are carried out if the expression matches. ||
+|| `matches` || 0..infinity || An element to specify a single regular or a glob expression. This element supports all the attributes of the enclosing `switch` (but `value`). It may contain any number of tasks or macros as sub elements. They are carried out if the expression matches. ||
 || `default` || 0..1        || The default statement will be executed if no `matches` element matched the input value. This element is optional. This element can only be specified once. A build exception will be raised if used more than once. This element does not accept any attributes.  It may contain any number of tasks or macros as sub elements. They are carried out if no expression matched. ||
 || `otherwise` || 0..1     || This element is a synonym for element `default` ||
 
 === Behaviour ===
 
-Attribute `value` is the basis for all further matching. It is a string value which may contain references to properties (`${..}`) or [EL] expressions (`#{..}`). Leading and trailing whitespace will be discarded after having resolved all references. 
+Attribute `value` is the basis for all further matching. It is a string value which may contain [Glossary#Property_Reference references to properties] or [Glossary#Expression_Reference EL expressions]. Leading and trailing whitespace will be discarded after having resolved all references. 
 
 All other attributes (see above) are default values for subsequent `matches` elements. For example, setting attribute `debug` to `true` will turn on debug on all `matches` elements.
 
