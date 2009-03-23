@@ -43,6 +43,6 @@ The next targeted version, *version 1.0*, will not reach all this goals. Instead
 
  * [http://code.google.com/p/flaka/downloads/list Download] Flaka and read the [Installation installation page].
  * Have a look a [BasicScriptingConstructs basic scripting elements] to see tasks, types, macros etc introduced by Flaka.
- * Have a look at the [Tasks task],[Type type] and [Macro macro] reference manuals for gory details.
+ * Have a look at the [Tasks task],[Types type] and [Macros macro] reference manuals for gory details.
  * Don't forget to look into [EL expression language], it contains a lot of information on this enormous useful extension.
  * Start writing good build scripts..
