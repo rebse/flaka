@@ -16,9 +16,6 @@ What I'm missing is the full power of a programming language. Yes, I want to hav
 
 Flaka is a framework build on top of Ant. It’s main goal is to simplify the process of writing a build script. It comes with a high abstraction a la Maven while providing a dark force to escape from defaults and conventions.
 
-
-Flaka's goal is to relieve a Software Engineer from writing build scripts and to let him focus on his core business, writing software that is. Too much time is spent on setting up build tools and scripts. Eventually this leads to various build scripts and techniques mostly only working on the author's machine and build environment.
-
 This is how a Flaka build script will look like in the near future:
 
 {{{
@@ -36,6 +33,7 @@ It will essentially a Ant build script. All what should be done by the author is
  * figure out where project's source code, test cases etc are
  * handle dependencies
  * create targets like `clean`, `compile`, `package`, `test` automatically
+ * generate Javadoc and other reports
  * _etc_ 
 
 The next targeted version, *version 1.0*, will not reach all this goals. Instead a set of essential programming tasks will be made available. Furthermore, [http://en.wikipedia.org/wiki/Unified_Expression_Language unified expression language] will be used to eventually glue this control structures together to a higher leveled framework.
