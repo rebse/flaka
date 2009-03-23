@@ -1,21 +1,42 @@
-#summary Getting Started
+#summary About Flaka
 
-On a lower level, Flaka is a set of tasks, types and macros. This entities can be used [http://ant.apache.org/manual like any other entity provided by standard Ant]. [Installation Just add _ant-flaka-x.y.z.jar_ to Ant's classpath] and make Flaka's entities available withing the buildscript via a namespace
+In the world of [http://en.wikipedia.org/wiki/Java_(programming_language) Java], build scripts are traditionally written in [http://en.wikipedia.org/wiki/Apache_Ant Ant] and nowadays [http://en.wikipedia.org/wiki/Apache_Maven Maven].
+
+When it comes to write a build script using Ant, it feels like using a Shell script in a rather awkward language (XML). Each Ant task solves a particular problem. This is similar to a Shell where you have this small masterpieces like `mkdir`, `cp`, `tar` plus some control structures to eventually being able to put the one big thing together.
+
+Writing a build script using a Shell is serious business. And so it is when using Ant. Ant does not provide you any abstraction how the project needs to be build. There is no underlying logic. In fact you, the author, need to know what to do. Step by step. What's more, you have to use the unfriendly [http://en.wikipedia.org/wiki/XML XML] syntax and restrictions, a control structure is missing and you have to use immutable properties to communicate between tasks. Therefore, Ant scripts are large, notoriously difficult to understand, usually not portable (usuallyt they just work on the authors host) and each author uses a different set of targets and properties.
+
+Maven on the other side provides a high abstraction of building a project. Instead of describing how the project needs to be build, just describe project details and reports you like to have and Maven figures out what needs to be done. This is probably the reason why Maven got so much attention recently.
+
+Despite better knowledge I wrote that Maven figures out how a project needs to be build automatically. That’s actually not quite true. In fact, Maven only works fine when following conventions setup by the Maven team. When not “en route”, Maven gets difficult as well. But even when following conventions, the possibilities in Maven are now endless and the [http://maven.apache.org/ref/current/maven-model/maven.html POM seems to be a endless stream of XML tags]. At the end, I found myself using Ant again.
+
+Still I'm not happy with Ant. 
+
+What I'm missing is the full power of a programming language. Yes, I want to have conditionals, loops and exception handling. I want to have typeless variables which I can set or remove for pleasure. No, I don't want string based properties which I can't remove. At least not if that is the only option. And then I want to have some kind of higher abstraction which does the right thing most of the time. This is what Flaka is about.
+
+Flaka is a framework build on top of Ant. It’s main goal is to simplify the process of writing a build script. It comes with a high abstraction a la Maven while providing a dark force to escape from defaults and conventions.
+
+
+Flaka's goal is to relieve a Software Engineer from writing build scripts and to let him focus on his core business, writing software that is. Too much time is spent on setting up build tools and scripts. Eventually this leads to various build scripts and techniques mostly only working on the author's machine and build environment.
+
+This is how a Flaka build script will look like in the near future:
 
 {{{
- <project xmlns:c="antlib:net.haefelingerit.flaka">
-   [..]
- </project>
+<project xmlns:c="antlib:net.haefelingerit.net">
+ <c:init />
+ <c:dependencies>
+  <c:dependency artefactid="log4j" groupid="log4j" version="1.2.13" />
+ <c:/dependencies>
+</project>
 }}}
 
-The namespace prefix used in this document is, as shown above, the character c. The prefix itself is not relevant and can thus be changed to your liking. Here is an example of a simple script using Flaka:
 
-{{{ 
-  <project xmlns:c="antlib:net.haefelingerit.flaka">
-   <c:unless test="-d folder">
-      <mkdir dir="folder" />
-   </c:unless>
- </project>
-}}}
+It will essentially a Ant build script. All what should be done by the author is to list dependencies (if they can't be figured out automatically) and _all the rest_ would be done by the Flaka framework (`<c:init/>`). All the rest means:
+ * figure out what type of project should be build (jar, war, ear ..)
+ * figure out where project's source code, test cases etc are
+ * handle dependencies
+ * create targets like `clean`, `compile`, `package`, `test` automatically
+ * _etc_ 
 
-Here Flaka's task [Tasks#unless unless] is being used to test whether a given folder exists or not. The test is carried out via Flaka's [TestEL conditional expression language]. If not existing, the folder is created using [http://ant.apache.org/manual/CoreTasks/mkdir.html task mkdir] provided by Ant.
+The next targeted version, *version 1.0*, will not reach all this goals. Instead a set of essential programming tasks will be made available. Furthermore, [http://en.wikipedia.org/wiki/Unified_Expression_Language unified expression language] will be used to eventually glue this control structures together to a higher leveled framework.
+
