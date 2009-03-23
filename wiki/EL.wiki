@@ -338,7 +338,7 @@ Negative indexes are currently not supported. If an index is specfies an not exi
 
 Besides _natural_ properties (see discussion above) are the following properties supported:
 
-|| Property || Type || Meaning ||
+|| Property || Type || Description ||
 || length   || int  || number of characters in this string ||
 || size     || int  || same as property `length` ||
 || tolower  || string || return this string in lowercase characters only ||
@@ -355,7 +355,7 @@ Files and folders is Ant's bread and butter. A couple of properties are defined 
 In this example of an EL expression, string `myfolder` is converted in a File object using property `tofile`. In addition, the so created object is checked whether it is a folder or not.
 
 The following _properties_ are defined on File objects:
-|| Property || Type || Meaning ||
+|| Property || Type || Description ||
 || `parent` || File || parent of file or folder as file object ||
 || `toabs`|| File || file or folder as absolute file object ||
 || `exists` || bool || check whether file or folder exists ||
@@ -373,6 +373,24 @@ The following _properties_ are defined on File objects:
 || `tourl`    || URL  || file as URL object ||
 || `delete` || bool || deletes the file or folder (true); false otherwise ||
 || `mkdir`  || bool || creates the folder (and intermediate) folders (true); false otherwise ||
+
+== Matcher Properties ==
+
+A _matcher object_ is created in task [Tasks#switch switch] if a regular expression matches a input value. Such a matcher object contain then the details of the match. This object is especially useful if capturing groups (also known as _marked subexpression) are used.
+
+|| Property || Type     || Description ||
+|| `start`   || int     || The position within the input where the match starts. ||
+|| `s`       || int     || Same as `start` ||
+|| `end`     || int     || The position within the input where the match ends (the character at `end` is the last matching character) 
+|| `e`       || int     || Same as `end`   ||
+|| `groups`  || int     || The number of capturing groups in the (regular) expression. ||
+|| `size     || int     || Same as `groups` ||
+|| `length`  || int     || Same as `groups` ||
+|| `n`       || int     || Same as `groups` ||
+|| `pattern` || string  || The regular expression that was used for this match. Notice that glob expressions are translated into regular expressions. ||
+|| `p`       || string  || Same as `pattern` ||
+|| _i_       || matcher || The matcher object for _i_'th capturing group. See task [Tasks#switch switch] for examples. ||
+
 
 = Evaluating in a boolean context ==
 

@@ -737,30 +737,31 @@ This would execute all macros and tasks listed in the otherwise clause since no 
 <hr/>
 == switch ==
 
-A switch statement as found in typical programming languages. A sequence of case statement is tried to match a given value. The case body of the first matching case value is evaluated. A typical example:  
+Task `switch` has been designed to ease pattern matching. The idea is to try to match a pattern, a [http://en.wikipedia.org/wiki/Regular_expression regular expression] or [http://en.wikipedia.org/wiki/Glob_(programming) glob expression] against a given string value and carry out a sequence of actions in case of a hit.
 
 {{{
- <c:switch value="${myvalue}">
-  <case match="*.jar">            -- #1
+ <c:switch value=" a${string}#{value} ">
+  <matches glob="*.jar">          -- #1
    -- string ending in .jar
-  </case>
-  <case match="/(1|2|3)/">        -- #2
+  </matches>
+  <matches re="1|2|3">            -- #2
     -- one or two or three
-  </case>
-  <case match="/-\d+/">           -- #3
-    -- negative number
-  </case>
-  <default>
-   -- neither of the above 
-  </default>
+  </matches>
+  <matches re="-\d+">             -- #3
+    -- negative integral number
+  </matches>
+  <otherwise>
+   -- no match so far ..
+  </otherwise>
  <c:case>
 }}}
 
-Notice the usage of a pattern expression in the first and the usage of regular expressions in the second and third case statement. Utilization of pattern and regular expressions make switch a very flexible and powerful conditional statement.
+Notice the usage of a glob expression in the first and the usage of regular expressions in the second and third `matches` element. Utilization of glob and regular expressions make `switch` a very flexible and powerful conditional statement.
 
 === Attributes ===
- * value<br />The (string) value that needs to be matched by a case statement. Note that the value given is normalized, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case. See {{JavaLangRef|1=Character}} for details on whitespace. [].
- * stem<br />When applying regular expressions, details of the match are exposed as a set of properties. To avoid pollution, each property is prefixed with the given stem. A stem can also individually been set for each case statement if necessary. [switch]
+|| Attribute || Type   || Default || [EL]  || Description ||
+|| `value`   || string ||       - || #{..} || The (string) value that needs to be matched against. Note that the value given is _normalized_, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case.||
+|| `var`     || string ||       - || #{..} || When applying regular expressions, details of the match are exposed for further usage as `matching object`. ||
  * find<br />When set to true, it is sufficient for a case expression to match a substring. By default, the whole input string, i.e. the  switch value, must match. [false]
  * ignorecase<br />Enables case-insensitive matching. By default, case-insensitive matching assumes that only characters in the US-ASCII charset are being matched. Unicode-aware case-insensitive matching can be enabled by specifying the UNICODE_CASE flag in conjunction with this flag. Case-insensitive matching can also be enabled via the embedded flag expression (?i).  [false]
  * comments<br />Permits whitespace and comments in pattern. In this mode, whitespace is ignored, and embedded comments starting with # are ignored until the end of a line. Comments mode can also be enabled via the embedded flag expression (?x).  [false]
