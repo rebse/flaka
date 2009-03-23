@@ -902,8 +902,8 @@ When matching against the error message, be aware that the actual error message 
 || Attribute || Type || Default || [EL] || Description ||
 || `property` || string || || no || The name of the property that should hold the exception message ||
 || `reference` || string || `trycatch.object` || no || >The name of the reference to hold the exception object ||
-|| `catch.type` || glob || *.BuildException || no || A pattern against the type (Java classname) of the exception object ||
-|| `catch.match` || glob || *  || no || A pattern to be applied against the exception message ||
+|| `catch.type` || glob || `*.BuildException` || no || A pattern against the type (Java classname) of the exception object ||
+|| `catch.match` || glob || `*`  || no || A pattern to be applied against the exception message ||
 
 === Elements ===
 
