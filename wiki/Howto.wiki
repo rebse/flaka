@@ -1,7 +1,8 @@
 #summary A collection of _howto_ question and answers
 <wiki:toc max_depth="2"/>
 
-<hr />
+============
+
 = Testing Properties, References et cetera =
 == How to check whether a property is defined? ==
 
@@ -60,7 +61,8 @@ A property is considered _empty_ if either not defined or consists only of white
 }}}
 
 
-<hr />
+============
+
 = Dynamic Execution =
 == How can I dynamically execute a target? ==
 Use task run-target to run any target. For example
