@@ -776,13 +776,23 @@ Note that each `switch` attribute (but `value`) can be applied to a `matches` el
 === Elements ===
 
 || Element   || Cardinality || Description ||
-|| `matches` || 0..infinity || The element is used for matching the given switch value. This element can be applied multiple times or can be absent. Each case element will be tried in order. Element case supports the same attributes as the enclosing switch element does. Additionally the following attributes are supported: <br\> *match*: The expression to use for matching this case against the switch value. By default, the expression is interpreted as pattern  expression. If however the first and last character are '/', then these characters are stripped off and the remaining string is interpreted as regular expression. If it is not possible to interpret the remaining string as regular expression, the remaining string will be treated as pattern expression which is always possible. <br />If the first and last character are '%', then the remaining string is interpreted as pattern expression. The underlying regular expression engine is implementation dependent. It is Java for the current version of Flaka. Although Java, note that the backslash character doesn't need to be escaped. For example, string "\s" is indeed a whitespace character while this needs to be written as "\\s" in Java. ||
-|| `default` || 0..1        || The default statement will be executed if no `matches` element matched the input value. This element is optional. This element can only be specified once. A build exception will be raised if used more than once. This element does not accept any attributes. ||
+|| `matches` || 0..infinity || An element to specify a single regular or a glob expression. This element supports all the attributes of the enclosing `switch` (but `value). It may contain any number of tasks or macros as sub elements. They are carried out if the expression matches. ||
+|| `default` || 0..1        || The default statement will be executed if no `matches` element matched the input value. This element is optional. This element can only be specified once. A build exception will be raised if used more than once. This element does not accept any attributes.  It may contain any number of tasks or macros as sub elements. They are carried out if no expression matched. ||
 || `otherwise` || 0..1     || This element is a synonym for element `default` ||
 
 === Behaviour ===
 
-This example shows a couple of ways to handle a file based on it's extension:
+Attribute `value` is the basis for all further matching. It is a string value which may contain references to properties (`${..}`) or [EL] expressions (`#{..}`). Leading and trailing whitespace will be discarded after having resolved all references. 
+
+All other attributes (see above) are default values for subsequent `matches` elements. For example, setting attribute `debug` to `true` will turn on debug on all `matches` elements.
+
+Any number of `matches` elements are allowed and at most one `otherwise` (resp. `default`) element. Whether the `otherwise` element is at the end, in the middle or at the begin does not matter. The order of the `matches` elements are relevant however. Each `matches` element will be tried in the order given until no more untried elements are left. Then, if no element matched, a given `otherwise` element is carried out. Otherwise the matching elment will.
+
+Carrying out an element means that all enclosed tasks or macros are executed in the order given. 
+
+The underlying regular expression engine is the one given by Java. It's [http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html Javadoc] documentation is a pretty good source of information if you are familiar with regular expressions. For all the gory details, have a look at [http://oreilly.com/catalog/9780596528126/index.html Mastering Regular Expressions] by Jeffrey E. F. Friedl. 
+
+Be aware that there is no need to escape the escape character. For example, people using regular expressions in Java are used to write `\\*` if they want match the literal `*` character and thus escaping from the usual semantics (match zero or more times). This is not necessary in Flaka where the input sequence `\*` remains `\*`.
 
 {{{
  <c:switch value="${myvalue}">
@@ -799,7 +809,6 @@ This example shows a couple of ways to handle a file based on it's extension:
 }}}
 
 === Advanced Example ===
-This example requires at least version 2.1.5.
 
 Very often it is not only important to know whether a value matches or not. For further processing, it would be also good to break the matching string apart. To support this, properties are set for each match as the example below demonstrates. Contrary to standard Ant behaviour, those attributes are always set, even if such a property exists before. The standard stem for those properties, is net.haefelingerit.flaka.match.. 
 
