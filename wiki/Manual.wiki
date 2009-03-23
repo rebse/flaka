@@ -4,7 +4,7 @@ Welcome to Flaka's manual page. Please find below the various sections of the ma
 
 || *Section* || *What to expect therein ..* ||
 || [Flaka About]   || Background information on design and motivation can be found on the [Flaka about] page.||
-|| Installation || How to download and install Flaka is explained in the [Installation installation] section of this manual. ||
+|| [Installation] || How to download and install Flaka is explained in the [Installation installation] section of this manual. ||
 || [BasicScriptingConstructs Basic Task Usage] || The core layer of Flaka consist of additional tasks, types and macros along with the expression language to glue things together. This [BasicScriptingConstructs section] lists those new item along with a basic usage example. For detailed information, pointers to the reference manual are provided. The unified expression language has its own [EL section]. ||
 || [EL Unified Expression Language] ||  The [EL unified expression language] is a small albeit powerfull and beautiful little language that eases programming. It's a real work horse. ||
 || API References || The gory details of [Tasks tasks], [Types types] and [Macros macros] introduced by Flaka are listed in appropriate sections of this manual. ||
