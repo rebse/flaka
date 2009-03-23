@@ -1000,21 +1000,134 @@ When being executed, Ant would receive a build exception (re-thrown within the c
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Throw.java Source]
  * Task [Tasks#trycatch trycatch]
 
-= Special Purpose Tasks =
 
 <hr/>
-== component-handler == 
+= Special Purpose Tasks =
+== export == 
 
-A simple task to install or uninstall a special component handler supposed to get rid of some annoying Ant warning messages.
+Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
 
 === Attributes ===
- * install<br />Install component handler [true]
- * uninstall<br />Uninstall component handler [false]
- * fail<br />Whether to fail if the installation or un-installation can't be carried out.
+ * dst The destination to dump the file to. If dst is <tt>-</tt>, the file will be dumped to stdout.
+ * dest Same as dst
+ * out Same as dst
+ * src The file within the package to export. By default, file antlib.xml is exported.
+ * tee (boolean,false) If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does).
 
 === Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Component-handler.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Component-handler.java Source]
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Export.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Export.java Source]
+
+<hr/>
+== find == 
+<wiki:comment>todo:references</wiki:comment>
+
+Ant lacks a simple task to report all or certain files in a folder. This task lets you evaluate an arbitrary [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] into a list of `file`s. Used in conjunction with [Tasks#for task for] enables you to print easily all files and properties of them. Of course, that generated list can also be used for other purposes.
+
+{{{
+<c:find var="filelist" type="f" />
+<c:for var="file" in="filelist">
+ <c:echo>
+  #{file} has been last accessed at #{file.mtime}
+ </c:echo>
+</c:for>
+}}}
+
+=== Attributes ===
+
+|| Attribute || Type   || EL || Meaning || Default ||
+|| dir       || string ||  = || The directories to scan. || Basedir of build script (''.tofile) ||
+|| type      || string ||    || `f` to select files and `d` to select folders || all files and folders ||
+|| var       || string ||  r || The name of the variable to hold a list of scanned files or folders || null ||
+
+=== Elements ===
+
+This task implements a [http://ant.apache.org/manual/CoreTypes/fileset.html standard Ant fileset]. All elements of `fileset` are therefore legal elements of `find` as well.
+
+=== Behaviour ===
+
+This task scans all files and folders given by attribute `dir` into a variable given by `var`. If `var` is empty, then no scanning takes place. Attribute `var` may contain [EL#EL_References EL references] which are resolved. If a scanning takes place, then `var` will be created and contains, in any case, a list value.
+
+Attribute `dir` may contain [EL#EL_References EL references] which are resolved. The so resolved string value must be a syntatically legal EL expression. This expression will then be evaluated. If the evaluated object is a list, then each list item will be scanned for files and folder, otherwise only the evaluated object. If such a object to be scanned is not already a file object, then stringized object is used to create the folder to be scanned. The following examples illustrate this behaviour:
+|| Argument           || Same as ||
+|| 'src'              || list('src'.tofile) ||
+|| list('src','lib')  || list('src'.tofile,'lib'.tofile) ||
+
+Attribute `type` is used to filter out unwanted files or folder from being scanned. If `type` is `f`, then only files are taken into account and when `d`, only folders matter. By default files and folders are accumulated.
+
+=== Examples ===
+
+Report all files in the working directory. Note that also files in sub folders are reported.
+
+{{{
+ <c:find var="filelist" type="f" />
+}}}
+
+Check whether a sub folder ending in '.jar' exists which is not a file but a directory.
+
+{{{
+ <c:find var="filelist" type="d">
+   <include name="**/*.jar" />
+ </c:find>
+}}}
+ 
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Find.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Find.java Source]
+
+<hr/>
+= Meta Programming =
+== run-macro == 
+
+A task to invoke a macro or task (or a list of them) dynamically. 
+
+{{{
+ <macrodef name="foobar" >
+  <sequential>...</sequential>
+ <macrodef>
+ ..
+ ..
+ <foobar />                     -- conventional way of using macro foobar
+ <c:run-macro name="foobar" />  -- dynamic way
+}}}
+
+The current version does not support calling macros or tasks with arguments. 
+
+=== Attributes ===
+
+|| Attribute || Type || Default || EL || Description ||
+|| `name`    || string ||       || no || The name of the macro to run. Use whitespace chars to specify a list of names.||
+|| `fail`    || bool   || false || no || Whether a exception shall be thrown if macro does not exist||
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Run-macro.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Run-macro.java Source]
+
+<hr/>
+== run-target == 
+
+A task to invoke a target dynamically.
+
+=== Attributes ===
+ *name <br />The name of the target to invoke.
+ *fail <br />Fail if target does not exist [false]
+
+=== Example ===
+
+{{{
+ <target name="foobar">
+   ..
+ </target>
+ ..
+ <c:run-target name="foobar" />
+}}}
+
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Run-target.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Run-target.java Source]
+
 
 <hr/>
 == create-target ==
@@ -1112,80 +1225,6 @@ would set the following properties:
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Cvsstat.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Cvsstat.java Source]
-
-<hr/>
-== export == 
-
-Use this task to dump a file within the Flaka package to stdout or a file.  This task's usefulness is rather limited for public use, however this task is used to implement target [Targets#export export].  
-
-=== Attributes ===
- * dst The destination to dump the file to. If dst is <tt>-</tt>, the file will be dumped to stdout.
- * dest Same as dst
- * out Same as dst
- * src The file within the package to export. By default, file antlib.xml is exported.
- * tee (boolean,false) If enabled, the file will be exported to src as well as to stdout (similar as standard UNIX command tee does).
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Export.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Export.java Source]
-
-<hr/>
-== find == 
-<wiki:comment>todo:references</wiki:comment>
-
-Ant lacks a simple task to report all or certain files in a folder. This task lets you evaluate an arbitrary [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] into a list of `file`s. Used in conjunction with [Tasks#for task for] enables you to print easily all files and properties of them. Of course, that generated list can also be used for other purposes.
-
-{{{
-<c:find var="filelist" type="f" />
-<c:for var="file" in="filelist">
- <c:echo>
-  #{file} has been last accessed at #{file.mtime}
- </c:echo>
-</c:for>
-}}}
-
-=== Attributes ===
-
-|| Attribute || Type   || EL || Meaning || Default ||
-|| dir       || string ||  = || The directories to scan. || Basedir of build script (''.tofile) ||
-|| type      || string ||    || `f` to select files and `d` to select folders || all files and folders ||
-|| var       || string ||  r || The name of the variable to hold a list of scanned files or folders || null ||
-
-=== Elements ===
-
-This task implements a [http://ant.apache.org/manual/CoreTypes/fileset.html standard Ant fileset]. All elements of `fileset` are therefore legal elements of `find` as well.
-
-=== Behaviour ===
-
-This task scans all files and folders given by attribute `dir` into a variable given by `var`. If `var` is empty, then no scanning takes place. Attribute `var` may contain [EL#EL_References EL references] which are resolved. If a scanning takes place, then `var` will be created and contains, in any case, a list value.
-
-Attribute `dir` may contain [EL#EL_References EL references] which are resolved. The so resolved string value must be a syntatically legal EL expression. This expression will then be evaluated. If the evaluated object is a list, then each list item will be scanned for files and folder, otherwise only the evaluated object. If such a object to be scanned is not already a file object, then stringized object is used to create the folder to be scanned. The following examples illustrate this behaviour:
-|| Argument           || Same as ||
-|| 'src'              || list('src'.tofile) ||
-|| list('src','lib')  || list('src'.tofile,'lib'.tofile) ||
-
-Attribute `type` is used to filter out unwanted files or folder from being scanned. If `type` is `f`, then only files are taken into account and when `d`, only folders matter. By default files and folders are accumulated.
-
-=== Examples ===
-
-Report all files in the working directory. Note that also files in sub folders are reported.
-
-{{{
- <c:find var="filelist" type="f" />
-}}}
-
-Check whether a sub folder ending in '.jar' exists which is not a file but a directory.
-
-{{{
- <c:find var="filelist" type="d">
-   <include name="**/*.jar" />
- </c:find>
-}}}
- 
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Find.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Find.java Source]
 
 <hr/>
 == getdeps ==
@@ -1407,57 +1446,6 @@ A list of functions provided by installing property-handler:
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-handler.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-handler.java Source]
-
-<hr/>
-== run-macro == 
-
-A task to invoke a macro or task (or a list of them) dynamically. 
-
-The current version does not support calling macros or tasks with arguments. 
-
-=== Attributes ===
- *name <br/> The name of the macro to run. Use whitespace chars to specify a list of names. []
- *fail <br />Whether a exception shall be thrown if macro does not exist [false]
-
-=== Example ===
-
-{{{
- <{{AntRefTask|1=macrodef.html|2=macrodef}} name="foobar" >
-  <sequential>...</sequential>
- <macrodef>
- ..
- ..
- <foobar />                     -- conventional way of using macro foobar
- <c:run-macro name="foobar" />  -- dynamic way
-}}}
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Run-macro.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Run-macro.java Source]
-
-<hr/>
-== run-target == 
-
-A task to invoke a target dynamically.
-
-=== Attributes ===
- *name <br />The name of the target to invoke.
- *fail <br />Fail if target does not exist [false]
-
-=== Example ===
-
-{{{
- <target name="foobar">
-   ..
- </target>
- ..
- <c:run-target name="foobar" />
-}}}
-
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Run-target.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Run-target.java Source]
 
 <hr/>
 == set-default-target == 
