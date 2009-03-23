@@ -39,7 +39,7 @@ It will essentially a Ant build script. All what should be done by the author is
 
 The next targeted version, *version 1.0*, will not reach all this goals. Instead a set of essential programming tasks will be made available. Furthermore, [http://en.wikipedia.org/wiki/Unified_Expression_Language unified expression language] will be used to eventually glue this control structures together to a higher leveled framework.
 
-*Where to go from here* <br />
+*Where to go from here?* <br />
 
  * [http://code.google.com/p/flaka/downloads/list Download] Flaka and read the [Installation installation page].
  * Have a look a [BasicScriptingConstructs basic scripting elements] to see tasks, types, macros etc introduced by Flaka.
