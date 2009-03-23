@@ -1,4 +1,5 @@
 #summary About Flaka
+#labels Featured
 
 In the world of [http://en.wikipedia.org/wiki/Java_(programming_language) Java], build scripts are traditionally written in [http://en.wikipedia.org/wiki/Apache_Ant Ant] and nowadays [http://en.wikipedia.org/wiki/Apache_Maven Maven].
 
