@@ -391,6 +391,9 @@ A _matcher object_ is created by task [Tasks#switch switch] if a regular express
 || `p`       || string  || Same as `pattern` ||
 || _i_       || matcher || The matcher object for _i_'th capturing group. See task [Tasks#switch switch] for examples. ||
 
+<wiki:comment>
+bla bla
+</wiki:comment>
 
 = Evaluating in a boolean context ==
 
