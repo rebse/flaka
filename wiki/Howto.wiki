@@ -1,12 +1,19 @@
-#summary A summary of all Macros implemented by Flaka
-#labels Featured
-<wiki:toc max_depth="3" />
+#summary A collection of _howto_ question and answers
+<wiki:toc max_depth="2"/>
 
 = Testing Properties, References et cetera =
 == How to check whether a property is defined? ==
 
 {{{
- <c:when test="-P debug">
+ <c:when test=" has.property[name] ">
+  ...
+ </c:when>
+}}}
+
+== How to check whether a variable is defined? ==
+
+{{{
+ <c:when test=" has.var[name] ">
   ...
  </c:when>
 }}}
@@ -14,7 +21,7 @@
 == How to check whether a reference is defined? ==
 
 {{{
- <c:when test="-R javac.classpath">
+ <c:when test=" has.reference[name] ">
   ...
  </c:when>
 }}}
@@ -22,7 +29,7 @@
 == How to check whether a target is defined? ==
 
 {{{
- <c:when test="-T hello">
+ <c:when test=" has.target[name] ">
   ..
  </c:when>
 }}}
@@ -33,91 +40,22 @@
 To check whether a macro or task exists use test -M as shown below:
 
 {{{
- <c:when test="-M hello">
-   <echo>`hello' is either a macro or a task</echo>
+ <c:when test=" has.task[name] ">
+   <echo>either a macro or a task</echo>
  </c:when>
 }}}
 
-= How to check using choose?
-If you further need to make a distinction it is a real macro or a real taskdef you
-would use -m or -t. Here's an example showing relevant tests in action:
+To check for a specific taskdef or macrodef, use `has.taskdef` or `has.macrodef`. 
 
-{{{
-    <c:choose>
-      <when test="-M ' ''name'' '">
-          <info>`' ''name'' '' is a Macro or Task</info>
-      </when>
-      <when test="-m ' ''name'' '">
-          <info>`' ''name'' '' is a pure Macro</info>
-      </when>
-      <when test="-t ' ''name'' '">
-          <info>`' ''name'' '' is a pure Task</info>
-      </when>
-      <when test="-T ' ''name'' '">
-          <info>`' ''name'' '' is a Target</info>
-      </when>
-   <c:choose>
-}}}
 
 == How to check whether a property is empty? ==
 
 A property is considered _empty_ if either not defined or consists only of whitespace characters.
-Task empty simplifies this check:
 
 {{{
- <c:property somevar=" " />   -- notice the blank character
- [..]
- <c:empty var="somevar"> -- => true
-   -- handle empty property 
- </c:empty>
-
- <c:notempty var="somevar">
-   -- not reached 
+ <c:when test=" empty property[name] ">
+   ..
  </c:notempty>
-}}}
-
-
-As an alternative, test operators -z or -n can be used. When using them, care must be taken to quote properly:
-
-{{{
- <c:set var="x" value=""/>
- <c:when test="-z '${x}' />    -- => true
- <c:when test="-n '${x}' />    -- => false
-}}}
-
-Contrary to task empty or nonempty, whitespace characters are significant for operators -z and -n:
-
-{{{
- <c:set var="x" value=" "/>   -- notice, blank character!
- <c:when test="-z '${x}' />    -- => false
- <c:when test="-n '${x}' />    -- => true
-}}}
-
-
-Operator -z expects a string argument. If no argument is given (like `test="-z"`), then operator -z evaluates to true (standard Posix behaviour). To test that a string is not empty you may use operator -n. Operator -n expects also a string argument. If no argument is given, then -n evaluates to true like -z does. Here's an example of this unexpected semantics: 
-
-{{{
- <c:set var="x" value="" />   -- x is empty 
- <c:when test="-z ${x}">       -- =>  true
- <c:when test="-n ${x}">       -- =>  true (!!)
-}}}
-
-
-It is therefore necessary to quote the arguments in order to provide a string argument. Note that unlike POSIX, quote character does not prevent evaluation of embedded variables:
-
-{{{
-  <c:set var="x" value=""  />  -- x is empty 
-  <c:when test="-z '${x}' />    -- true
-  <c:when test="-n '${x}' />    -- false
-}}}
-
-
-Quoting is also necessary if the value to be tested contains whitespace characters. If so and not quotes, the behaviour is undefined. Most likely a syntax error will be thrown:
-
-{{{
-  <c:set var="x" value="hello world" />
-  <c:when test="-z ${x}" />    -- syntax error: only one argument expected
-  <c:when test="-z '${x}'" />  -- good (evaluates to false)
 }}}
 
 
@@ -127,7 +65,7 @@ Quoting is also necessary if the value to be tested contains whitespace characte
 Use task run-target to run any target. For example
 
 {{{
-  <run-target name="hello" fail="false" />
+  <c:run-target name="hello" fail="false" />
 }}}
 
 This would execute the target hello if this target exists. Otherwise this task will simply be ignored in case attribute fail is set to false (which is the default). If fail is true, then calling a non-existing target throws an exception. Note that targets and macros are in a different namespace.
@@ -154,27 +92,3 @@ Use task run-macro for this task.
 }}}
 
 Note that there is currently no way to call a macro with elements. Only attributes are supported.
-
-= Override =
-== How can I override a macro being executed during init? ==
-On initalizing Flaka (via [Macros:init macro init])  a couple of macros are executed to set relevant properties, guessing the project type et cetera. To override one of this macros, one needs to split up the import statement. Here's an example that overrides the macro guessing the project's type.
-
-{{{
- -- TODO: check, may not be appropriate 
- <project xmlns:c="antlib:net.haefelingerit.flaka" >
-  <macrodef name="guess-project-type">
-    <sequential>
-    <c:guess-project-type />
-    <c:empty var="project.type">
-      <echo>GUESSING</echo>
-      ...
-      <c:set var="project.type" value=".." />
-    </c:empty
-    </sequential>
-  </macrodef>
-  <!-- configure project -->
-  <c:init />
-  <!-- .. -->
- </project
-
-In this example we override macro guess-project-type. First we check whether the framework knows about this particular project type. If this is not the case, i.e. property project.type is not defined, then we do our own guess and finally set the property. 
