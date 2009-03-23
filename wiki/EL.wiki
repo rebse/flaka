@@ -376,15 +376,15 @@ The following _properties_ are defined on File objects:
 
 == Matcher Properties ==
 
-A _matcher object_ is created in task [Tasks#switch switch] if a regular expression matches a input value. Such a matcher object contain then the details of the match. This object is especially useful if capturing groups (also known as _marked subexpression) are used.
+A _matcher object_ is created by task [Tasks#switch switch] if a regular expression matches a input value. Such a matcher object contains details of the match like the start and end position, the pattern used to match and it allows to explore details of capturing groups (also known as _marked subexpression).
 
 || Property || Type     || Description ||
 || `start`   || int     || The position within the input where the match starts. ||
 || `s`       || int     || Same as `start` ||
-|| `end`     || int     || The position within the input where the match ends (the character at `end` is the last matching character) 
+|| `end`     || int     || The position within the input where the match ends (the character at `end` is the last matching character)  ||
 || `e`       || int     || Same as `end`   ||
 || `groups`  || int     || The number of capturing groups in the (regular) expression. ||
-|| `size     || int     || Same as `groups` ||
+|| `size`    || int     || Same as `groups` ||
 || `length`  || int     || Same as `groups` ||
 || `n`       || int     || Same as `groups` ||
 || `pattern` || string  || The regular expression that was used for this match. Notice that glob expressions are translated into regular expressions. ||
