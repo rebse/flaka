@@ -1,11 +1,6 @@
 #summary Getting Started
-#labels Featured
 
-<wiki:toc max_depth="2" />
-
-= Getting Started =
-
-On a lower level, Flaka is a set of tasks, types and macros. This entities can be used [http://http://ant.apache.org/manual like any other entity provided by standard Ant]. [Installation Just add _ant-flaka-x.y.z.jar_ to Ant's classpath] and make Flaka's entities available withing the buildscript via a namespace
+On a lower level, Flaka is a set of tasks, types and macros. This entities can be used [http://ant.apache.org/manual like any other entity provided by standard Ant]. [Installation Just add _ant-flaka-x.y.z.jar_ to Ant's classpath] and make Flaka's entities available withing the buildscript via a namespace
 
 {{{
  <project xmlns:c="antlib:net.haefelingerit.flaka">
