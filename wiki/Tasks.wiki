@@ -794,49 +794,49 @@ The underlying regular expression engine is the one given by Java. It's [http://
 
 Be aware that there is no need to escape the escape character. For example, people using regular expressions in Java are used to write `\\*` if they want match the literal `*` character and thus escaping from the usual semantics (match zero or more times). This is not necessary in Flaka where the input sequence `\*` remains `\*`.
 
+So called _globs_ are a kind of simplified regular expressions. They lack the full power while simplifying the expression. For example, to specify whether a name input string end in `jar`, we can simply write 
+
 {{{
- <c:switch value="${myvalue}">
-  <case match="*.jar">
-   -- handle jar file (no properties set)
-  </case>
-  <case match="/(.*)\.war/">
-   <echo>basename = ${match.g1}</echo>
-  </case>
-  <case match="/.*(zip|tgz)/">
-   <echo>extension = ${match.g1}</echo>
-  </case>
+ <c:switch value=" #{myfile}.name ">
+  <matches glob="*.jar">
+    -- do something with jar file ..
+  </matches>
  </c:switch>
 }}}
 
-=== Advanced Example ===
-
-Very often it is not only important to know whether a value matches or not. For further processing, it would be also good to break the matching string apart. To support this, properties are set for each match as the example below demonstrates. Contrary to standard Ant behaviour, those attributes are always set, even if such a property exists before. The standard stem for those properties, is net.haefelingerit.flaka.match.. 
-
-The task in example below is to parse an EPO version tag. Such a version tag follows usually the convention v-<version> but allows additionally also to be v-<env>_<version>. The string before the version is usually used to specify a particular environment. If such a tag would be given, how could the tag be divided into environment and version? The code example below shows how it could be done. In this example, stem g is being used instead of the standard stem net.haefelingerit.flaka.match.
-
+The very same can also be expressed as `re="\.jar$"` using regular expressions. The biggest disadvange of globs are that capturing groups are not supported. Thus the match above just indicates that the file name ends in `.jar` while there is nothing to figure the file's basename. Compare this with 
 
 {{{
- <c:switch value="v-uat_3_20_500" stem="g">
-   <case match = "/v-(?:([^\d][^_]*)_)?(\d.*)/" stem="g">
-     <echo>
-       g.p  = ${g.p}    // g.p  = v-(?:([^\d][^_]*)_)?(\d.*)
-       g.n  = ${g.n}    // g.n  = 2
-       g.g0 = ${g.g0}   // g.g0 = v-uat_3_20_500
-       g.g1 = ${g.g1}   // g.g1 = uat
-       g.g2 = ${g.g2}   // g.g2 = 3_20_500
-       g.g3 = ${g.g3}   // g.g3 = ${g.g3}
-       g.s1 = ${g.s1}   // g.s1 = 2
-       g.e1 = ${g.e1}   // g.e1 = 5
-     </echo>
-   </case>
+ <c:switch value=" #{myfile}.name ">
+  <matches re="^(.*)\.jar$" var="m">
+    <c:echo>
+      basename = #{m[1]}
+    </c:echo>       
+  </matches>
  </c:switch>
 }}}
 
-Property g.p holds the matching pattern and g.n holds the number of capturing groups in that pattern. Pattern above contains 3 groups, two of them are capturing. The first capturing group (g.g1) holds the environment, the second (g.g2) the version. Furthermore, g.g0 holds the complete matching value (which could be a substring of the value given to switch).
+Here we use a capturing group for the basename. A matcher object will be associated with variable `m`. This object can then be [http://code.google.com/p/flaka/wiki/EL#Matcher_Properties evaluated using properties] for matching details.
 
-Note that in this example property g.g3 is not set cause there are only two capturing groups. If however g.g3 would have been set before, then it's value would not have been changed.
-
-For further processing, properties like g.s1 and g.e1 are set. Property g.s1 contains the index start index of the substring captured by group one during the match. Property g.s2 contains the start index of group two and so on. Similar, g.e1 contains the index of the last matching character, incremented by one. This indexes can be used to extract arbitrary substrings.
+Here is a more complicated example. It was used once to examine a CVS tag which was supposed to follow the convetion `schema-(env_)version`, where `(env_)` was optional, `schema` indicated the tag's semantic and where `version` was the products version or build number: 
+{{{
+ <c:switch value="v-uat_3_20_500" var="m">
+   <matches re="v-(?:([^\d][^_]*)_)?(\d.*)" >
+     <c:echo>
+       pattern      = #{m.p}         -- v-(?:([^\d][^_]*)_)?(\d.*)
+       groups       = #{m.n}         -- 2
+       matched text = #{m}           -- v-uat_3_20_500  (same as m[0])
+       env          = #{m[1]}        -- uat
+       version      = #{m[2]}        -- 3_20_500
+       ;; refering to non existing group
+       ??           = #{m[3]}        -- (empty string)
+       ;; start and end index of first group
+       start        = #{m[1].s}      -- 2
+       end          = #{m[1].e}      -- 5
+     </c:echo>
+   </matches>
+ </c:switch>
+}}}
 
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Switch.html Javadoc] 
