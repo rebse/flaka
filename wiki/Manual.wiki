@@ -1,7 +1,7 @@
-#summary This page shall contain the manual's table of contents
 #labels Featured
 
+Welcome to Flaka's manual page. Please find below the various sections of the manual along with a short description what to expect therein.
 
 = Installation = 
 
-How to download and install Flaka is explained in the [Installation installation] section of this manual.
+  How to download and install Flaka is explained in the [Installation installation] section of this manual.
