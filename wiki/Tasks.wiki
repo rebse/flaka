@@ -1249,8 +1249,6 @@ The same setup as before gives, when no root element is applied, the following:
 
 <hr/>
 = Properties =
-== install-reference-handler ==
-
 == property-by-regex == 
 
 A task to compose a property based on existing properties.
@@ -1650,63 +1648,4 @@ When using more than one entry, then each entry must match. This condition can b
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Taskdotclasspath.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Taskdotclasspath.java Source]
 
-<hr/>
-== writedeps ==
-
-A task to format dependencies in various predefined styles. In order to use this task, dependencies need to be defined and retrieved. See examples for details.
-
-=== Attributes ===
- * refid<br/> Use this attribute to reference another variable than the default [deps.object]
- * format<br/> Change the format style rather than the default `maven`. Well known styles are:
- ** maven<br/> Format a la Maven
- ** alias<br/> Dump the alias name of each dependency if an alias name exists
- ** flat<br/> Dump the relative depot path 
- * out<br />The file to write to. Use `-` to write to standard out [-].
-
-=== Example I===
-
-A small project defining, retrieving and formating dependencies:
-{{{
- <project xmlns:c="antlib:ant.epoline">
-  <c:inline-properties>
-    jdepot.csv = http://jdepot.internal.epo.org/depot/external
-  </c:inline-properties>
-
-  <c:dependencies>
-    <c:dependency groupId="log4j" artifactId="log4j" version="1.2.9" />
-  </c:dependencies>
-
-  <!-- Retrieve dependencies in order to create reference deps.object -->
-  <c:getdeps dst="libdir" depotlist="${jdepot.csv}" />
-
-  <!-- format dependencies referenced by deps.object -->
-  <c:writedeps />
- </project>
-}}}
-
-
-When running this script, the following dependency would be reported on standard out:
-
-{{{
- <dependencies>
-  <dependency>
-   <groupId>log4j</groupId>
-   <artifactId>log4j</artifactId>
-   <version>1.2.9</version>
-   <type>jar</type>
-   <scope>compile</scope>
-  </dependency>
- </dependencies>
-}}}
-
-Output above shows the dependency in format <tt>maven</tt>. The same dependency in
-other supported formats are:
-
-{{{
- flat: /log4j/jars/log4j-1.2.9.jar
-}}}
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Writedeps.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Writedeps.java Source]
 
