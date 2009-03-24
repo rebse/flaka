@@ -80,7 +80,11 @@ _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
  * [Tasks#for for]
  * [Tasks#echo echo]
 
-Further tasks to follow. It is further worked on to provide a task which enables _EL_ on a core level. This would allow to use _EL_ expressions similar to Ant property references `${..}`.
+Further tasks to follow. See also how to enable EL on a [#Globally_Enabling_EL global level].
+
+== Globally Enabling EL ==
+
+To enable handling of EL references on a global level - i.e. on all tasks, types or  macros and independent of the vendor - use task [Tasks#install-reference-handler].  
 
 == EL References ==
 

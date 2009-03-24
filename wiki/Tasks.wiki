@@ -1339,86 +1339,48 @@ would set the following properties:
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Cvsstat.java Source]
 
 <hr/>
-== getdeps ==
+== scan4deps ==
 
-A task to retrieve dependencies.
+A task to scanning for dependencies in files.
 
-The task scans for Maven style dependencies by default in the current build script. Alternatively, a comma separated list of files can be specified via attribute src. Scanning stops if at least one dependency was located, remaining files specified via src are then not further investigated. It is not regarded as an error if no dependency is located at all. 
+{{{
+<c:scan4deps var="mydeps">
+  <include name="build.xml" />
+</c:scan4deps>
+}}}
 
-A dependency is just recognized by it's element name. Therefore something like
+Example above searches for dependencies in file `build.xml` in the [Glossary#Base_Folder project's base folder]. The list of dependencies is assigned with variable `mydeps`. 
+
+=== Attributes ===
+|| Attribute || Type   || Default   || EL  || Description ||
+|| var       || string ||           || #{} || The name of the variable to hold dependencies ||
+|| dir       || string || ''.tofile || yes || The root folder to use when scanning files ||
+|| debug     || bool   || false     ||  no || Turn on extra debug information ||
+
+=== Elements ===
+
+This task is a implicit [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] and may thus contain any elements which can be applied to a fileset. 
+
+=== Behaviour ===
+
+If attribute `var` is not used, then no scanning for dependencies takes place and no warning will be issued (except when `debug` has been enabled). If a variable is used, then a list of dependencies will be assigned in any case. If no dependencies are found, the list will be empty.
+
+Attribute `dir` is evaluated as [EL] expression. If the result is a file object, the object is taken as the root for scanning files. If `dir` is not used, then the current [Glossary#Base_Folder] is used as root.
+
+This task may take any elements which are applicable for a [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] type. If no elements are used, then all files and folders beneth `dir` are scanned. Otherwise the elements applied will limit the scan for specific files or folders.
+
+A dependency is just recognized by it's element name regardless any namespace. Therefore something like
 
 {{{
  <dependency />
+ <x:dependency>
 }}}
 
-will be accepted as dependency when scanning. Note also that the namespace does not matter.
-
-Each dependency will be looked up on a list of depots. A list of depot URLs can be given via attribute depotlist. If not used, then property jdepot.csv will be used. Any valid URL might be specified. Furthermore, local folder like build/lib or /var/depot will be converted into file URLs, i.e. file://localhost/build/lib and file://localhost//var/depot respectively.
-
-A dependency is supposed to be composed of a groupId, a artifactId and a version. When looking up a dependency on a depot, the following paths (simplified) are tried:
-
- * {groupId}/jars/{artifactId}-{version}.jar  -- Maven I style
- * {groupId}/{artifactId}/{artifactId}-{version}.jar -- Maven II style
-
-A dependency element may also use a name attribute. Such a attribute is interpreted as the logical name of a dependency. When being used, a [[Baseline]] file must be specified via attribute baseline. The logical name is then looked up in the Baseline and, if present, provides default values for groupId, artifactId, version and other dependency properties. Each of this properties can be overridden by an appropriate attribute or element. For example, the following dependency
-
-{{{
- <c:dependency alias="log4j">
-   <version>1.2.9</version>
- </c:dependency>
-}}}
-
-is defined in terms of a logical dependency defined in a Baseline. However, the version to be taken should not be the one specified by the Baseline but rather version 1.2.9.
-
-
-=== Attributes ===
- * baseline <br />The Baseline to use when resolving aliased dependencies. Optional, []
- * src <br /> The comma separated list of files to scan for dependencies [${ant.file}]
- * dst <br /> The folder to save retrieved dependencies [.]
- * depotlist <br />The (comma separated) list of depots to retrieve dependencies from. If not given, property jdepot.csv will be looked up. If still not given, an exception will be thrown. 
- * stem <br />A prefix to be used when setting various property or reference names
-
-=== Example I ===
-
-Assume that the following dependency is specified in the current build script (${ant.file})
-
-{{{
-  <c:dependency>
-    <groupId>log4j</groupId>
-    <artifactId>log4j</artifactId>
-    <version>1.2.8</version>
-  </c:dependency>
-}}}
-
-and that file lib/log4j/jars/log4j-1.2.8.jar exists as well. Then
-
-{{{
- <c:set var="jdepot.csv" value=" 'lib'.tofile.tourl " />
- <c:getdeps />
-}}}
-
-retrieves the file lib/log4j/jars/log4j-1.2.8.jar locally into the current working directory. 
-
-=== Example II ===
-
-Retrieve dependencies from a list of depots into local folder build/lib (which must exists):
-
-{{{
- <c:inline-properties>
-   depot1 = http://depot/component
-   depot2 = http://depot/3rdparty
-   depot3 = http://depot/external
-   ..
-   depot.csv = ${depot1},${depot2,${depot3}
- <c:/inline-properties>
- ..
- <c:getdeps depotlist="${depot.csv}" dst="build/lib" />
-}}}
-
+will be accepted as dependency when scanning.
 
 === Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Getdeps.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Getdeps.java Source]
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/ScanDeps.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/ScanDeps.java Source]
 
 <hr/>
 == initssl ==
