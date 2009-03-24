@@ -1193,7 +1193,7 @@ This example changes the default target to be called from this to foobar.
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Set-default-target.java Source]
 
 <hr />
-= XML Support =
+= XML =
 == xmlmerge == 
 
 A simple task to merge XML files. 
@@ -1247,8 +1247,129 @@ The same setup as before gives, when no root element is applied, the following:
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/XmlMerger.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/XmlMerer.java Source]
 
+<hr/>
+= Properties =
+== install-reference-handler ==
+
+== property-by-regex == 
+
+A task to compose a property based on existing properties.
+
+The new property is composed by searching for property names matching a given regular expression. Then the new property is created by  concatenating the value of each matching property using a separator of choice.
+
+=== Attributes ===
+ * property<br />The name of the property to create
+ * regex<br />The regular expression. 
+ * sep<br />The separator to use when concatenating
+=== Example ===
+
+Assume that the following properties are defined:
+
+{{{
+ depot.1.url = http://depot/component
+ depot.2.url = http://depot/3rdparty
+ depot.3.url = http://depot/externals
+}}}
+
+Then
+
+{{{
+ <c:property-by-regex property="depot.csv" regex="depot\.\d+\.url" />
+}}}
+
+creates property
+
+{{{
+ depot.csv = http://depot/component,http://depot/3rdparty,http://depot/externals
+}}}
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-by-regex.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-by-regex.java Source]
 
 <hr/>
+== install-reference-handler ==
+
+A task to install a property handler in addition to the standard one provided by Ant. The new handler will also handle [EL] references like `#{..}` in addition to handling `${..}`. 
+
+{{{
+ <c:set>
+    ;; set variable foo to string 'bar'
+    foo = 'bar'
+ <c:set>
+ <echo>
+    [1] #{foo}
+ </echo>
+ <c:install-reference-handler />
+ <echo>
+    [2] #{foo}
+ </echo>
+}}}
+
+This snippet would give
+{{{
+ [echo] [1] #{foo}
+ [echo] [2] bar
+}}}
+
+=== Attributes ===
+|| Attributes || Type    || Default  || EL  || Description ||
+|| type       || string  || 'elonly' || #{} || Install handler with certain additional features  enabled (see below) ||
+      
+=== Behaviour ===
+
+If `type` is `elonly` (exactly as written), then the new handler will only handle `#{..}` in addition. If `type` is `remove`, then unresolved property references are discarded.
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/PropertyHelper.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/PropertyHelper.java Source]
+
+<hr/>
+= Dependencies =
+== scandeps ==
+
+A task to scanning for dependencies in files.
+
+{{{
+<c:scandeps var="mydeps">
+  <include name="build.xml" />
+</c:scandeps>
+}}}
+
+Example above searches for dependencies in file `build.xml` in the [Glossary#Base_Folder project's base folder]. The list of dependencies is assigned with variable `mydeps`. 
+
+=== Attributes ===
+|| Attribute || Type   || Default   || EL  || Description ||
+|| var       || string ||           || #{} || The name of the variable to hold dependencies ||
+|| dir       || string || ''.tofile || yes || The root folder to use when scanning files ||
+|| debug     || bool   || false     ||  no || Turn on extra debug information ||
+
+=== Elements ===
+
+This task is a implicit [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] and may thus contain any elements which can be applied to a fileset. 
+
+=== Behaviour ===
+
+If attribute `var` is not used, then no scanning for dependencies takes place and no warning will be issued (except when `debug` has been enabled). If a variable is used, then a list of dependencies will be assigned in any case. If no dependencies are found, the list will be empty.
+
+Attribute `dir` is evaluated as [EL] expression. If the result is a file object, the object is taken as the root for scanning files. If `dir` is not used, then the current [Glossary#Base_Folder] is used as root.
+
+This task may take any elements which are applicable for a [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] type. If no elements are used, then all files and folders beneth `dir` are scanned. Otherwise the elements applied will limit the scan for specific files or folders.
+
+A dependency is just recognized by it's element name regardless any namespace. Therefore something like
+
+{{{
+ <dependency />
+ <x:dependency>
+}}}
+
+will be accepted as dependency when scanning.
+
+=== Further Links ===
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/ScanDeps.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/ScanDeps.java Source]
+
+<hr />
 <wiki:comment>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                                          UNDER DEVELOPMENT
@@ -1339,49 +1460,6 @@ would set the following properties:
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Cvsstat.java Source]
 
 <hr/>
-== scan4deps ==
-
-A task to scanning for dependencies in files.
-
-{{{
-<c:scan4deps var="mydeps">
-  <include name="build.xml" />
-</c:scan4deps>
-}}}
-
-Example above searches for dependencies in file `build.xml` in the [Glossary#Base_Folder project's base folder]. The list of dependencies is assigned with variable `mydeps`. 
-
-=== Attributes ===
-|| Attribute || Type   || Default   || EL  || Description ||
-|| var       || string ||           || #{} || The name of the variable to hold dependencies ||
-|| dir       || string || ''.tofile || yes || The root folder to use when scanning files ||
-|| debug     || bool   || false     ||  no || Turn on extra debug information ||
-
-=== Elements ===
-
-This task is a implicit [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] and may thus contain any elements which can be applied to a fileset. 
-
-=== Behaviour ===
-
-If attribute `var` is not used, then no scanning for dependencies takes place and no warning will be issued (except when `debug` has been enabled). If a variable is used, then a list of dependencies will be assigned in any case. If no dependencies are found, the list will be empty.
-
-Attribute `dir` is evaluated as [EL] expression. If the result is a file object, the object is taken as the root for scanning files. If `dir` is not used, then the current [Glossary#Base_Folder] is used as root.
-
-This task may take any elements which are applicable for a [http://ant.apache.org/manual/CoreTypes/fileset.html fileset] type. If no elements are used, then all files and folders beneth `dir` are scanned. Otherwise the elements applied will limit the scan for specific files or folders.
-
-A dependency is just recognized by it's element name regardless any namespace. Therefore something like
-
-{{{
- <dependency />
- <x:dependency>
-}}}
-
-will be accepted as dependency when scanning.
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/ScanDeps.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/ScanDeps.java Source]
-
 <hr/>
 == initssl ==
 
@@ -1417,109 +1495,6 @@ Such a property will not make it into your JVM's system properties. They will on
 === Further Links ===
  * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Initssl.html Javadoc] 
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Initssl.java Source]
-
-<hr/>
-== property-by-regex == 
-
-A task to compose a property based on existing properties.
-
-The new property is composed by searching for property names matching a given regular expression. Then the new property is created by  concatenating the value of each matching property using a separator of choice.
-
-=== Attributes ===
- * property<br />The name of the property to create
- * regex<br />The regular expression. 
- * sep<br />The separator to use when concatenating
-=== Example ===
-
-Assume that the following properties are defined:
-
-{{{
- depot.1.url = http://depot/component
- depot.2.url = http://depot/3rdparty
- depot.3.url = http://depot/externals
-}}}
-
-Then
-
-{{{
- <c:property-by-regex property="depot.csv" regex="depot\.\d+\.url" />
-}}}
-
-creates property
-
-{{{
- depot.csv = http://depot/component,http://depot/3rdparty,http://depot/externals
-}}}
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-by-regex.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-by-regex.java Source]
-
-<hr/>
-== property-handler ==
-
-A task to install a property handler in addition to the standard one provided by Ant. 
-
-This task provides some inline property functions like uppercasing an argument. For example:
-
-{{{
- <c:property-handler />
- ..
- <echo>hello => ${uppercase hello}</echo>
-}}}
-
-This snippet would show:
-
-{{{
- [echo] hello => HELLO
-}}}
-
-Note that this property handle grets automatically installed when booting the framework.
-
-A list of functions provided by installing property-handler:
-
-{| class="{{Whtable}}
-|-
-! Function
-! Description
-|-
-| uppercase 
-| Puts argument in uppercase letters
-|-
-| lowercase
-| Puts argument in lowercase letters
-|-
-| length
-| Returns the number of characters in argument
-|-
-| basename
-| The base name i.e. a/b/c => c
-|-
-| dirname
-| The directory name i.e. a/bc/ => a/b
-|- 
-| exists
-| "true" if argument exists else "false"
-|-
-| isfile
-| "true" if argument is a file else "false"
-|-
-| isdir
-| "true" if argument is a folder else "false"
-|-
-| mtime
-| Arguments last modification time if existing otherwise ""
-|-
-| subst
-| replace every match of first argument with content of second argument in the third and last argument. For example, ${subst /,_,a/b/c} => a_b_c
-|}
-
-=== Attributes ===
- * atleast<br/>The minimum version required.
-
-=== Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Property-handler.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Property-handler.java Source]
 
 <hr/>
 == taskdotclasspath ==

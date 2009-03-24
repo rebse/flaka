@@ -84,7 +84,7 @@ Further tasks to follow. See also how to enable EL on a [#Globally_Enabling_EL g
 
 == Globally Enabling EL ==
 
-To enable handling of EL references on a global level - i.e. on all tasks, types or  macros and independent of the vendor - use task [Tasks#install-reference-handler].  
+To enable handling of EL references on a global level - i.e. on all tasks, types or  macros and independent of the vendor - use task [Tasks#install-reference-handler install-reference-handler].  
 
 == EL References ==
 
