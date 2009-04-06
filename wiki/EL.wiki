@@ -34,16 +34,16 @@ as output. Notice the usage of task [Tasks#echo echo]. When being tried with [ht
 
 The code snippet following shows _EL_ in action. The idea is to list all unreadable files in a certain directory (here the root folder). The snippet shows how EL is used in [#EL_Ready_Tasks Flaka various EL enabled tasks].
 {{{
-<c:set>
+<c:let>
   root = '/'.tofile
   list = list()
-</c:set>
+</c:let>
 
 <c:for var="file" in=" root.list ">
   <c:when test=" file.isdir and not file.isread ">
-    <c:set>
+    <c:let>
       list = append(file,list)
-    </c:set>
+    </c:let>
   </c:when>
 </c:for>
 
@@ -74,7 +74,7 @@ If the property is not set, or set to a different value, then _EL_ is enabled.
 
 _EL_ expressions can only be used in tasks which are _EL_ ready. This are:
 
- * [Tasks#set set], [Tasks#set set]
+ * [Tasks#let let]
  * [Tasks#properties properties]
  * [Tasks#when when], [Tasks#unless unless]
  * [Tasks#for for]

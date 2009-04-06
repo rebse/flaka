@@ -196,7 +196,7 @@ This creates a list variable `mystrings` containing two elements. The first elem
  * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/List.java Source]
 
 <hr/>
-== set ==
+== let ==
 
 This elementary task allows to set multiple variables and properties in one go. In addition, comments and continuation lines are allowed for additional readability and comfort.
 
@@ -214,9 +214,9 @@ This task accepts implicit text. Text may contain any amount of [EL] and propert
 
 === Examples ===
 
-XML is not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `set` helps to reduce the clutter. For example:
+XML is not particular easy to read for humans. When assigning a couple of varables and properties, this becomes obvious. Task `let` helps to reduce the clutter. For example:
 {{{
-  <c:set>
+  <c:let>
     f = 'folder'
     ; turn f into a file object
     f = f.tofile
@@ -226,7 +226,7 @@ XML is not particular easy to read for humans. When assigning a couple of varabl
     ; override a property if you dare
     p ::= "HELLO \
     WORLD"
-  </c:set>
+  </c:let>
 }}}
 
 In this example, `f` is first assigned to be string `"folder"`. The comment line - the one starting with character `;` - tells what the next line is going to do: turn `f` into a file object which can then be used further (for example, to check whether `f` is a directory or not.
@@ -247,39 +247,39 @@ When evaluating, each line is independent of other lines evaluated. Each line is
 
 Notice that it is perfectly legal to use property or variable references as the following example shows:
 {{{
-<c:set>
+<c:let>
  f = '${ant.file}'
  F = '#{f}'
-</c:set>
+</c:let>
 }}}
 
 Be aware that property references are evaluated _before_ [EL] expressions. Consider:
 {{{
-<c:set>
+<c:let>
   ;; let s hold string ant.file
   s = 'ant.file'
   ;; bad, f will not assigned
   f = ${#{s}}
-</c:set>
+</c:let>
 }}}
 The second assignment will not work as expected because, in a first step, all occurrences of `${..}` are resolved by Ant itself. In a second step, the expression `${#{s}}` will be evaluated. Since this expression is invalid, `f` will not be assigned.
 
 Each line is evaluated in order. Therefore the following works as expected:
 {{{
-<c:set>
+<c:let>
   s := '3 * 5'
   ;; defines r as 15
   r = ${s}
-</c:set>
+</c:let>
 }}}
 
-The following kind of meta programming will not work for `set`:
+The following kind of meta programming will not work for `let`:
 {{{
-<c:set>
+<c:let>
   property_or_var := condition ? '=' : ':='
 
   name ${property_or_var} expr
-</c:set>
+</c:let>
 }}}
 Reason: In a first step all continuation lines are accumulated. Then each line is taken as is an broken up in left and right part, plus assignment type. Then properties are resolved on both sides. In an additonal step, EL references are evaluated as well on both sides. Then, the right side is evaluated as EL expression and it's result is assigned to the stringized left side (whitespace chopped off).
 
@@ -295,14 +295,14 @@ Reason: In a first step all continuation lines are accumulated. Then each line i
 
 To illustrate, here are example behaviours:
 {{{
-<c:set>
+<c:let>
  x = 3 * 5 
  ;; remove x
  x =  
  ;; remove x 
  x = null
  
- ;; set property p to '3*5' (a string)
+ ;; let property p to '3*5' (a string)
  p := 3 * 5
  ;; ignored 
  p := null
@@ -310,7 +310,7 @@ To illustrate, here are example behaviours:
  p ::= null
  ;; .. same as
  p ::= 
-</c:set>
+</c:let>
 }}}
 
 <wiki:comment>
@@ -320,8 +320,8 @@ To illustrate, here are example behaviours:
 </wiki:comment>
 
 === Further Links ===
- * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/Set.html Javadoc] 
- * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/Set.java Source]
+ * [http://javadoc.haefelingerit.net/net.haefelingerit.flaka/1.00/net/haefelingerit/flaka/MSet.html Javadoc] 
+ * [http://code.google.com/p/flaka/source/browse/trunk/src/net/haefelingerit/flaka/MSet.java Source]
 
 <hr/>
 == properties == 
@@ -355,20 +355,20 @@ This task accepts a implicit text element.
 
 === Behaviour ===
 
-This task is similar to [Tasks#set set]. The difference is that this task only allows to define properties while  [Tasks#set set] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#set set] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#set set] and once with this _properties_ task:
+This task is similar to [Tasks#let let]. The difference is that this task only allows to define properties while  [Tasks#let let] also supports the creation of variables. Furthermore, the right side of `=` will be literally taken as string value. This is different from [Tasks#let let] where the right side will be additionally evaluted as [EL] expression. The following example defines each property foobar, once done with task  [Tasks#let let] and once with this _properties_ task:
 {{{
-<c:set>
+<c:let>
   foobar := 'foobar'
-</c:set>
+</c:let>
 <c:properties>
   foobar = foobar
 </c:properties>
 }}}
 Notice the usage of the quote character `'` in the former example and the absence of it in the latter.
 
-Task _properties_ supports, like task [Tasks#set set] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved on both sides of `=`.
+Task _properties_ supports, like task [Tasks#let let] does, continuation lines and comments. Furthermore, variable references `#{..}` and property references `${..}` are resolved on both sides of `=`.
 
-If the right side is empty, then no property will be created and an existing property will not be changed. If the right side is `null`, a property with string value `null` will be assigned if the property does not already exist (this is very much different than when using task [#set set] to create properties.
+If the right side is empty, then no property will be created and an existing property will not be changed. If the right side is `null`, a property with string value `null` will be assigned if the property does not already exist (this is very much different than when using task [#let let] to create properties.
 
 Leading and trailing (!) whitespace characters are ignored. This is different from standard Ant where trailing whitespace is significant (and responsible for unexpected and hard to track script behaviour).
 
@@ -471,9 +471,9 @@ Executes all embedded tasks. Variables and properties listed in `vars` and `prop
 == while ==
 A task implemening a `while` loop:
 {{{
-<c:set>
+<c:let>
   i = 3
-</c:set>
+</c:let>
 <c:while test=" countdown >= 0 ">
   <c:echo>#{countdown > 0 ? countdown : 'bang!' }</c:echo>
 <c:while>
@@ -639,7 +639,7 @@ Task when represents a else-less if statement. The following example dumps the c
 
 {{{
  <c:when test=" 'path/to/file'.tofile.isfile" >
-   <c:set var="fname" property="true" value=" f " />
+   <c:let var="fname" property="true" value=" f " />
     <loadfile property="__z__" srcFile="${fname}"/>
     <echo message="${__z__}" />
  </c:when>
@@ -1291,10 +1291,10 @@ creates property
 A task to install a property handler in addition to the standard one provided by Ant. The new handler will also handle [EL] references like `#{..}` in addition to handling `${..}`. 
 
 {{{
- <c:set>
-    ;; set variable foo to string 'bar'
+ <c:let>
+    ;; let variable foo to string 'bar'
     foo = 'bar'
- <c:set>
+ <c:let>
  <echo>
     [1] #{foo}
  </echo>

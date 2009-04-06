@@ -39,13 +39,13 @@ When referencing a non existing property, i.e. a symbol name not associated with
 </echo>
 }}}
 
-It can be done using Flaka's task [Tasks#set] or [Task#unset] as the following snippet demonstrates.
+It can be done using Flaka's task [Tasks#let] or [Task#unset] as the following snippet demonstrates.
 
 {{{
 <property name="x" value="99" />
-<c:set>
+<c:let>
    x ::= "The quick brown fox .."
-</c:set>
+</c:let>
 <echo>
   value of property x is ${x}    -- .. is The quick brown ..
 </echo>
