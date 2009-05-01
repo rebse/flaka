@@ -115,8 +115,8 @@ Task [Tasks#choose choose] tests each `when` condition in turn until an _expr_ e
 A programming task often seen is to check whether a (string) value matches a given (string) value. If so, a particular action shall be carried out. This can be done via a series of _when_ statements. The nasty thing is to keep track of whether a value matched already. Flaka provides a handy task for this common scenario, the [Tasks#switch switch] task:
 
 {{{
- <c:switch value="some string">
-  <case match="regular expression or pattern" >
+ <c:switch value=" 'some string' ">
+  <matches re="regular expression or pattern" >
     -- body_1
   </case>
   ..
@@ -126,7 +126,7 @@ A programming task often seen is to check whether a (string) value matches a giv
  </c:switch>
 }}}
 
-Each case is tried in turn _to match_ the given (and normalized) string value. If a case matches, the appropriate case body is executed. If it happens that no case matches, then the optional default body is executed. To be of greater value, a regular expression or pattern expression can be used in a case condition.
+Each case is tried in turn _to match_ the string value (given as [EL] expression). If a case matches, the appropriate case body is executed. If it happens that no case matches, then the optional default body is executed. To be of greater value, a regular expression or pattern expression can be used in a case condition.
 
 = Looping =
 

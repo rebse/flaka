@@ -740,7 +740,7 @@ This would execute all macros and tasks listed in the otherwise clause since no 
 Task `switch` has been designed to ease pattern matching. The idea is to try to match a pattern, a [http://en.wikipedia.org/wiki/Regular_expression regular expression] or [http://en.wikipedia.org/wiki/Glob_(programming) glob expression] against a given string value and carry out a sequence of actions in case of a hit.
 
 {{{
- <c:switch value=" a${string}#{value} ">
+ <c:switch value=" 'a${string}#{value}' ">
   <matches glob="*.jar">          -- #1
    -- string ending in .jar
   </matches>
@@ -760,7 +760,7 @@ Notice the usage of a glob expression in the first and the usage of regular expr
 
 === Attributes ===
 || Attribute || Type   || Default || [EL]  || Description ||
-|| `value`   || string ||       - || #{..} || The (string) value that needs to be matched against. Note that the value given is _normalized_, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case.||
+|| `value`   || string ||       - ||   el  || The (string) value that needs to be matched against. Note that the value given is _normalized_, i.e. leading and trailing whitespace is removed. Whitespace characters are controlled by the underlying implementation which is Java in this case.||
 || `var`     || string ||       - || #{..} || Save details of this match as `matching object` using the variable name given. See [EL#Matcher_Properties matcher properties] for a list of available properties; see also below for examples. ||
 || `ignorecase` || bool || false  ||    no || Enables case-insensitive matching. By default, case-insensitive matching assumes that only characters in the US-ASCII charset are being matched. Unicode-aware case-insensitive matching can be enabled by specifying the UNICODE_CASE flag in conjunction with this flag. Case-insensitive matching can also be enabled via the embedded flag expression `(?i)` || 
 || `comments`   || bool || false  ||    no || Permits whitespace and comments in pattern. In this mode, whitespace is ignored, and embedded comments starting with # are ignored until the end of a line. Comments mode can also be enabled via the embedded flag expression `(?x)` || 
@@ -820,7 +820,7 @@ Here we use a capturing group for the basename. A matcher object will be associa
 
 Here is a more complicated example. It was used once to examine a CVS tag which was supposed to follow the convetion `schema-(env_)version`, where `(env_)` was optional, `schema` indicated the tag's semantic and where `version` was the products version or build number: 
 {{{
- <c:switch value="v-uat_3_20_500" var="m">
+ <c:switch value=" 'v-uat_3_20_500' " var="m">
    <matches re="v-(?:([^\d][^_]*)_)?(\d.*)" >
      <c:echo>
        pattern      = #{m.p}         -- v-(?:([^\d][^_]*)_)?(\d.*)
