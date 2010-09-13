@@ -1,0 +1,5 @@
+<project xmlns:c="antlib:it.haefelinger.flaka">
+  
+  <!--  test needs to be rewritten using scan4deps and EL -->
+   
+</project>
