@@ -1,0 +1,21 @@
+<project xmlns:c="antlib:it.haefelinger.flaka">
+	 
+	 <fail if="pass" />
+	    <c:let>
+	      foo = 'foo'
+	    </c:let>
+	    <c:switch value=" #{foo} " debug="true">
+	      <glob expr="f*">
+	        <property name="pass" value="true" />
+	      </glob>
+	      <otherwise>
+	        <fail />
+	      </otherwise>
+	    </c:switch>
+	    <fail unless="pass" />
+	    <c:unset>
+	      pass
+	    </c:unset>
+	    <fail if="pass" />
+	
+	</project>

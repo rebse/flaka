@@ -1,0 +1,16 @@
+<project xmlns:c="antlib:it.haefelinger.flaka">
+<target name="test-case">
+  <mkdir dir="tmp" />
+  <echo message="hello world" file="tmp/greeting.txt" />
+  <c:cat src="tmp/greeting.txt" />
+  <c:trycatch>
+    <try>
+      <delete file="g.txt" />
+      <c:cat src="g.txt" />
+      <fail message="cat does not throw exception" />
+    </try>
+    <catch type="*" match="*">
+    </catch>
+  </c:trycatch>
+</target>
+</project>
