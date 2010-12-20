@@ -1,0 +1,11 @@
+<project xmlns:c="antlib:it.haefelinger.flaka" name="tryme">
+	
+	
+  <c:echo>
+    foobar
+     </c:echo>
+  <c:echo>
+    foobar\
+  </c:echo>
+	
+</project>
