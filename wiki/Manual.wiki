@@ -2,5 +2,7 @@
 
 The following documentation is available:
 
-http://flaka.googlecode.com/files/flaka.pdf
+http://flaka.googlecode.com/files/flaka-1.02.02.pdf 
+http://flaka.googlecode.com/files/flaka-1.02.02.html
+
 
