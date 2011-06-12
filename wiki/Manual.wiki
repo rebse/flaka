@@ -3,10 +3,10 @@
 The following documentation is available:
 
 || *Version* || *Links* ||
-|| 1.2.2 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.2.pdf PDF] [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.2.html HTML] ||
-|| 1.2.1 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.1.pdf PDF] ||
-|| 1.2.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.0.pdf PDF] || 
-|| 1.1.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.1.0.pdf PDF] || 
+|| 1.2.2 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.2.pdf PDF] [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.2.html HTML] [http://workbench.haefelinger.it/flaka/javadoc/1.2.2/ Javadoc] ||
+|| 1.2.1 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.1.pdf PDF] [http://workbench.haefelinger.it/flaka/javadoc/1.2.1/ Javadoc] ||
+|| 1.2.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.0.pdf PDF] [http://workbench.haefelinger.it/flaka/javadoc/1.2.0/ Javadoc]|| 
+|| 1.1.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.1.0.pdf PDF] [http://workbench.haefelinger.it/flaka/javadoc/1.1.0/ Javadoc]|| 
 
 
 
