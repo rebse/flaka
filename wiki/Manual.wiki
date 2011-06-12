@@ -2,7 +2,7 @@
 
 The following documentation is available:
 
-http://flaka.googlecode.com/files/flaka-1.02.02.pdf 
-http://flaka.googlecode.com/files/flaka-1.02.02.html
+|| *Version* || *PDF* || *HTML* ||
+|| 1.2.2 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.2.pdf 1.2.2] || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.2.html 1.2.2] ||
 
 
