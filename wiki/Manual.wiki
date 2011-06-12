@@ -7,7 +7,6 @@ The following documentation is available:
 || 1.2.1 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.1.pdf PDF] ||
 || 1.2.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.2.0.pdf PDF] || 
 || 1.1.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.1.0.pdf PDF] || 
-|| 1.0.0 || [http://workbench.haefelinger.it/flaka/download/manual/flaka-1.0.0.pdf PDF] || 
 
 
 
