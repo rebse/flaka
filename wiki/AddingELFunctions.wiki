@@ -14,9 +14,9 @@ Flaka's EL has been charged with a documented list of functions and values. So f
  * embedded Groovy source code
 
 The Groovy code will be compiled into a Java class on the fly, i.e. at runtime. In either way, the Java class is expected to contain a arbitrary list of methods which are 
-* `static`
-* `public`
-* annotated by Annotation `it.haefelinger.flaka.el.Binding`
+ * `static`
+ * `public`
+ * annotated by Annotation `it.haefelinger.flaka.el.Binding`
 
 The number or arguments or return type does not matter. Especially is it possible to use variable-length arguments.
 
@@ -57,4 +57,3 @@ Here `format()` is be imported as `sprintf()` in namespace `my`. And off we go:
   #{   my:sprintf("%s/%s",'foo','bar') }         ;; foo/bar
   </fl:echo>
 }}}
-
