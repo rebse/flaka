@@ -81,4 +81,59 @@ To make this work, `groovy-all.jar` must be added as runtime dependency. Due to 
   ..
 }}}
 
+So far it's all fine and well, but how about defining my EL binding directly in my build script without outsourcing them?
+
+{{{
+  <fl:el-load ns="my" type="text/groovy">
+     /* just Groovy .. */
+     import it.haefelinger.flaka.el.Binding;
+     
+    @Binding
+    static def sprintf(String fmt, Object... args) { String.format(fmt, args); }
+  </fl:el-load>
+}}}
+
+That isn't that painful, is it? Of course you need to add groovy-all.jar as runtime dependency as shown before.
+
+So far it has been shown how to charge EL with additional functions. How about adding some EL variables? Or how about adding a static function from an already existing class? 
+
+{{{
+package my;
+import it.haefelinger.flaka.el.Binding;
+
+public class ELBinding {
+  @Binding(type=2)                          /* adding variable "pi" */
+  static public  Object pi () {
+    return new Double(Math.PI);         
+  }
+
+  @Binding(type = 3)                        /* adding function "rand()" */
+  static public Method rand() throws SecurityException, NoSuchMethodException {
+    return Math.class.getMethod("random");
+  }
+}
+}}}
+
+Both binding types, type 2 and type 3, are expected to annotate a parameter-less static and public method. While loading those bindings, the annotated static methods are invoked and expected to return an arbitrary instance if type is 2 and a method instance if type is 3. Note that this is different from type 1, being the default, where the static method is just added to EL's context when loading binding.
+
+When loading bindings into EL's context, which names are assigned? By default it is the basic name of the annotated method. This is especially important for binding type 3, where the name of the method return is not taken into account. Therefore the name will be `rand` rather than `random`.
+
+Is it possible to use a different name? Yes it is although a scenario where this is relevant needs still to be discovered. Here is an example:
+
+{{{
+package my;
+import it.haefelinger.flaka.el.Binding;
+
+public class ELBinding {
+  @Binding(type=2,name="PI")                          /* adding variable "PI" */
+  static public  Object pi () {
+    return new Double(Math.PI);         
+  }
+}
+}}}
+
+A note on namespaces. Functions can be imported into a namespace. If a namespace argument is given in task `<fl:el-load /> then the function will be referenced in an EL expression like `ns:name()`. Thus color is used to separate the namespace from the name. If no namespace is given or if the string given to argument is empty, then the function will be imported as is, like `name()`.
+
+Does this principle apply to binding of type 2 as well? It turns out that importing objects into a namespace is not possible, at least not to my understand of EL's programming API. 
+
 
