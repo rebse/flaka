@@ -51,9 +51,34 @@ Your Ant build script would then contain a task importing this class:
  ..
 }}}
 
-Here `format()` is be imported as `sprintf()` in namespace `my`. And off we go:
+Here `format()` is be imported as `sprintf()` in namespace `my`. And off we go :
 {{{
   <fl:echo>
   #{   my:sprintf("%s/%s",'foo','bar') }         ;; foo/bar
   </fl:echo>
 }}}
+
+This all works as expected if `my.ELBinding` made it's way into the JVM's classpath. Thus `my/ELBinding.java` must have been compiled in a previous step using a Java compiler. This compilation step can be omitted by adding a dependency on Groovy. In this case, just rename `my/ELBinding.java` into `my/ELBinding.groovy` and change `<fl:el-load />` into
+
+{{{
+  <fl:el-load ns="my" type="file/groovy">
+     ;;; The Groovy file contains my EL Bindings (see above).
+     ;;; An arbitrary numer of Groovy files may go here, one file per line.
+     my/ELBinding.groovy
+  </fl:el-load>
+ ..
+   <fl:echo>
+   ;; This time sprintf() implemented in Groovy!
+   #{   my:sprintf("%s/%s",'foo','bar') }         ;; foo/bar
+  </fl:echo>
+}}}
+
+To make this work, `groovy-all.jar` must be added as runtime dependency. Due to it's size, `groovy-all.jar` has not been inlined into `ant-flaka.jar` as done with other jars Flaka depends on:
+
+{{{
+  > ant -lib ant-flaka.jar -lib groovy-all.jar ..
+  [fl:echo] foo/bar
+  ..
+}}}
+
+
