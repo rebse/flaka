@@ -1,0 +1,60 @@
+#summary How to add Functions and Variables to EL
+#labels Featured,Phase-Design
+
+= Introduction =
+
+* THIS IS WORK IN PROGESS AND NOT YET RELEASED*
+
+Flaka's EL has been charged with a documented list of functions and values. So far it was not possible to extend this list.
+
+= Details =
+
+Flaka's EL has been charged with a documented list of functions and values. So far it was not possible to extend this list. Some effort has been put into changing this. There will be a new task `<el-load />` accepting
+ * a Java class name
+ * embedded Groovy source code
+
+The Groovy code will be compiled into a Java class on the fly, i.e. at runtime. In either way, the Java class is expected to contain a arbitrary list of methods which are 
+* `static`
+* `public`
+* annotated by Annotation `it.haefelinger.flaka.el.Binding`
+
+The number or arguments or return type does not matter. Especially is it possible to use variable-length arguments.
+
+Let's start by adding a `sprintf()` function. Flaka contains already function `format()` which addresses the same purpose, namely generating a formated string. Furthermore, every `string` object contains a method `format` which would do the very same. Nevertheless, here is how an arbitrary Java class could look like
+
+{{{
+package my;
+import it.haefelinger.flaka.el.Binding;
+
+/**
+ * A class containing functions to be imported into an EL context.
+ */
+
+public class ELBinding {
+  @Binding
+  static public String sprintf(String fmt, Object... args) {
+    return String.format(fmt, args);
+  }
+}
+}}}
+
+Your Ant build script would then contain a task importing this class:
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka" >
+  ..
+  <fl:el-load ns="my" type="file/class">
+     ;;; The class containing my EL Bindings (see above).
+     ;;; An arbitrary numer of classes may go here, one class per line.
+     my.ELBinding
+  </fl:el-load>
+ ..
+}}}
+
+Here `format()` is be imported as `sprintf()` in namespace `my`. And off we go:
+{{{
+  <fl:echo>
+  #{   my:sprintf("%s/%s",'foo','bar') }         ;; foo/bar
+  </fl:echo>
+}}}
+
