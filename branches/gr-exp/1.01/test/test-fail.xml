@@ -1,3 +1,0 @@
-<project xmlns:c="antlib:it.haefelinger.flaka">
-  <c:fail test="3 * 5 != 15" if="p"/>
-</project>
