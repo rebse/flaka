@@ -3,12 +3,13 @@
 
 Flaka provides some very innovative features and syntactic sugar.
 
+
 <wiki:toc max_depth="2" />
 
 = Categories =
 
 == Properties ==
-One of the most common questions is how to overwrite or edit existing properties in ant.
+One of the most common question is how to overwrite or edit existing properties in ant.
 
 *Question* : How do i overwrite an existing property ?<br>
 *Solution* : use the let task
