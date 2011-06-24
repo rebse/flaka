@@ -1,8 +1,7 @@
 #summary Snippets, Flaka in the wild, Ant problems and solutions
 #labels Featured
 
-Flaka provides some very innovative features and syntactic sugar.<br>
-This wiki page will mainly show 'real-life examples' from production code or from questions posted and answered on stackoverflow.com or the ant user list.
+Flaka provides some very innovative features and syntactic sugar.
 
 <wiki:toc max_depth="2" />
 
