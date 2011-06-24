@@ -11,8 +11,23 @@ This wiki page will mainly show 'real-life examples' from production code or fro
 == Properties ==
 One of the most common questions is how to overwrite or edit existing properties in ant.
 
-Question : How do i extract a specific part from a csv separated property ?<br>
-Solution : use the split function
+*Question* : How do i overwrite an existing property ?<br>
+*Solution* : use the let task
+
+{{{
+<!-- set a new property -->
+<fl:let>foo := bar</fl:let>
+}}}
+
+{{{
+<!-- overwrite an existing property or userproperty
+     (those properties defined on the commandline via -Dfoo=bar ..) -->
+<fl:let>foo ::= baz</fl:let>
+notice the double '::'
+}}}
+
+*Question* : How do i extract a specific part from a csv separated property ?<br>
+*Solution* : use the split function
 
 {{{
 <project xmlns:fl="antlib:it.haefelinger.flaka">
