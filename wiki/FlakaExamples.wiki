@@ -16,13 +16,13 @@ One of the most common questions is how to overwrite or edit existing properties
 
 {{{
 <!-- set a new property -->
-<fl:let>foo := bar</fl:let>
+<fl:let>foo := 'bar'</fl:let>
 }}}
 
 {{{
 <!-- overwrite an existing property or userproperty
      (those properties defined on the commandline via -Dfoo=bar ..) -->
-<fl:let>foo ::= baz</fl:let>
+<fl:let>foo ::= 'baz'</fl:let>
 notice the double '::'
 }}}
 
