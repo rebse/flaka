@@ -1,2 +1,41 @@
 #summary Snippets, Flaka in the wild, Ant problems and solutions
 #labels Featured
+
+Flaka provides some very innovative features and syntactic sugar.<br>
+This wiki page will mainly show 'real-life examples' from production code or from questions posted and answered on stackoverflow.com or the ant user list.
+
+<wiki:toc max_depth="2" />
+
+= Categories =
+
+== Properties ==
+One of the most common questions is how to overwrite or edit existing properties in ant.
+
+Question : How do i extract a specific part from a csv separated property ?<br>
+Solution : use the split function
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka">
+
+  <property name="module.list" value="mod1,mod2,mod3,mod4,mod5"/>
+
+  <target name="main">
+    <!-- simple echo -->
+    <fl:echo>xtractedvalue => #{split('${module.list}',',')[0]}</fl:echo>
+    <!-- create property for further processing.. -->
+    <fl:let>
+      xtractedvalue := split('${module.list}',',')[0]
+    </fl:let>
+    <echo>$${xtractedvalue} => ${xtractedvalue}</echo>
+  </target>
+
+</project>
+}}}
+
+output
+
+{{{
+ [fl:echo] xtractedvalue => mod1
+ [echo] ${xtractedvalue} => mod1
+}}}
+
