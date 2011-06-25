@@ -28,8 +28,9 @@ Properties once set are immutable in ant by design.
 <!-- overwrite an existing property or userproperty
      (those properties defined on the commandline via -Dfoo=bar ..) -->
 <fl:let>foo ::= 'baz'</fl:let>
-notice the double '::'
 }}}
+
+notice the double '::' in foo ::= 'baz'
 
 *Question* : How do i extract a specific part from a csv separated property ?<br>
 *Solution* : use the split function with index
