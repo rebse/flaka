@@ -60,8 +60,8 @@ output :
 
 a similar one :
 
-*Question* : Given is an ant property which has value of the type 1.0.0.123
-How to extract the value after the last dot, in this case that would be '123' ?<br>
+*Question* : Given is an ant property which has value of the type 1.0.0.123<br>
+How to extract the value after the last dot, in this case that would be '123' ?
 *Solution* : use the split function with index
 
 {{{
@@ -81,10 +81,7 @@ How to extract the value after the last dot, in this case that would be '123' ?<
 </project>
 }}}
 
-output
-
-{{{
-output
+output :
 
 {{{
  [fl:echo] xtractedvalue => 123
