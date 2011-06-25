@@ -51,7 +51,7 @@ notice the double '::'
 </project>
 }}}
 
-output
+output :
 
 {{{
  [fl:echo] xtractedvalue => mod1
@@ -61,7 +61,7 @@ output
 a similar one :
 
 *Question* : Given is an ant property which has value of the type 1.0.0.123
-How to extract the value after the last dot, in this case that would be '123' ?
+How to extract the value after the last dot, in this case that would be '123' ?<br>
 *Solution* : use the split function with index
 
 {{{
