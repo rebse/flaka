@@ -90,7 +90,7 @@ output :
 
 == Files / Directories ==
 
-*Question* : After compiling my java sources how to run the corresponding classes ?
+*Question* : After compiling my java sources how to run the corresponding classes ?<br>
 *Solution* : Iterate over the fileset which contains the java sources and use the
 replace function to call the corresponding class files.
 
@@ -134,5 +134,5 @@ This example shows also how to iterate over a fileset with the ant builtin ${toS
     </java>
   </fl:for>
 
-</project>a
+</project>
 }}}
