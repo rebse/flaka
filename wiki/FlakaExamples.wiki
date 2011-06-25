@@ -5,7 +5,7 @@
 
 Flaka provides some very innovative features and syntactic sugar.
 This page will show how to tackle common ant problems with Flaka.
-Examples are taken from 'real-life' => production code, questions from stackoverflow.com and the Ant user list .. etc.
+Examples are taken from 'real-life' => production code, questions from stackoverflow.com, the Ant user list .. etc.
 
 <wiki:toc max_depth="2" />
 
