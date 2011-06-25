@@ -2,6 +2,8 @@
 #labels Featured
 
 Flaka provides some very innovative features and syntactic sugar.
+This page will show how to tackle common ant problems with Flaka.
+Examples are taken from 'real-life' => production code, questions from stackoverflow.com and the Ant user list
 
 
 <wiki:toc max_depth="2" />
@@ -13,6 +15,8 @@ One of the most common question is how to overwrite or edit existing properties 
 
 *Question* : How do i overwrite an existing property ?<br>
 *Solution* : use the let task
+
+Properties once set are immutable in ant by design.
 
 {{{
 <!-- set a new property -->
@@ -27,7 +31,7 @@ notice the double '::'
 }}}
 
 *Question* : How do i extract a specific part from a csv separated property ?<br>
-*Solution* : use the split function
+*Solution* : use the split function with index
 
 {{{
 <project xmlns:fl="antlib:it.haefelinger.flaka">
@@ -54,3 +58,84 @@ output
  [echo] ${xtractedvalue} => mod1
 }}}
 
+a similar one :
+
+*Question* : Given is an ant property which has value of the type 1.0.0.123
+How to extract the value after the last dot, in this case that would be '123' ?
+*Solution* : use the split function with index
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka">
+
+ <property name="foobar" value="1.0.0.123"/>
+
+  <target name="main">
+   <!-- simple echo -->
+   <fl:echo>xtractedvalue => #{split('${foobar}','\.')[3]}</fl:echo>
+   <!-- create property for further processing.. -->
+   <fl:let>
+    xtractedvalue := split('${foobar}','\.')[3]
+   </fl:let>
+   <echo>$${xtractedvalue} => ${xtractedvalue}</echo>
+  </target>
+</project>
+}}}
+
+output
+
+{{{
+output
+
+{{{
+ [fl:echo] xtractedvalue => 123
+ [echo] ${xtractedvalue} => 123
+}}}
+
+== Files / Directories ==
+
+*Question* : After compiling my java sources how to run the corresponding classes ?
+*Solution* : Iterate over the fileset which contains the java sources and use the
+replace function to call the corresponding class files.
+
+This example shows also how to iterate over a fileset with the ant builtin ${toString:filesetid} property.
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka">
+
+  <property name="srcroot" value="path/to/srcrootdir"/>
+  <property name="classroot" value="path/to/classrootdir"/>
+
+  <!-- seek all classes with main method -->
+  <fileset dir="${srcroot}" includes="**/*.java" id="mainclasses">
+    <contains text="public static void main"/>
+  </fileset>
+
+  <!-- iterate over classes with main method and call
+       corresponding classfile -->
+  <fl:for var="file" in="split('${toString:mainclasses}', ';')">
+    <fl:let>
+      ; strip the '.java' extension
+      file = replace(file, '', '.java')
+      ; replace fileseparator with '.'
+      ; when running on windows you have to use :
+      ; replace(file, '\.', '${file.separator}${file.separator}')
+      file = replace(file, '\.', '${file.separator}')
+      </fl:let>
+    <fl:echo>
+      starting => #{file} in ${classroot}..
+    </fl:echo>
+    <java classname="#{file}">
+      <classpath>
+       <!--
+         when using a fileset you'll get a
+         java.util.zip.ZipException because you're
+         referencing not jarfiles but classfiles
+         therefore you've to use pathelement location
+       -->
+       <pathelement location="${classroot}"/>
+      </classpath>
+    </java>
+  </fl:for>
+
+</project>a
+}}}
