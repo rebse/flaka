@@ -216,7 +216,7 @@ The standard way in vanilla ant would be something like<br>
   </condition>
  </target>
 
- <target name="delbuild" depends="check" if="delbuild">
+ <target name="clean" depends="check" if="delbuild">
  <delete dir="${build}"/>
     <!-- .. -->
  </target>
