@@ -155,9 +155,9 @@ This example shows also how to iterate over a fileset with the ant builtin ${toS
 
 *Question* : In ant, how can i check if a set of files (comma-separated list of paths) exists or not?<br>
 *Solution* : use
-   a)when with combined file function calls<br>
+   a) when with combined file function calls<br>
    or<br>
-   b)use list function to iterate over the commaseparated pathentries
+   b) use list function to iterate over the commaseparated pathentries
 
 {{{
 <project xmlns:fl="antlib:it.haefelinger.flaka">
