@@ -90,6 +90,20 @@ output :
  [echo] ${xtractedvalue} => 123
 }}}
 
+*Question* : For some reason i need to strip of the drive name of some property<br>
+${basedir} = "D:\some\directory\blah\blah"<br>
+${cwd} = some\directory\blah\blah"<br>
+*Solution* : use the replace function
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka" name="World">
+  <!-- simple echo -->
+  <fl:echo>#{replace('${basedir}', '$1' , '.:\\\\(.+)' )}</fl:echo>
+  <!-- set property -->
+  <fl:let>cwd := replace('${basedir}', '$1' , '.:\\\\(.+)' )</fl:let>
+</project>
+}}}
+
 == Files / Directories ==
 
 *Question* : After compiling my java sources how to run the corresponding classes ?<br>
@@ -138,3 +152,127 @@ This example shows also how to iterate over a fileset with the ant builtin ${toS
 
 </project>
 }}}
+
+*Question* : In ant, how can i check if a set of files (comma-separated list of paths) exists or not?<br>
+*Solution* : use<br>
+   a)when with combined file function calls<br>
+   or<br>
+   b)use list function to iterate over the commaseparated pathentries
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka">
+
+  <!-- when you have a cvs property use split function
+       to get your list to iterate over -->
+  <property name="checkpath" value="/foo/bar,/foo/baz,/foo/bazz"/>
+  <fl:for var="file" in="split('${checkpath}', ',')">
+    <fl:fail message="#{file} does not exist !!" test="!file.tofile.exists"/>
+  </fl:for>
+
+  <!-- creating the list inline -->
+  <fl:for var="file" in="list('/foo/bar','/foo/baz', '/foo/bazz')">
+    <fl:fail message="#{file} does not exist !!" test="!file.tofile.exists"/
+  </fl:for>
+
+  <!-- using some if then else construct with choose -->
+  <fl:choose>
+    <fl:when test="file('/foo/bar').exists and file('/foo/baz' and file('/foo/bazz').exists">
+      <!-- create property based on existence -->
+      <fl:let>pathExist := true</fl:let>
+      <!-- .. other nested tasks .. -->
+    </fl:when>
+    <fl:otherwise>
+      <fl:let>pathExist := false</fl:let>
+      <!-- .. other nested tasks .. -->
+    </fl:otherwise>
+  </fl:choose>
+
+  <echo>${pathExist}</echo>
+
+</project>
+}}}
+
+== Conditions ==
+
+*Question* : I would like to do something like this<br>
+{{{
+<target name="clean" description="clean">
+    <if>
+        <available file="${build}" type="dir" />
+        <then>
+            <delete dir="${build}" />
+        </then>
+    </if>
+</target>
+}}}
+
+*Solution* :<br>
+
+The standard way in vanilla ant would be something like =<br>
+{{{
+<target name="check">
+  <condition property="delbuild">
+    <available file="${build}" type="dir"/>
+  </condition>
+ </target>
+
+ <target name="delbuild" depends="check" if="delbuild">
+ <delete dir="${build}"/>
+    <!-- .. -->
+ </target>
+}}}
+
+with Flaka its straightforward<br>
+{{{
+<fl:when test=" '${build}'.isdir ">
+  <delete dir="${build}"/>
+</fl:when>
+}}}
+
+*Question* : Is there any if then else construct in ant ?<br>
+*Solution* : Use choose/when/otherwise
+
+{{{
+<project xmlns:fl="antlib:it.haefelinger.flaka">
+  <!-- some if/then/else construct -->
+  <fl:choose>
+    <!-- if -->
+    <when test=" '${buildtype}' eq 'prod' ">
+      <!-- then -->
+      <echo>..starting ProductionBuild</echo>
+    </when>
+    <when test=" '${buildtype}' eq 'test' ">
+      <!-- then -->
+      <echo>..starting TestBuild</echo>
+    </when>
+    <!-- else -->
+    <otherwise>
+      <fl:unless test="has.property.dummybuild">
+        <fail message="No valid buildtype !, found => '${buildtype}'"/>
+      </fl:unless>
+      <echo>.. is DummyBuild</echo>
+    </otherwise>
+  </fl:choose>
+</project>
+}}}
+
+output with ant -f build.xml -Dbuildtype=prod or<br>
+ant -f build.xml -Dbuildtype=prod -Ddummybuild=whatever
+
+{{{
+[echo] ..starting ProductionBuild
+}}}
+
+output with typo => ant - build.xml -Dbuildtype=testt
+
+{{{
+BUILD FAILED
+/home/rosebud/workspace/AntTest/build.xml:21: No valid buildtype !, found => 'testt'
+}}}
+
+output with ant -f build.xml -Ddummybuild=whatever
+{{{
+[echo] .. is DummyBuild
+}}}
+
+
